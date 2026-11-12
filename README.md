@@ -2,6 +2,14 @@
 
 An Android app for EME (moonbounce) operators, made for ON5GS.
 
+## Download
+
+**[Download the app (EME-APP.apk, version 0.16)](https://github.com/on5gsdirk-cmd/EME-APP/raw/main/apk/EME-APP.apk)**
+
+Open the link on your Android phone, open the downloaded file and allow installation from this source.
+It installs over earlier versions; your settings and HB9Q login are kept.
+This is a debug build signed with a development key, meant for testing.
+
 ## Tabs
 
 | Tab | What it does |
