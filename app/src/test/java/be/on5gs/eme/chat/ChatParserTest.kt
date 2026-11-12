@@ -8,7 +8,7 @@ import org.junit.Test
 
 class ChatParserTest {
 
-    /** Berichtenrijen uit een echte HB9Q-pagina (1296), e-mailadressen verwijderd. */
+    /** Berichtenrijen uit een echte HB9Q-pagina (1296); e-mailadressen vervangen door xxxx@test.com. */
     private val rows: String =
         javaClass.classLoader!!.getResource("hb9q_logger_rows.html")!!.readText()
 

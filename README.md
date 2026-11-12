@@ -1,53 +1,52 @@
 # EME APP (ON5GS)
 
-Android-app voor EME (moonbounce), gemaakt voor ON5GS.
-*Android app for EME (moonbounce) operators.*
+An Android app for EME (moonbounce) operators, made for ON5GS.
 
-## Tabbladen
+## Tabs
 
-| Tabblad | Wat |
+| Tab | What it does |
 |---|---|
-| **Maan** | AZ/EL van de maan voor je locator (Meeus, topocentrisch), datum en tijd (lokaal + UTC), opkomst / culminatie / ondergang, wereldkaart met het gebied waar de maan boven de horizon staat, de maanfase en de Live CQ-stations in de kleur van hun band. |
-| **Deg** | EME-degradatie zoals MMMonVHF (50 – 1296 MHz): nu, en een grafiek van 30 dagen rond een gekozen dag met maanafstand en declinatie. |
-| **HB9Q Chat** | De HB9Q EME-chat, **alleen lezen** (afgesproken met HB9Q): berichten en wie recent schreef. Met "Log out". |
-| **Chat CQ** | De CQ-aanroepen uit de HB9Q-chat van het laatste half uur, als tabel. |
-| **Live CQ** | CQ-spots van W3SZ Live CQ (MAP65/Q65), filter per band, met maanstand per station. |
+| **Moon** | Moon AZ/EL for your locator (Meeus, topocentric), date and time (local + UTC), moonrise / culmination / moonset, and a world map showing where the moon is above the horizon, the current moon phase and the Live CQ stations in the colour of their band. |
+| **Deg** | EME degradation as calculated by MMMonVHF (50 – 1296 MHz): the value right now, plus a 30-day graph around a chosen date with moon distance and declination. |
+| **HB9Q Chat** | The HB9Q EME chat, **read only** (agreed with HB9Q): messages and the stations that wrote recently. Includes a "Log out" button. |
+| **Chat CQ** | The CQ calls from the HB9Q chat of the last 30 minutes, shown as a table. |
+| **Live CQ** | CQ spots from W3SZ Live CQ (MAP65/Q65), filtered per band, showing whether each station has the moon above its horizon. |
 
-Verder: instellingen voor callsign, locator en HB9Q-login (versleuteld bewaard met de Android Keystore),
-donkerblauw thema en 13 talen (NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, RU, ZH, JA).
+Also: settings for callsign, locator and HB9Q login (stored encrypted with the Android Keystore),
+a dark blue theme, and 13 languages (NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, RU, ZH, JA).
 
-## Bouwen
+## Building
 
-Vereist: Android Studio (of JDK 17+ en de Android SDK, platform 35).
+Requirements: Android Studio (or JDK 17+ and the Android SDK, platform 35).
 
 ```bash
 ./gradlew assembleDebug        # app/build/outputs/apk/debug/app-debug.apk
 ./gradlew testDebugUnitTest    # unit tests
-./gradlew testDebugUnitTest -Pscreenshots   # + schermafdrukken in app/build/screenshots/
+./gradlew testDebugUnitTest -Pscreenshots   # also renders screenshots into app/build/screenshots/
 ```
 
-## Projectindeling
+## Project layout
 
 ```
 app/src/main/java/be/on5gs/eme/
-  moon/          maanberekening (Meeus), opkomst/ondergang, maanfase, wereldkaart, labelplaatsing
-  degradation/   degradatie (MMMonVHF-methode) en het Deg-scherm
-  location/      Maidenhead-locator <-> breedte/lengte
-  cq/            W3SZ Live CQ (CSV-export), bandkleuren
-  chat/          HB9Q-chat (alleen lezen), Chat CQ-herkenning
-  settings/      instellingen, versleutelde login, taalkeuze
-  ui/theme/      thema
-app/src/main/res/values*/strings.xml   vertalingen
-app/src/main/assets/land110m.txt       landcontouren voor de kaart
+  moon/          moon position (Meeus), rise/set, moon phase, world map, label placement
+  degradation/   degradation (MMMonVHF method) and the Deg screen
+  location/      Maidenhead locator <-> latitude/longitude
+  cq/            W3SZ Live CQ (CSV export), band colours
+  chat/          HB9Q chat (read only), Chat CQ parsing
+  settings/      settings, encrypted login, language selection
+  ui/theme/      theme
+app/src/main/res/values*/strings.xml   translations
+app/src/main/assets/land110m.txt       coastlines for the world map
 ```
 
-## Bronnen en dank
+## Sources and credits
 
-- Maanberekening: Jean Meeus, *Astronomical Algorithms* (hfst. 12, 22, 25, 40, 47, 48); getest tegen astropy.
-- Degradatie en hemeltemperatuur-tabel (144 MHz): MMMonVHF (www.mmmonvhf.de/eme.php), naar EME Handbook 2010 / WSJT-gegevens van K1JT.
-- Live CQ: W3SZ (w3sz.com/livecq.html), via de officiële CSV-export.
-- HB9Q EME-chat: logger.hb9q.ch — alleen lezen, in overleg met HB9Q.
-- Landcontouren: Natural Earth 1:110m (public domain), via world-atlas (ISC, © Mike Bostock).
+- Moon calculations: Jean Meeus, *Astronomical Algorithms* (chapters 12, 22, 25, 40, 47, 48); tested against astropy.
+- Degradation and the 144 MHz sky temperature table: MMMonVHF (www.mmmonvhf.de/eme.php), based on the EME Handbook 2010 / WSJT data by K1JT.
+- Live CQ: W3SZ (w3sz.com/livecq.html), via its official CSV export.
+- HB9Q EME chat: logger.hb9q.ch — read only, in agreement with HB9Q.
+- Coastlines: Natural Earth 1:110m (public domain), via world-atlas (ISC, © Mike Bostock).
 
-De testgegevens in `app/src/test/resources/` zijn echte (geanonimiseerde e-mail) voorbeelden uit de
-HB9Q-chat en W3SZ; deze repository is daarom privé.
+The test data in `app/src/test/resources/` are real samples from the HB9Q chat and W3SZ Live CQ,
+used to test the parsers. All e-mail addresses in them have been replaced by `xxxx@test.com`.
