@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gegenereerd: en -->
+<resources>
+    <string name="app_name" translatable="false">EME</string>
+    <string name="app_title" translatable="false">EME APP</string>
+    <string name="tab_livecq" translatable="false">Live CQ</string>
+    <string name="tab_chatcq" translatable="false">Chat CQ</string>
+    <string name="tab_degradation" translatable="false">Deg</string>
+    <string name="tab_moon">Moon</string>
+    <string name="tab_chat">HB9Q Chat</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="time_local">Local</string>
+    <string name="no_locator">No valid locator. Set it via ⚙.</string>
+    <string name="livecq_spots">Live CQ spots:</string>
+    <string name="distance">Distance: %1$s km</string>
+    <string name="times_local">Times in local time (%1$s)</string>
+    <string name="moon_up_now">The moon is above the horizon now</string>
+    <string name="moonrise">Moonrise</string>
+    <string name="culmination">Culmination</string>
+    <string name="moonset">Moonset</string>
+    <string name="next_moonrise">Next moonrise</string>
+    <string name="not_within_48h">— (not within 48 hours)</string>
+    <string name="tomorrow">tomorrow</string>
+    <string name="yesterday">yesterday</string>
+    <string name="band_none">None</string>
+    <string name="band_all">All</string>
+    <string name="not_fetched">not fetched yet</string>
+    <string name="updated">updated %1$s UTC</string>
+    <string name="cq_summary">%1$d stations · last %2$d min · %3$s</string>
+    <string name="moon_at_you">Moon at your QTH: EL %1$s°</string>
+    <string name="refresh">Refresh</string>
+    <string name="choose_band">Choose at least one band.</string>
+    <string name="no_cq">No CQ on these bands in the last hour.</string>
+    <string name="spot_age">%1$s UTC (%2$d min)</string>
+    <string name="via">via %1$s</string>
+    <string name="moon_no_locator">moon: no locator</string>
+    <string name="moon_up_el">moon ↑ EL %1$s°</string>
+    <string name="moon_down">moon ↓ below horizon</string>
+    <string name="livecq_error">Live CQ not reachable: %1$s</string>
+    <string name="hb9q_error">HB9Q not reachable: %1$s</string>
+    <string name="login_failed">Login to HB9Q failed. Check login and password.</string>
+    <string name="need_login">First enter your HB9Q login and password in Settings (⚙ top right).</string>
+    <string name="messages">Messages</string>
+    <string name="participants">Participants (%1$d)</string>
+    <string name="station">Station</string>
+    <string name="callsign">Callsign</string>
+    <string name="locator_label">Maidenhead locator (4 or 6 characters)</string>
+    <string name="locator_invalid">Invalid. Example: JO21 or JO21SC</string>
+    <string name="locator_center">Centre of the square: %1$s</string>
+    <string name="save">Save</string>
+    <string name="hb9q_chat">HB9Q chat</string>
+    <string name="login_encrypted">Your login is stored encrypted on this phone.</string>
+    <string name="hb9q_login">HB9Q login (callsign)</string>
+    <string name="password">Password</string>
+    <string name="password_saved">Password (saved — leave empty to keep)</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
+    <string name="save_login">Save login</string>
+    <string name="login_saved">HB9Q login saved.</string>
+    <string name="clear">Clear</string>
+    <string name="login_cleared">HB9Q login cleared.</string>
+    <string name="language">Language</string>
+    <string name="language_system">Phone language (automatic)</string>
+    <string name="recent_in_chat">Wrote recently in the chat:</string>
+    <string name="chatcq_title">CQ calls in the HB9Q chat (%1$s), last 30 minutes: %2$d</string>
+    <string name="chatcq_header">UTC - freq - period - call - mode - CFOM - Hz</string>
+    <string name="chatcq_empty">No CQ calls in the HB9Q chat in the last 30 minutes.</string>
+    <string name="deg_now">Degradation now (%1$s)</string>
+    <string name="deg_excellent">Excellent</string>
+    <string name="deg_good">Good</string>
+    <string name="deg_fair">Fair</string>
+    <string name="deg_poor">Poor</string>
+    <string name="deg_very_poor">Very poor</string>
+    <string name="deg_details">Tsky %1$s K · TskyMin %2$s K · Tsys %3$s K · range factor %4$s dB · %5$s km</string>
+    <string name="deg_chart_title">30 days around %1$s (12:00 UTC)</string>
+    <string name="deg_best_days">Best days (lowest degradation)</string>
+    <string name="deg_info">DEG = Tsky / (TskyMin + Tsys) + range factor, as on MMMonVHF. Tsky is the sky noise behind the moon (144 MHz data by K1JT, scaled to the chosen band). Below 1.5 dB is excellent, above 5.5 dB very poor. Near new moon, sun noise can make conditions poor regardless of DEG.</string>
+    <string name="deg_full_moon">full moon</string>
+    <string name="deg_new_moon">new moon</string>
+    <string name="moon_phase">Moon phase: %1$s (%2$d%% lit)</string>
+    <string name="phase_0">new moon</string>
+    <string name="phase_1">waxing crescent</string>
+    <string name="phase_2">first quarter</string>
+    <string name="phase_3">waxing gibbous</string>
+    <string name="phase_4">full moon</string>
+    <string name="phase_5">waning gibbous</string>
+    <string name="phase_6">last quarter</string>
+    <string name="phase_7">waning crescent</string>
+    <string name="deg_series_deg">DEG (dB)</string>
+    <string name="deg_series_dist">Moon distance (km)</string>
+    <string name="deg_series_dec">Declination (°)</string>
+    <string name="deg_center_day">Day in the middle of the graph</string>
+    <string name="deg_back_today">Back to today</string>
+    <string name="log_out">Log out</string>
+    <string name="log_in">Log in</string>
+    <string name="logged_out">You are logged out of the HB9Q chat.</string>
+</resources>

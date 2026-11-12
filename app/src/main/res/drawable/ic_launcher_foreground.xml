@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grote parabolische schotel die naar de maan wijst -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- maan -->
+    <path android:fillColor="#FFE9A8"
+        android:pathData="M62,25m-4.5,0a4.5,4.5 0,1 1,9 0a4.5,4.5 0,1 1,-9 0" />
+    <!-- voet en mast -->
+    <path android:fillColor="#7F8A99" android:pathData="M47,64h6v16h-6z" />
+    <path android:fillColor="#9AA5B4" android:pathData="M40,86L44,79H56L60,86Z" />
+    <group android:rotation="30" android:scaleX="1.2" android:scaleY="1.2" android:pivotX="50" android:pivotY="66">
+        <!-- steunen naar de feed -->
+        <path android:strokeColor="#C9D2DE" android:strokeWidth="1.2"
+            android:pathData="M27,52L50,37M73,52L50,37" />
+        <!-- schotel (achterkant) -->
+        <path android:fillColor="#D7DEE8"
+            android:pathData="M24,52Q50,84 76,52Z" />
+        <!-- rand / binnenkant -->
+        <path android:fillColor="#F4F7FB"
+            android:pathData="M24,52a26,5 0,1 0,52 0a26,5 0,1 0,-52 0Z" />
+        <!-- feedarm en feed -->
+        <path android:strokeColor="#C9D2DE" android:strokeWidth="2"
+            android:pathData="M50,53L50,39" />
+        <path android:fillColor="#FFB74D" android:pathData="M47.5,34h5v5h-5z" />
+    </group>
+</vector>
