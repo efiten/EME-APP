@@ -30,6 +30,9 @@ class Hb9qClient(private val baseUrl: String = BASE_URL) {
     private var loggedIn = false
     private var loggedInAs: String? = null
 
+    /** Klok voor de wachttijd na een geweigerde login; alleen tests vervangen hem. */
+    internal var clock: () -> Long = System::currentTimeMillis
+
     init {
         // De sessie van HB9Q werkt met cookies; die houden we in het geheugen bij.
         if (CookieHandler.getDefault() == null) {
