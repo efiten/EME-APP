@@ -37,7 +37,7 @@
     <string name="login_failed">Connexion à HB9Q échouée. Vérifiez l\'identifiant et le mot de passe.</string>
     <string name="need_login">Saisissez d\'abord votre identifiant et mot de passe HB9Q dans les Paramètres (⚙ en haut à droite).</string>
     <string name="messages">Messages</string>
-    <string name="participants">Participants (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Indicatif</string>
     <string name="locator_label">Locator Maidenhead (4 ou 6 caractères)</string>

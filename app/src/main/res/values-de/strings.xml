@@ -37,7 +37,7 @@
     <string name="login_failed">Anmeldung bei HB9Q fehlgeschlagen. Login und Passwort prüfen.</string>
     <string name="need_login">Gib zuerst dein HB9Q-Login und Passwort in den Einstellungen ein (⚙ oben rechts).</string>
     <string name="messages">Nachrichten</string>
-    <string name="participants">Teilnehmer (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Rufzeichen</string>
     <string name="locator_label">Maidenhead-Locator (4 oder 6 Zeichen)</string>

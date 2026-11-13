@@ -37,7 +37,7 @@
     <string name="login_failed">Falha no login no HB9Q. Verifique o login e a palavra-passe.</string>
     <string name="need_login">Introduza primeiro o seu login e palavra-passe do HB9Q nas Definições (⚙ em cima à direita).</string>
     <string name="messages">Mensagens</string>
-    <string name="participants">Participantes (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Estação</string>
     <string name="callsign">Indicativo</string>
     <string name="locator_label">Locator Maidenhead (4 ou 6 caracteres)</string>

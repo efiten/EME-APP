@@ -37,7 +37,7 @@
     <string name="login_failed">Inloggning på HB9Q misslyckades. Kontrollera inloggning och lösenord.</string>
     <string name="need_login">Ange först din HB9Q-inloggning och ditt lösenord i Inställningar (⚙ uppe till höger).</string>
     <string name="messages">Meddelanden</string>
-    <string name="participants">Deltagare (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Anropssignal</string>
     <string name="locator_label">Maidenhead-lokator (4 eller 6 tecken)</string>

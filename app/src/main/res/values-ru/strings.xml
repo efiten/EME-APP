@@ -37,7 +37,7 @@
     <string name="login_failed">Не удалось войти в HB9Q. Проверьте логин и пароль.</string>
     <string name="need_login">Сначала введите логин и пароль HB9Q в Настройках (⚙ вверху справа).</string>
     <string name="messages">Сообщения</string>
-    <string name="participants">Участники (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Станция</string>
     <string name="callsign">Позывной</string>
     <string name="locator_label">Локатор Maidenhead (4 или 6 символов)</string>

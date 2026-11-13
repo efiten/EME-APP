@@ -37,7 +37,7 @@
     <string name="login_failed">HB9Q へのログインに失敗しました。ログイン名とパスワードを確認してください。</string>
     <string name="need_login">まず設定（右上の ⚙）で HB9Q のログイン名とパスワードを入力してください。</string>
     <string name="messages">メッセージ</string>
-    <string name="participants">参加者（%1$d）</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">局</string>
     <string name="callsign">コールサイン</string>
     <string name="locator_label">Maidenhead ロケーター（4 または 6 文字）</string>
