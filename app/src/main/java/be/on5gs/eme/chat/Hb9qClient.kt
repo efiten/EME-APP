@@ -62,7 +62,7 @@ class Hb9qClient {
     /** Berichten van een band. */
     suspend fun fetchMessages(band: Hb9qBand, login: String, password: String): List<ChatMessage> {
         val json = postJson("$BASE_URL/rpc/logger/logger_lst.cfm?vBand=${band.id}&vSearch=&vSearchDt=0", "", login, password)
-        return ChatParser.parseRows(json.optString("logger"))
+        return ChatParser.parseRows(loggerRows(json))
     }
 
     /** Uitloggen zoals de website ("Logout") en de sessie-cookies in de app wissen. */
@@ -74,6 +74,18 @@ class Hb9qClient {
     }
 
     // ---------- Intern ----------
+
+    /**
+     * De waarde van "logger" uit een geslaagde ("status":"success") respons. Een ONTBREKEND
+     * "logger"-veld is een kapotte/onvolledige respons, geen eerlijk lege chat - zonder dit
+     * onderscheid geeft `optString` stilzwijgend "" terug, identiek aan een echt lege chat,
+     * en valt een server-glitch nooit op (zie #7). "logger" aanwezig maar leeg ("") blijft wél
+     * gewoon een lege chat.
+     */
+    internal fun loggerRows(json: JSONObject): String {
+        if (!json.has("logger")) throw IOException("HB9Q: antwoord zonder 'logger'-veld")
+        return json.optString("logger")
+    }
 
     private suspend fun ensureLoggedIn(login: String, password: String) {
         if (loggedIn && loggedInAs == login) return
