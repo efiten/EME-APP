@@ -139,6 +139,7 @@ private fun LanguagePicker() {
 @Composable
 private fun Hb9qLoginSection(store: CredentialStore) {
     val saved = remember { store.load() }
+    val savedPassword = remember { SavedPassword(saved?.password) }
     var hasSaved by remember { mutableStateOf(saved != null) }
     var login by remember { mutableStateOf(saved?.login ?: "") }
     var password by remember { mutableStateOf("") }      // wordt nooit terug getoond
@@ -175,7 +176,7 @@ private fun Hb9qLoginSection(store: CredentialStore) {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Button(
             onClick = {
-                val pw = password.ifEmpty { saved?.password ?: "" }
+                val pw = savedPassword.passwordToSave(password)
                 store.save(login, pw)
                 hasSaved = true
                 password = ""
@@ -187,6 +188,7 @@ private fun Hb9qLoginSection(store: CredentialStore) {
         if (hasSaved) {
             OutlinedButton(onClick = {
                 store.clear()
+                savedPassword.clear()
                 hasSaved = false
                 login = ""
                 password = ""
