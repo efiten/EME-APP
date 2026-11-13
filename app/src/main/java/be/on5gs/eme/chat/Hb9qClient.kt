@@ -25,8 +25,12 @@ class Hb9qClient {
 
     class LoginFailedException(msg: String) : IOException(msg)
 
+    /** Login wordt tijdelijk niet opnieuw geprobeerd: nog [retryAfterMs] ms te wachten. */
+    class LoginOnCooldownException(val retryAfterMs: Long) : IOException("HB9Q: te veel mislukte logins, even wachten")
+
     private var loggedIn = false
     private var loggedInAs: String? = null
+    private val loginBackoff = LoginBackoff()
 
     init {
         // De sessie van HB9Q werkt met cookies; die houden we in het geheugen bij.
@@ -71,7 +75,15 @@ class Hb9qClient {
     // ---------- Intern ----------
 
     private suspend fun ensureLoggedIn(login: String, password: String) {
-        if (!loggedIn || loggedInAs != login) login(login, password)
+        if (loggedIn && loggedInAs == login) return
+        loginBackoff.retryAfterMs()?.let { throw LoginOnCooldownException(it) }
+        try {
+            login(login, password)
+            loginBackoff.onSuccess()
+        } catch (e: Exception) {
+            loginBackoff.onFailure()
+            throw e
+        }
     }
 
     /** POST zonder inhoud, antwoord als JSON. Logt (opnieuw) in als dat nodig is. */
