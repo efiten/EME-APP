@@ -29,7 +29,7 @@ object ChatCqParser {
 
     private val FREQ = Regex("""\b(\d{2,5})\.(\d{0,3})""")
     private val PERIOD = Regex("""(?i)\b(1st|2nd)\b""")
-    private val Q65 = Regex("""(?i)\bQ65[A-E]?\s*-?\s*(\d{2})\s*([A-E])\b""")
+    private val Q65 = Regex("""(?i)\bQ65[A-E]?\s*-?\s*(\d{2,3})\s*([A-E])\b""")
     private val OTHER_MODE = Regex("""(?i)\b(JT65[A-C]?|JT4[A-G]?|JT9|QRA64[A-E]?|FT8|FT4|FST4|MSK144|JTTY|ISCAT-?[AB]?|CW|SSB)\b""")
     private val CFOM = Regex("""(?i)CFOM""")
     private val OWN_ECHO = Regex("""(?i)own\s*echo""")
@@ -118,7 +118,7 @@ object ChatCqParser {
             }
         } ?: run {
             val today = now.toLocalDate()
-            if (time.isAfter(now.toLocalTime().plusMinutes(2))) today.minusDays(1) else today
+            if (today.atTime(time).isAfter(now.toLocalDateTime().plusMinutes(2))) today.minusDays(1) else today
         }
         return date.atTime(time).toInstant(ZoneOffset.UTC).toEpochMilli()
     }
