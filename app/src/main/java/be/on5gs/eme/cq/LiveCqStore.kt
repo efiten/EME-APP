@@ -29,9 +29,12 @@ object LiveCqStore {
     private val lock = Mutex()
 
     /** Alleen voor tests (schermafdrukken): vaste gegevens instellen zonder netwerk. */
-    internal fun seedForTest(spots: List<LiveCqSpot>) {
-        _state.value = State(spots = spots, lastFetch = System.currentTimeMillis())
+    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = System.currentTimeMillis()) {
+        _state.value = State(spots = spots, lastFetch = lastFetch)
     }
+
+    /** Haalt de spots op bij W3SZ. Alleen voor tests vervangbaar, zodat er geen netwerk nodig is. */
+    internal var fetcher: suspend () -> List<LiveCqSpot> = { LiveCqRepository.fetch() }
 
     /**
      * Haalt nieuwe gegevens op als de vorige ophaling ouder is dan [maxAgeMs].
@@ -42,7 +45,7 @@ object LiveCqStore {
         if (System.currentTimeMillis() - s.lastFetch < maxOf(maxAgeMs, MIN_FETCH_INTERVAL_MS)) return@withLock
         _state.value = s.copy(loading = true)
         _state.value = try {
-            State(spots = LiveCqRepository.fetch(), lastFetch = System.currentTimeMillis())
+            State(spots = fetcher(), lastFetch = System.currentTimeMillis())
         } catch (e: Exception) {
             // Vorige lijst blijft staan, met een foutmelding erbij
             s.copy(
