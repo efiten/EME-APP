@@ -129,7 +129,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
             Text(stringResource(R.string.log_out))
         }
 
-        chat.error?.let {
+        ChatStore.errorFor(chat, band)?.let {
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF3B1F1F)),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),

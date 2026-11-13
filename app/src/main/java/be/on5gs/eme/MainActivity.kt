@@ -9,6 +9,7 @@ import android.content.Context
 import androidx.compose.ui.res.stringResource
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
@@ -71,6 +72,8 @@ fun EmeApp() {
     var locator by remember { mutableStateOf(settings.locator) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableIntStateOf(0) }
+    // Systeem-terug in de instellingen: terug naar de tabbladen, zoals de pijl bovenaan
+    BackHandler(enabled = showSettings) { showSettings = false }
     // Volgorde: Maan, Deg, HB9Q Chat, Chat CQ, Live CQ
     val tabs = listOf(
         stringResource(R.string.tab_moon),

@@ -44,6 +44,14 @@ class ChatCqParserTest {
         assertEquals("1296.040 1st Q65-60A ? 1200", fields("***** CQ 1296.040 1st Q65-60A 1200Hz *****"))
     }
 
+    /** Q65 heeft ook periodes van 120 en 300 s; die mogen niet als "?" of als Hz gelezen worden. */
+    @Test
+    fun q65WithLongPeriods() {
+        assertEquals("10368.100 1st Q65-120E CFOM 1000", fields("***** CQ 10368.100 1st Q65-120E CFOM 1000 *****"))
+        assertEquals("1296.065 1st Q65-300A CFOM 1000", fields("***** CQ 1296.065 1st Q65-300A CFOM 1000 *****"))
+        assertEquals("1296.065 2nd Q65-300A CFOM ?", fields("***** CQ 1296.065 2nd Q65-300A CFOM *****"))
+    }
+
     @Test
     fun ordinaryMessagesAreNotCq() {
         assertNull(ChatCqParser.parse(msg("089 -332 0 0900 2.7 -10 : CQ F5AOL JN38"), now))
@@ -72,11 +80,33 @@ class ChatCqParserTest {
     }
 
     @Test
+    fun unparseableTimeIsDroppedExplicitlyInsteadOfShowingAsEpochZero() {
+        // "time" komt niet overeen met "H:MM": zonder de fix geeft messageMillis stilzwijgend 0L terug,
+        // waardoor de CQ als "veel te oud" wordt weggefilterd in plaats van duidelijk weggelaten.
+        val bad = msg("***** CQ 1296.075 1st Q65-60C CFOM 1500 *****", time = "")
+        assertNull(ChatCqParser.messageMillis(bad, now))
+        assertNull(ChatCqParser.parse(bad, now))
+        assertTrue(ChatCqParser.recent(listOf(bad), now, 30).isEmpty())
+    }
+
+    @Test
     fun messageTimeUsesDateFromFullTime() {
         // Bericht van gisteren op hetzelfde klokuur mag niet als "net verstuurd" tellen
         val old = ChatMessage(1, "09:05", "Sat 7th of Nov - 09:05", "K6EME", "Matt", null, "***** CQ 1296.075 *****", true)
         assertEquals(Instant.parse("2026-11-07T09:05:00Z").toEpochMilli(), ChatCqParser.messageMillis(old, now))
         assertTrue(ChatCqParser.recent(listOf(old), now, 30).isEmpty())
+    }
+
+    /** Zonder datum in fullTime: vlak voor middernacht UTC blijft een bericht van enkele minuten geleden van vandaag. */
+    @Test
+    fun messageTimeWithoutDateJustBeforeMidnight() {
+        val lateNow = Instant.parse("2026-11-08T23:59:00Z").toEpochMilli()
+        val justSent = ChatMessage(1, "23:57", "", "K6EME", "Matt", null, "***** CQ 1296.075 *****", true)
+        assertEquals(Instant.parse("2026-11-08T23:57:00Z").toEpochMilli(), ChatCqParser.messageMillis(justSent, lateNow))
+        assertEquals(1, ChatCqParser.recent(listOf(justSent), lateNow, 30).size)
+        // Een klokuur dat nog moet komen, hoort bij gisteren
+        val earlier = ChatMessage(2, "23:30", "", "K6EME", "Matt", null, "***** CQ 1296.075 *****", true)
+        assertEquals(Instant.parse("2026-11-07T23:30:00Z").toEpochMilli(), ChatCqParser.messageMillis(earlier, Instant.parse("2026-11-08T08:00:00Z").toEpochMilli()))
     }
 
     /** Echte chat van 8 november: alle CQ-regels worden herkend. */
