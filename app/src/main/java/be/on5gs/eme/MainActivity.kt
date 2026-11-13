@@ -35,7 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import be.on5gs.eme.chat.ChatCqScreen
 import be.on5gs.eme.chat.ChatScreen
 import be.on5gs.eme.cq.CqScreen
 import be.on5gs.eme.moon.MoonScreen
@@ -74,12 +73,11 @@ fun EmeApp() {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     // Systeem-terug in de instellingen: terug naar de tabbladen, zoals de pijl bovenaan
     BackHandler(enabled = showSettings) { showSettings = false }
-    // Volgorde: Maan, Deg, HB9Q Chat, Chat CQ, Live CQ
+    // Volgorde: Maan, Deg, HB9Q, Live CQ (Chat CQ is een subpagina van HB9Q)
     val tabs = listOf(
         stringResource(R.string.tab_moon),
         stringResource(R.string.tab_degradation),
         stringResource(R.string.tab_chat),
-        stringResource(R.string.tab_chatcq),
         stringResource(R.string.tab_livecq),
     )
 
@@ -141,7 +139,6 @@ fun EmeApp() {
                     0 -> MoonScreen(settings, callsign, locator)
                     1 -> DegradationScreen(settings, locator)
                     2 -> ChatScreen(settings, credentialStore, callsign)
-                    3 -> ChatCqScreen(settings, credentialStore)
                     else -> CqScreen(settings, locator)
                 }
             }
