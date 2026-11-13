@@ -2,6 +2,7 @@ package be.on5gs.eme.chat
 
 import be.on5gs.eme.R
 import be.on5gs.eme.settings.CredentialStore
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,11 @@ object ChatStore {
     data class Participant(val time: String, val callsign: String, val name: String)
 
     private val client by lazy { Hb9qClient() }
+
+    /** Haalt de berichten op bij HB9Q. Alleen voor tests vervangbaar, zodat er geen netwerk nodig is. */
+    internal var fetchMessages: suspend (Hb9qBand, CredentialStore.Credentials) -> List<ChatMessage> =
+        { band, creds -> client.fetchMessages(band, creds.login, creds.password) }
+
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state.asStateFlow()
     private val lock = Mutex()
@@ -48,8 +54,12 @@ object ChatStore {
         if (now - s.lastFetch < maxAgeMs) return@withLock
         _state.value = s.copy(loading = true)
         s = try {
-            val msgs = client.fetchMessages(band, creds.login, creds.password)
+            val msgs = fetchMessages(band, creds)
             s.copy(messages = msgs, error = null, lastFetch = now)
+        } catch (e: CancellationException) {
+            // Tabblad verlaten tijdens het ophalen: geen fout, de volgende keer gewoon opnieuw
+            _state.value = s.copy(loading = false)
+            throw e
         } catch (e: Hb9qClient.LoginFailedException) {
             s.copy(error = R.string.login_failed to "", lastFetch = now)
         } catch (e: Exception) {
