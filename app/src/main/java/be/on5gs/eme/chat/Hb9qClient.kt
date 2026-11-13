@@ -39,6 +39,8 @@ class Hb9qClient(private val baseUrl: String = BASE_URL) {
 
     suspend fun login(login: String, password: String) = withContext(Dispatchers.IO) {
         loggedIn = false
+        // Altijd met een nieuwe sessie beginnen: met een oude, nog geldige sessiecookie toont HB9Q geen loginformulier
+        (CookieHandler.getDefault() as? CookieManager)?.cookieStore?.removeAll()
         val page = request("GET", pageUrl, null).body
         val token = Jsoup.parse(page).selectFirst("input[name=swordfisch]")?.attr("value")
             ?: throw IOException("HB9Q: login form not found")
