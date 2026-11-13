@@ -16,7 +16,10 @@ data class N0ukMessage(
     val station: String,       // "F4HBY/2X15/700W" (callsign met antennes/vermogen, zoals opgegeven)
     val name: String,          // "Laurent"
     val locator: String,       // "IN97at", of "" als onbekend
-)
+) {
+    /** Datum en tijd zoals op de site: "10Nov 16:28" (UTC). */
+    val dateTime: String get() = "$date $time"
+}
 
 /** Soort bericht, voor de CQ-lijst. */
 enum class N0ukKind { CQ, STOP, OTHER }

@@ -156,7 +156,10 @@ private fun MessageRow(msg: N0ukMessage, myCallsign: String) {
     }
 }
 
-/** "Schreven recent in de chat:" met tijd (UTC), callsign, naam en locator. */
+/**
+ * QRV: "Schreven recent in de chat:" met datum en tijd (UTC) zoals op de site ("10Nov 16:28"),
+ * callsign, naam en locator. Met de datum zie je ook wie al dagen niet meer actief was.
+ */
 @Composable
 private fun WriterList(writers: List<N0ukMessage>) {
     LazyColumn(modifier = Modifier.padding(top = 6.dp)) {
@@ -170,8 +173,8 @@ private fun WriterList(writers: List<N0ukMessage>) {
         }
         items(writers, key = { it.callsign }) { w ->
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp)) {
-                Text(w.time, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(52.dp))
-                Text(w.callsign, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.width(96.dp))
+                Text(w.dateTime, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(92.dp))
+                Text(w.callsign, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.width(86.dp))
                 Text(w.name, modifier = Modifier.weight(1f))
                 Text(w.locator, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall)
             }

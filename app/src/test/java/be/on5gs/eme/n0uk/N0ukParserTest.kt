@@ -92,5 +92,8 @@ class N0ukParserTest {
         assertEquals("WA4MYO", w.first().callsign)
         assertEquals(w.size, w.map { it.callsign }.toSet().size)
         assertFalse(w.any { it.callsign == "OM4CW" })
+        // Met de datum zie je dat WA4MYO het laatst op 11 november schreef
+        assertEquals("11Nov 15:44", w.first().dateTime)
+        assertEquals("10Nov 16:28", w.first { it.callsign == "F4HBY" }.dateTime)
     }
 }
