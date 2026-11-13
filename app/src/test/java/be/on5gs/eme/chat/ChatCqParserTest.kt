@@ -79,6 +79,18 @@ class ChatCqParserTest {
         assertTrue(ChatCqParser.recent(listOf(old), now, 30).isEmpty())
     }
 
+    /** Zonder datum in fullTime: vlak voor middernacht UTC blijft een bericht van enkele minuten geleden van vandaag. */
+    @Test
+    fun messageTimeWithoutDateJustBeforeMidnight() {
+        val lateNow = Instant.parse("2026-11-08T23:59:00Z").toEpochMilli()
+        val justSent = ChatMessage(1, "23:57", "", "K6EME", "Matt", null, "***** CQ 1296.075 *****", true)
+        assertEquals(Instant.parse("2026-11-08T23:57:00Z").toEpochMilli(), ChatCqParser.messageMillis(justSent, lateNow))
+        assertEquals(1, ChatCqParser.recent(listOf(justSent), lateNow, 30).size)
+        // Een klokuur dat nog moet komen, hoort bij gisteren
+        val earlier = ChatMessage(2, "23:30", "", "K6EME", "Matt", null, "***** CQ 1296.075 *****", true)
+        assertEquals(Instant.parse("2026-11-07T23:30:00Z").toEpochMilli(), ChatCqParser.messageMillis(earlier, Instant.parse("2026-11-08T08:00:00Z").toEpochMilli()))
+    }
+
     /** Echte chat van 8 november: alle CQ-regels worden herkend. */
     @Test
     fun realChatPage() {

@@ -118,7 +118,7 @@ object ChatCqParser {
             }
         } ?: run {
             val today = now.toLocalDate()
-            if (time.isAfter(now.toLocalTime().plusMinutes(2))) today.minusDays(1) else today
+            if (today.atTime(time).isAfter(now.toLocalDateTime().plusMinutes(2))) today.minusDays(1) else today
         }
         return date.atTime(time).toInstant(ZoneOffset.UTC).toEpochMilli()
     }
