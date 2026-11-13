@@ -69,6 +69,12 @@ object ChatStore {
         _state.value = State()
     }
 
+    /**
+     * De foutmelding van [s], maar alleen als ze bij [band] hoort. Zonder dit kan een gebruiker die
+     * van band wisselt tijdens een foutmelding, die oude foutmelding nog even bij de nieuwe band zien.
+     */
+    fun errorFor(s: State, band: Hb9qBand): Pair<Int, String>? = s.error.takeIf { s.band == band }
+
     /** Deelnemers = de stations die recent in de chat schreven (behalve jijzelf), nieuwste eerst. */
     fun recentParticipants(s: State, myCallsign: String): List<Participant> =
         s.messages   // de berichten staan al met het nieuwste bovenaan
