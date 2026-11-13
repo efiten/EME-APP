@@ -15,8 +15,10 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 
 - Never commit on `main` and never push to `main` directly, also not as the owner. Create a
   branch (`fix/...` or `feat/...`), commit there, push the branch and open a pull request.
-- One logical change per branch and per pull request. Link the issue in the pull request
-  (`Fixes #12`).
+- One logical change per branch and per pull request. Link the issue in the pull request:
+  `Fixes #12` when it solves the whole issue (GitHub closes the issue on merge), `Part of #12`
+  when it solves a part. After merging the last part of an issue, close it by hand with a
+  comment that links the pull requests.
 - Run `./gradlew testDebugUnitTest` before every commit. Do not commit when a test fails.
 - A change in logic comes with a unit test. A bug fix comes with a test that fails without
   the fix.

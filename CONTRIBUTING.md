@@ -12,9 +12,14 @@ Thanks for helping. This page describes how changes get into the app.
 3. **Fork and branch.** Fork the repository and create a branch from `main`, for example
    `fix/chat-login-cookies` or `feat/moon-libration`.
 4. **One logical change per pull request.** Keep unrelated changes in separate pull requests.
-5. **Open the pull request** against `main` and link the issue in the description
-   (`Fixes #12`). The unit tests run automatically on every pull request and must pass.
+5. **Open the pull request** against `main` and link the issue in the description.
+   The unit tests run automatically on every pull request and must pass.
+   - `Fixes #12` when the pull request solves the whole issue. GitHub then closes the issue
+     when the pull request is merged.
+   - `Part of #12` when it solves only a part. Say in the issue what is left.
 6. The maintainer (ON5GS) reviews and merges.
+7. **Closing an issue by hand.** An issue that was solved in parts does not close by itself.
+   Whoever merges the last part closes the issue, with a comment that links the pull requests.
 
 ## Building and testing
 
