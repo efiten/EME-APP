@@ -49,6 +49,9 @@ object ChatCqParser {
 
     fun parse(msg: ChatMessage, nowMillis: Long): ChatCq? {
         if (!isCq(msg)) return null
+        // Geen bruikbaar tijdstip: deze CQ kan niet geplaatst worden in het "laatste N minuten"-venster,
+        // dus duidelijk weglaten in plaats van een gok (epoch 0) die later stilzwijgend als "te oud" wegvalt.
+        val millis = messageMillis(msg, nowMillis) ?: return null
         val text = clean(msg.text)
 
         val f = FREQ.find(text)
@@ -70,7 +73,7 @@ object ChatCqParser {
 
         return ChatCq(
             messageId = msg.id,
-            utcMillis = messageMillis(msg, nowMillis),
+            utcMillis = millis,
             time = msg.time,
             freq = freq,
             period = period,
@@ -102,10 +105,12 @@ object ChatCqParser {
     /**
      * Tijdstip van een chatbericht in UTC. De chat toont "07:16" en (in fullTime) "Fri 6th of Nov - 07:16".
      * Zonder bruikbare datum: het meest recente moment met die klokuur (vandaag of gisteren).
+     * `null` als `msg.time` niet in het verwachte "H:MM"-formaat staat (in plaats van stilzwijgend
+     * epoch 0 terug te geven, wat elders zou lijken op "heel oud bericht" in plaats van "niet te lezen").
      */
-    internal fun messageMillis(msg: ChatMessage, nowMillis: Long): Long {
+    internal fun messageMillis(msg: ChatMessage, nowMillis: Long): Long? {
         val now = ZonedDateTime.ofInstant(java.time.Instant.ofEpochMilli(nowMillis), ZoneOffset.UTC)
-        val hm = Regex("""(\d{1,2}):(\d{2})""").find(msg.time) ?: return 0L
+        val hm = Regex("""(\d{1,2}):(\d{2})""").find(msg.time) ?: return null
         val time = LocalTime.of(hm.groupValues[1].toInt(), hm.groupValues[2].toInt())
         val dm = Regex("""(\d{1,2})(?:st|nd|rd|th)\s+of\s+([A-Za-z]{3})""").find(msg.fullTime)
         val date = dm?.let {
