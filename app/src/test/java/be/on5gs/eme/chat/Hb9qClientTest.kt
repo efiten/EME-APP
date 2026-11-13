@@ -1,0 +1,69 @@
+package be.on5gs.eme.chat
+
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
+import org.junit.Before
+import org.junit.Test
+import java.net.CookieHandler
+import java.net.CookieManager
+import java.net.CookiePolicy
+
+class Hb9qClientTest {
+
+    private val users = mapOf("ON0AAA" to "pw-a", "ON0BBB" to "pw-b")
+
+    @Before
+    fun freshCookies() {
+        CookieHandler.setDefault(CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER))
+    }
+
+    private suspend fun expectLoginFailed(block: suspend () -> Unit) {
+        try {
+            block()
+            fail("LoginFailedException verwacht")
+        } catch (e: Hb9qClient.LoginFailedException) {
+            // verwacht
+        }
+    }
+
+    @Test
+    fun logsInAndFetches() = runBlocking {
+        FakeHb9q(users).use { hb9q ->
+            val client = Hb9qClient(hb9q.baseUrl)
+            assertEquals(emptyList<ChatMessage>(), client.fetchMessages(Hb9qBand.B1296, "ON0AAA", "pw-a"))
+            assertEquals("ON0AAA", hb9q.lastLoggedIn)
+        }
+    }
+
+    @Test
+    fun wrongPasswordIsALoginFailure() = runBlocking {
+        FakeHb9q(users).use { hb9q ->
+            val client = Hb9qClient(hb9q.baseUrl)
+            expectLoginFailed { client.fetchMessages(Hb9qBand.B1296, "ON0AAA", "wrong") }
+        }
+    }
+
+    /** Andere login in de instellingen terwijl de vorige sessie nog geldig is: opnieuw inloggen moet lukken. */
+    @Test
+    fun changingTheLoginWhileASessionIsActiveLogsInAgain() = runBlocking {
+        FakeHb9q(users).use { hb9q ->
+            val client = Hb9qClient(hb9q.baseUrl)
+            client.fetchMessages(Hb9qBand.B1296, "ON0AAA", "pw-a")
+            client.fetchMessages(Hb9qBand.B1296, "ON0BBB", "pw-b")
+            assertEquals("ON0BBB", hb9q.lastLoggedIn)
+        }
+    }
+
+    /** Na een mislukte login met een nog geldige sessie herstelt de volgende poging zonder de app te herstarten. */
+    @Test
+    fun afterAFailedLoginTheNextAttemptRecovers() = runBlocking {
+        FakeHb9q(users).use { hb9q ->
+            val client = Hb9qClient(hb9q.baseUrl)
+            client.fetchMessages(Hb9qBand.B1296, "ON0AAA", "pw-a")
+            expectLoginFailed { client.fetchMessages(Hb9qBand.B1296, "ON0BBB", "typo") }
+            client.fetchMessages(Hb9qBand.B1296, "ON0BBB", "pw-b")
+            assertEquals("ON0BBB", hb9q.lastLoggedIn)
+        }
+    }
+}
