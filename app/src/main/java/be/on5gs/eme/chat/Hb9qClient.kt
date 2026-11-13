@@ -1,5 +1,6 @@
 package be.on5gs.eme.chat
 
+import be.on5gs.eme.UserAgent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -98,7 +99,7 @@ class Hb9qClient {
             instanceFollowRedirects = false
             connectTimeout = 15_000
             readTimeout = 30_000
-            setRequestProperty("User-Agent", USER_AGENT)
+            setRequestProperty("User-Agent", UserAgent.VALUE)
         }
 
     private fun request(method: String, url: String, formBody: String?): Response {
@@ -133,6 +134,5 @@ class Hb9qClient {
     companion object {
         private const val BASE_URL = "https://logger.hb9q.ch"
         private const val PAGE_URL = "$BASE_URL/"
-        private const val USER_AGENT = "EME-ON5GS-Android/0.16"
     }
 }
