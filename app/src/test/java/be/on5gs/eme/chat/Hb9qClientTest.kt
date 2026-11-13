@@ -1,14 +1,20 @@
 package be.on5gs.eme.chat
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
 
+/** Robolectric voor een echte org.json; het netwerk gaat naar een nagebootste HB9Q op 127.0.0.1 (FakeHb9q). */
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [34])
 class Hb9qClientTest {
 
     private val users = mapOf("ON0AAA" to "pw-a", "ON0BBB" to "pw-b")
