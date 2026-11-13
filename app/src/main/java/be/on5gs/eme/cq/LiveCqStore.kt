@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,6 +47,10 @@ object LiveCqStore {
         _state.value = s.copy(loading = true)
         _state.value = try {
             State(spots = fetcher(), lastFetch = System.currentTimeMillis())
+        } catch (e: CancellationException) {
+            // Scherm verlaten tijdens het ophalen: geen fout, de volgende keer gewoon opnieuw
+            _state.value = s.copy(loading = false)
+            throw e
         } catch (e: Exception) {
             // Vorige lijst blijft staan, met een foutmelding erbij
             s.copy(

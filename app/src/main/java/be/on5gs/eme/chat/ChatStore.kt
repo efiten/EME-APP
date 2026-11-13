@@ -2,6 +2,7 @@ package be.on5gs.eme.chat
 
 import be.on5gs.eme.R
 import be.on5gs.eme.settings.CredentialStore
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +56,10 @@ object ChatStore {
         s = try {
             val msgs = fetchMessages(band, creds)
             s.copy(messages = msgs, error = null, lastFetch = now)
+        } catch (e: CancellationException) {
+            // Tabblad verlaten tijdens het ophalen: geen fout, de volgende keer gewoon opnieuw
+            _state.value = s.copy(loading = false)
+            throw e
         } catch (e: Hb9qClient.LoginFailedException) {
             s.copy(error = R.string.login_failed to "", lastFetch = now)
         } catch (e: Exception) {
