@@ -31,7 +31,8 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 
 - Never make the app send anything to logger.hb9q.ch other than the login and the read
   requests it does today. The HB9Q chat is read only, as agreed with HB9Q.
-- Never poll HB9Q or W3SZ more often than the current intervals.
+- Never make the app post anything to www.chris.org (N0UK chat). It is read only.
+- Never poll HB9Q, W3SZ or N0UK more often than the current intervals.
 - Never put a login, password or cookie in code, test data, a commit, an issue or a pull
   request.
 - Never add an e-mail address to the test data; replace it by `xxxx@test.com`.

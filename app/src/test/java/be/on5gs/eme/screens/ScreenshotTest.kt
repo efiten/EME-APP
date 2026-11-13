@@ -13,6 +13,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import be.on5gs.eme.EmeApp
+import be.on5gs.eme.n0uk.N0ukCqList
+import be.on5gs.eme.n0uk.N0ukCqParser
+import be.on5gs.eme.n0uk.N0ukParser
+import be.on5gs.eme.n0uk.N0ukStore
 import be.on5gs.eme.moon.MoonPhase
 import be.on5gs.eme.moon.drawMoonPhase
 import be.on5gs.eme.chat.ChatCqList
@@ -191,6 +195,33 @@ class ScreenshotTest {
         }
         compose.waitForIdle()
         save("chatcq")
+    }
+
+    /** N0UK: berichten, met de opgeslagen pagina als bron (geen netwerk). */
+    @Test
+    @Config(qualifiers = "+nl")
+    fun n0ukMessages() {
+        val page = javaClass.classLoader!!.getResource("n0uk_jt65emeA.html")!!.readText()
+        N0ukStore.resetForTest()
+        N0ukStore.fetchPage = { page }
+        compose.setContent { EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { Box(Modifier.fillMaxSize()) { EmeApp() } } } }
+        compose.onNodeWithText("N0UK").performClick()
+        compose.waitForIdle()
+        save("n0uk-berichten")
+    }
+
+    /** N0UK Chat CQ als op 10 november 16:20 UTC, met een ruimer venster om meer regels te tonen. */
+    @Test
+    @Config(qualifiers = "+nl")
+    fun n0ukCqTable() {
+        val page = javaClass.classLoader!!.getResource("n0uk_jt65emeA.html")!!.readText()
+        val t = java.time.Instant.parse("2026-11-10T16:20:00Z").toEpochMilli()
+        val cqs = N0ukCqParser.recent(N0ukParser.parse(page, t), t, 24 * 60)
+        compose.setContent {
+            EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { Box(Modifier.fillMaxSize().padding(12.dp)) { N0ukCqList(cqs, t) } } }
+        }
+        compose.waitForIdle()
+        save("n0uk-chatcq")
     }
 
     private fun save(name: String) {

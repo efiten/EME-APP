@@ -95,4 +95,10 @@
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
     <string name="logged_out">You are logged out of the HB9Q chat.</string>
+    <string name="tab_n0uk" translatable="false">N0UK</string>
+    <string name="n0uk_info">N0UK WSJT EME chat · 144 MHz · read only · updated every 90 s</string>
+    <string name="n0uk_cq_title">CQ calls in the N0UK chat (144 MHz), last 60 minutes: %1$d</string>
+    <string name="n0uk_cq_header">UTC - freq - period - call - mode - locator - moon</string>
+    <string name="n0uk_cq_empty">No CQ calls in the N0UK chat in the last 60 minutes.</string>
+    <string name="n0uk_error">N0UK chat not reachable: %1$s</string>
 </resources>

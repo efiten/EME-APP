@@ -90,4 +90,9 @@
     <string name="log_out">Cerrar sesión</string>
     <string name="log_in">Iniciar sesión</string>
     <string name="logged_out">Ha cerrado la sesión del chat HB9Q.</string>
+    <string name="n0uk_info">Chat WSJT EME N0UK · 144 MHz · solo lectura · actualizado cada 90 s</string>
+    <string name="n0uk_cq_title">Llamadas CQ en el chat N0UK (144 MHz), últimos 60 minutos: %1$d</string>
+    <string name="n0uk_cq_header">UTC - frec - periodo - indicativo - modo - locator - luna</string>
+    <string name="n0uk_cq_empty">No hay llamadas CQ en el chat N0UK en los últimos 60 minutos.</string>
+    <string name="n0uk_error">Chat N0UK no disponible: %1$s</string>
 </resources>
