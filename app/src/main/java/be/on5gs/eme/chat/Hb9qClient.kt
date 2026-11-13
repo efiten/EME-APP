@@ -1,5 +1,6 @@
 package be.on5gs.eme.chat
 
+import be.on5gs.eme.UserAgent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -25,8 +26,12 @@ class Hb9qClient {
 
     class LoginFailedException(msg: String) : IOException(msg)
 
+    /** Login wordt tijdelijk niet opnieuw geprobeerd: nog [retryAfterMs] ms te wachten. */
+    class LoginOnCooldownException(val retryAfterMs: Long) : IOException("HB9Q: te veel mislukte logins, even wachten")
+
     private var loggedIn = false
     private var loggedInAs: String? = null
+    private val loginBackoff = LoginBackoff()
 
     init {
         // De sessie van HB9Q werkt met cookies; die houden we in het geheugen bij.
@@ -57,7 +62,7 @@ class Hb9qClient {
     /** Berichten van een band. */
     suspend fun fetchMessages(band: Hb9qBand, login: String, password: String): List<ChatMessage> {
         val json = postJson("$BASE_URL/rpc/logger/logger_lst.cfm?vBand=${band.id}&vSearch=&vSearchDt=0", "", login, password)
-        return ChatParser.parseRows(json.optString("logger"))
+        return ChatParser.parseRows(loggerRows(json))
     }
 
     /** Uitloggen zoals de website ("Logout") en de sessie-cookies in de app wissen. */
@@ -70,8 +75,28 @@ class Hb9qClient {
 
     // ---------- Intern ----------
 
+    /**
+     * De waarde van "logger" uit een geslaagde ("status":"success") respons. Een ONTBREKEND
+     * "logger"-veld is een kapotte/onvolledige respons, geen eerlijk lege chat - zonder dit
+     * onderscheid geeft `optString` stilzwijgend "" terug, identiek aan een echt lege chat,
+     * en valt een server-glitch nooit op (zie #7). "logger" aanwezig maar leeg ("") blijft wél
+     * gewoon een lege chat.
+     */
+    internal fun loggerRows(json: JSONObject): String {
+        if (!json.has("logger")) throw IOException("HB9Q: antwoord zonder 'logger'-veld")
+        return json.optString("logger")
+    }
+
     private suspend fun ensureLoggedIn(login: String, password: String) {
-        if (!loggedIn || loggedInAs != login) login(login, password)
+        if (loggedIn && loggedInAs == login) return
+        loginBackoff.retryAfterMs()?.let { throw LoginOnCooldownException(it) }
+        try {
+            login(login, password)
+            loginBackoff.onSuccess()
+        } catch (e: Exception) {
+            loginBackoff.onFailure()
+            throw e
+        }
     }
 
     /** POST zonder inhoud, antwoord als JSON. Logt (opnieuw) in als dat nodig is. */
@@ -98,7 +123,7 @@ class Hb9qClient {
             instanceFollowRedirects = false
             connectTimeout = 15_000
             readTimeout = 30_000
-            setRequestProperty("User-Agent", USER_AGENT)
+            setRequestProperty("User-Agent", UserAgent.VALUE)
         }
 
     private fun request(method: String, url: String, formBody: String?): Response {
@@ -133,6 +158,5 @@ class Hb9qClient {
     companion object {
         private const val BASE_URL = "https://logger.hb9q.ch"
         private const val PAGE_URL = "$BASE_URL/"
-        private const val USER_AGENT = "EME-ON5GS-Android/0.16"
     }
 }

@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import be.on5gs.eme.UserAgent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -13,7 +14,6 @@ import java.net.URL
 object LiveCqRepository {
 
     private const val EXPORT_URL = "https://w3sz.com/export_livecq3.php"
-    private const val USER_AGENT = "EME-ON5GS-Android/0.8"
 
     /** Gooit een IOException met een begrijpelijke Nederlandse melding bij problemen. */
     suspend fun fetch(): List<LiveCqSpot> = withContext(Dispatchers.IO) {
@@ -22,7 +22,7 @@ object LiveCqRepository {
             doOutput = true
             connectTimeout = 15_000
             readTimeout = 30_000
-            setRequestProperty("User-Agent", USER_AGENT)
+            setRequestProperty("User-Agent", UserAgent.VALUE)
             setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
         }
         try {
