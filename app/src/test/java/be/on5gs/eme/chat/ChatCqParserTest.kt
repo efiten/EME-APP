@@ -80,6 +80,16 @@ class ChatCqParserTest {
     }
 
     @Test
+    fun unparseableTimeIsDroppedExplicitlyInsteadOfShowingAsEpochZero() {
+        // "time" komt niet overeen met "H:MM": zonder de fix geeft messageMillis stilzwijgend 0L terug,
+        // waardoor de CQ als "veel te oud" wordt weggefilterd in plaats van duidelijk weggelaten.
+        val bad = msg("***** CQ 1296.075 1st Q65-60C CFOM 1500 *****", time = "")
+        assertNull(ChatCqParser.messageMillis(bad, now))
+        assertNull(ChatCqParser.parse(bad, now))
+        assertTrue(ChatCqParser.recent(listOf(bad), now, 30).isEmpty())
+    }
+
+    @Test
     fun messageTimeUsesDateFromFullTime() {
         // Bericht van gisteren op hetzelfde klokuur mag niet als "net verstuurd" tellen
         val old = ChatMessage(1, "09:05", "Sat 7th of Nov - 09:05", "K6EME", "Matt", null, "***** CQ 1296.075 *****", true)
