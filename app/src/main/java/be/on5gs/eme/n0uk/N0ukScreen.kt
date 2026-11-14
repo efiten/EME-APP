@@ -102,10 +102,25 @@ fun N0ukScreen(myCallsign: String) {
             )
         }
 
-        TabRow(selectedTabIndex = subTab) {
-            Tab(selected = subTab == 0, onClick = { subTab = 0 }, text = { Text(stringResource(R.string.messages)) })
-            Tab(selected = subTab == 1, onClick = { subTab = 1 }, text = { Text(stringResource(R.string.participants, writers.size)) })
-            Tab(selected = subTab == 2, onClick = { subTab = 2 }, text = { Text(stringResource(R.string.tab_chatcq)) })
+        // Subtabbladen niet groter dan normaal en met een smalle zijmarge, zoals de tabbladen bovenaan:
+        // anders past "Nachrichten" niet in een derde van een klein scherm en breekt het midden in het woord
+        FixedFontScale {
+            TabRow(selectedTabIndex = subTab) {
+                listOf(
+                    stringResource(R.string.messages),
+                    stringResource(R.string.participants, writers.size),
+                    stringResource(R.string.tab_chatcq),
+                ).forEachIndexed { i, title ->
+                    Tab(selected = subTab == i, onClick = { subTab = i }) {
+                        Text(
+                            title,
+                            style = MaterialTheme.typography.titleSmall,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 14.dp),
+                        )
+                    }
+                }
+            }
         }
 
         st.error?.let {

@@ -81,10 +81,7 @@ class LayoutTest(private val device: String, private val language: String, priva
          * Bekende problemen op het kleine scherm, elk met een issue. Een pull request die er een
          * oplost, haalt zijn regel hier weg. Voeg geen nieuwe toe zonder issue.
          */
-        private val KNOWN = listOf(
-            // #79: subtabblad "Messages" van N0UK midden in het woord afgebroken
-            Known(79, "n0uk", Regex("""^".*": word broken over two lines$""")),
-        )
+        private val KNOWN = emptyList<Known>()
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{1} {0} font {2}")
