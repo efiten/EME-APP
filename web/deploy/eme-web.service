@@ -1,0 +1,20 @@
+# Install as /etc/systemd/system/eme-web.service (task 14), then: systemctl enable eme-web
+# /etc/default/eme-web holds EME_VERSION=<version>; deploy-release.sh writes it.
+[Unit]
+Description=EME web server (eme.on8ar.eu)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=www-data
+EnvironmentFile=/etc/default/eme-web
+ExecStart=/opt/eme-web/eme-web -listen 127.0.0.1:5200 -version ${EME_VERSION}
+Restart=on-failure
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadOnlyPaths=/
+
+[Install]
+WantedBy=multi-user.target

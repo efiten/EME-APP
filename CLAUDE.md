@@ -25,6 +25,9 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 - A change in logic comes with a unit test. A bug fix comes with a test that fails without
   the fix.
 - A new or changed text goes into all 13 `strings.xml` files.
+- A change that users see goes into `app/` and `web/` in the same pull request. A change that
+  only exists on one platform says so in the pull request.
+- Run `npm test` in `web/` and `go test ./...` in `web/server` before a commit that touches `web/`.
 - Stage files by name (`git add <file>`), not `git add -A` or `git add .`.
 - Never force-push and never rewrite history that is already on GitHub.
 - Merge a pull request only when the "Unit tests" check is green.
@@ -36,7 +39,8 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 - Never make the app post anything to www.chris.org (N0UK chat). It is read only.
 - Never make the app send anything to livecq.n6nu.org other than the GET request for the spots.
   N6NU Live CQ is read only.
-- Never poll HB9Q, W3SZ, N6NU or N0UK more often than the current intervals.
+- Never poll HB9Q, W3SZ, N6NU or N0UK more often than the current intervals. The web server
+  obeys the same limits for all web users together.
 - Never put a login, password or cookie in code, test data, a commit, an issue or a pull
   request.
 - Never add an e-mail address to the test data; replace it by `xxxx@test.com`.
