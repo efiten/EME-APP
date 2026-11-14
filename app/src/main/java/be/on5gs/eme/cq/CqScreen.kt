@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -180,8 +181,24 @@ private fun SpotCard(spot: LiveCqSpot, now: Long) {
                 String.format(Locale.US, "%.3f MHz   %s   %s dB", spot.freqMhz, spot.mode, spot.db),
                 fontFamily = FontFamily.Monospace,
             )
-            Row {
-                Text(stringResource(R.string.via, spot.spotter), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // DT en programma bij de spotter; is de regel te lang, dan wordt het programma afgekort
+                val dt = if (spot.dt.isNotEmpty()) " · DT ${spot.dt}" else ""
+                val app = if (spot.app.isNotEmpty()) " · ${spot.app}" else ""
+                Text(
+                    stringResource(R.string.via, spot.spotter) + dt + app,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                // Bron van de melding: W3SZ, N6NU of beide
+                Text(
+                    spot.sourceLabel,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
                 MoonAtStation(spot.grid, now)
             }
         }

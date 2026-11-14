@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import be.on5gs.eme.cq.Band
 import be.on5gs.eme.cq.LiveCqParser
+import be.on5gs.eme.cq.LiveCqSource
 import be.on5gs.eme.cq.LiveCqSpot
 import be.on5gs.eme.settings.SettingsRepository
 import be.on5gs.eme.cq.LiveCqStore
@@ -68,8 +69,14 @@ class ScreenshotTest {
             Triple("OK1DFC", "JO70FD", 432.065), Triple("DL7APV", "JO62QM", 144.120),
             Triple("SP5GDM", "KO02MD", 1296.060), Triple("OK1AA", "JO61AA", 144.115),
             Triple("UA3PTW", "KO93", 1296.050), Triple("VK7MO", "QE37", 1296.050),
-        ).map { (call, grid, f) ->
-            LiveCqSpot(now, call, grid, f, Band.forFrequency(f), "Q65-60C", "-20", "PA3DRK", "JO21")
+        ).mapIndexed { i, (call, grid, f) ->
+            // Een deel van N6NU of van beide sites, om de bron op het scherm te zien
+            val sources = when (i % 3) {
+                0 -> setOf(LiveCqSource.W3SZ, LiveCqSource.N6NU)
+                1 -> setOf(LiveCqSource.N6NU)
+                else -> setOf(LiveCqSource.W3SZ)
+            }
+            LiveCqSpot(now, call, grid, f, Band.forFrequency(f), "Q65-60C", "-20", "PA3DRK", "JO21", sources, "2.5", "WSJT-X")
         }
         LiveCqStore.seedForTest(spots.map { it.copy(utcMillis = it.utcMillis + shift) } + extra)
         SettingsRepository(ApplicationProvider.getApplicationContext()).cqBands = setOf(Band.B144, Band.B432, Band.B23CM)
