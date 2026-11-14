@@ -57,6 +57,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import be.on5gs.eme.ui.rememberNewestOnTopListState
 
 /** Chat CQ van N0UK toont de CQ's van het laatste uur, zoals Live CQ en HB9Q. */
 internal const val N0UK_CQ_WINDOW_MINUTES = 60
@@ -117,7 +118,7 @@ fun N0ukScreen(myCallsign: String) {
 
         Box(Modifier.weight(1f)) {
             when (subTab) {
-                0 -> LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
+                0 -> LazyColumn(state = rememberNewestOnTopListState(st.messages.firstOrNull()?.let { "${it.utcMillis}-${it.callsign}-${it.text.hashCode()}" }), verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
                     items(st.messages, key = { "${it.utcMillis}-${it.callsign}-${it.text.hashCode()}" }) { MessageRow(it, myCallsign) }
                 }
                 1 -> WriterList(writers)
@@ -213,7 +214,7 @@ internal fun N0ukCqList(cqs: List<N0ukCq>, now: Long) = FixedFontScale {
             HeaderCell(t(6), COL_MOON, align = TextAlign.End)
         }
         if (cqs.isEmpty()) Text(stringResource(R.string.n0uk_cq_empty), modifier = Modifier.padding(top = 16.dp))
-        LazyColumn {
+        LazyColumn(state = rememberNewestOnTopListState(cqs.firstOrNull()?.let { "${it.utcMillis}-${it.callsign}-${it.freq}" })) {
             itemsIndexed(cqs, key = { _, c -> "${c.utcMillis}-${c.callsign}-${c.freq}" }) { i, c ->
                 val dim = if (c.ended) DIM else Color.Unspecified
                 val el = stationLatLon(c.locator)?.let { MoonCalculator.quickElevationDeg(sub, it.latDeg, it.lonDeg) }
