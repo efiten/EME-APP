@@ -158,13 +158,27 @@ describe('Live CQ screen', () => {
     expect(host.childElementCount).toBe(0);
   });
 
-  test('callsigns are inserted as text, never as markup', async () => {
-    const evil = csvText.replaceAll(',JT65B,', ',<img src=x onerror=alert(1)>,');
+  test('mode and spotter text is inserted as text, never as markup; a callsign with markup is dropped by the parser', async () => {
+    const lines = csvText.split(/\r?\n/);
+    const evil = lines
+      .map((l, i) => (i === 0 ? l : l.replace(',JT65B,', ',<img src=x onerror=alert(1)>,').replace(/,(W9IP),/, ',<b>BOLD</b>,')))
+      .map((l, i) => (i === 1 ? l.replace(',KA1EME,', ',<i>X</i>,') : l))
+      .join('\n');
     stubFetch({ [W3SZ]: ok(evil), [N6NU]: ok(jsonText) });
     vi.setSystemTime(Date.parse('2026-11-04T14:00:00Z'));
     await mount();
     expect(cards().length).toBeGreaterThan(0);
     expect(host.textContent).toContain('<img src=x onerror=alert(1)>');
-    expect(host.querySelector('img')).toBeNull();
+    expect(host.textContent).toContain('<B>BOLD</B>');
+    expect(host.textContent).not.toContain('<i>X</i>');
+    expect(host.querySelector('img, b, i')).toBeNull();
+  });
+
+  test('no .empty element while the list has spots', async () => {
+    await mount();
+    expect(cards().length).toBeGreaterThan(0);
+    expect(host.querySelector('.empty')).toBeNull();
+    await mount(settings({ cqBands: new Set() }));
+    expect(host.querySelector('.empty').textContent).toBe(t('choose_band'));
   });
 });

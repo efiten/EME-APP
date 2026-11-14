@@ -142,8 +142,9 @@ export function createLiveCqScreen() {
           errorBox.dataset.role = 'error';
           errorBox.textContent = t('livecq_error', s.error);
         }
-        empty.className = 'empty';
-        empty.textContent = shown.length === 0 && !s.loading ? (bands.size === 0 ? t('choose_band') : t('no_cq')) : '';
+        const message = shown.length === 0 && !s.loading ? (bands.size === 0 ? t('choose_band') : t('no_cq')) : '';
+        empty.className = message ? 'empty' : '';
+        empty.textContent = message;
         list.replaceChildren(...shown.map((spot) => spotCard(spot, now)));
       }
 

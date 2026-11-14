@@ -250,8 +250,8 @@ body {
 .cq .small, .n0uk .small { font-size: 12px; }
 .n0uk .dim { color: var(--dim); }
 .n0uk .accent { color: var(--secondary); }
-.up { color: var(--moon-up); }
-.down { color: var(--alert); }
+.cq .up, .n0uk .up { color: var(--moon-up); }
+.cq .down, .n0uk .down { color: var(--alert); }
 .spinner {
   flex: none; width: 20px; height: 20px; margin: 0 14px; border-radius: 50%;
   border: 2px solid var(--outline-variant); border-top-color: var(--primary); animation: spin 1s linear infinite;
