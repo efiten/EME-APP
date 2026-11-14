@@ -195,7 +195,7 @@ func TestSuccessAfterFailureClearsError(t *testing.T) {
 	c := newTestCache(u, clk, time.Second)
 	c.get()
 	u.set(func(u *upstream) { u.code = 200 })
-	clk.Advance(31 * time.Second)
+	clk.Advance(120 * time.Second)
 	r := c.get()
 	if r.status != 200 || r.errText != "" {
 		t.Fatalf("%+v", r)
@@ -299,5 +299,58 @@ func TestProductionDefaults(t *testing.T) {
 		n.maxAge != 120*time.Second || n.minInterval != 30*time.Second ||
 		c.maxAge != 90*time.Second || c.minInterval != 90*time.Second {
 		t.Fatalf("intervals %+v %+v %+v", w, n, c)
+	}
+}
+
+func TestFailingSiteRetriedOnlyAtMaxAgeCadence(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	c := newTestCache(u, clk, time.Second) // maxAge 120 s, minInterval 30 s
+	good := c.get()
+	u.set(func(u *upstream) { u.code = 500 })
+	clk.Advance(120 * time.Second)
+	c.get() // attempt 2, fails
+	if u.hits.Load() != 2 {
+		t.Fatalf("hits=%d", u.hits.Load())
+	}
+	// staggered browsers polling during the outage
+	for _, d := range []time.Duration{31, 60, 90, 119} {
+		clk.Now() // keep reading the clock
+		clk.mu.Lock()
+		clk.t = good.fetchedAt.Add(120*time.Second + d*time.Second)
+		clk.mu.Unlock()
+		r := c.get()
+		if u.hits.Load() != 2 {
+			t.Fatalf("+%ds: hits=%d, want no retry before maxAge", d, u.hits.Load())
+		}
+		if r.status != 200 || string(r.body) != "v1" || r.errText == "" || !r.fetchedAt.Equal(good.fetchedAt) {
+			t.Fatalf("+%ds: %+v", d, r)
+		}
+	}
+	clk.mu.Lock()
+	clk.t = good.fetchedAt.Add(240 * time.Second)
+	clk.mu.Unlock()
+	c.get()
+	if u.hits.Load() != 3 {
+		t.Fatalf("hits=%d, want retry at +120 s after the failed attempt", u.hits.Load())
+	}
+}
+
+func TestN0ukFailureRetriedAt90sNotEarlier(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	c := newCache(source{name: "n0uk", url: u.srv.URL, maxAge: 90 * time.Second, minInterval: 90 * time.Second},
+		"ua", time.Second, clk.Now)
+	c.get()
+	u.set(func(u *upstream) { u.code = 500 })
+	clk.Advance(90 * time.Second)
+	c.get() // fails
+	clk.Advance(89 * time.Second)
+	c.get()
+	if u.hits.Load() != 2 {
+		t.Fatalf("hits=%d, want no retry at +89 s", u.hits.Load())
+	}
+	clk.Advance(1 * time.Second)
+	c.get()
+	if u.hits.Load() != 3 {
+		t.Fatalf("hits=%d, want retry at +90 s", u.hits.Load())
 	}
 }

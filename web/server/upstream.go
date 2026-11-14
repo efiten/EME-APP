@@ -78,9 +78,10 @@ func (c *cache) get() result {
 	defer c.mu.Unlock()
 
 	t := c.now()
-	fresh := c.hasBody && t.Sub(c.fetchedAt) < c.src.maxAge
-	tooSoon := c.hasAttempt && t.Sub(c.lastAttempt) < c.src.minInterval
-	if !fresh && !tooSoon {
+	// Gate on the last attempt, success or failure, like the app (LiveCqStore.lastFetch):
+	// a site that is down is retried at the normal cadence, not at minInterval.
+	due := !c.hasAttempt || t.Sub(c.lastAttempt) >= max(c.src.maxAge, c.src.minInterval)
+	if due {
 		c.fetch(t)
 	}
 	return c.current()
