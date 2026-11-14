@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.sp
 import be.on5gs.eme.R
 import be.on5gs.eme.ui.theme.FixedFontScale
 
-private val CQ_ORANGE = Color(0xFFFFB74D)
-private val DIM = Color(0xFF9FB0C8)
+internal val CQ_ORANGE = Color(0xFFFFB74D)
+internal val DIM = Color(0xFF9FB0C8)
 private val ERROR_RED = Color(0xFFEF5350)
 
 /** Kolombreedtes van de tabel (dp). De kolom "call" krijgt de overblijvende ruimte. */
@@ -35,8 +35,8 @@ private val COL_MODE = 60.dp
 private val COL_CFOM = 40.dp
 private val COL_HZ = 34.dp
 
-private val HEADER_BG = Color(0xFF1B3054)
-private val ROW_ALT_BG = Color(0xFF102544)
+internal val HEADER_BG = Color(0xFF1B3054)
+internal val ROW_ALT_BG = Color(0xFF102544)
 
 /** De tabel zelf (los van het ophalen, zodat ze ook getest kan worden). */
 @Composable
@@ -71,7 +71,7 @@ internal fun ChatCqList(bandLabel: String, cqs: List<ChatCq>) = FixedFontScale {
 }
 
 @Composable
-private fun HeaderCell(text: String, width: Dp?, modifier: Modifier = Modifier, align: TextAlign = TextAlign.Start) {
+internal fun HeaderCell(text: String, width: Dp?, modifier: Modifier = Modifier, align: TextAlign = TextAlign.Start) {
     Text(
         text,
         color = MaterialTheme.colorScheme.secondary,
@@ -104,7 +104,7 @@ private fun CqRow(cq: ChatCq, odd: Boolean) {
 }
 
 @Composable
-private fun Cell(
+internal fun Cell(
     text: String,
     width: Dp?,
     modifier: Modifier = Modifier,

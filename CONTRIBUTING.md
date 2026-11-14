@@ -53,7 +53,9 @@ discuss them in an issue first.
 - **HB9Q chat is read only**, as agreed with HB9Q. The app does not send messages and does not
   change anything on logger.hb9q.ch.
 - **Do not poll more often.** The chat is fetched every 20 s (`ChatStore.MESSAGES_REFRESH_MS`),
-  Live CQ every 120 s with a minimum of 30 s between two fetches (`LiveCqStore`).
+  Live CQ every 120 s with a minimum of 30 s between two fetches (`LiveCqStore`), the N0UK chat
+  at most once every 90 s (`N0ukStore.REFRESH_MS`, the interval the page itself asks for).
+- **N0UK chat is read only.** The app reads www.chris.org/cgi-bin/jt65emeA and never posts to it.
 - **Keep the honest User-Agent** (`EME-ON5GS-Android/<version>`), so the operators of HB9Q and
   W3SZ can see where the requests come from.
 

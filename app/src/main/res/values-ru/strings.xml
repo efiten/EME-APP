@@ -90,4 +90,9 @@
     <string name="log_out">Выйти</string>
     <string name="log_in">Войти</string>
     <string name="logged_out">Вы вышли из чата HB9Q.</string>
+    <string name="n0uk_info">Чат N0UK WSJT EME · 144 МГц · только чтение · обновление каждые 90 с</string>
+    <string name="n0uk_cq_title">Вызовы CQ в чате N0UK (144 МГц), последние 60 минут: %1$d</string>
+    <string name="n0uk_cq_header">UTC - частота - период - позывной - вид - локатор - луна</string>
+    <string name="n0uk_cq_empty">Нет вызовов CQ в чате N0UK за последние 60 минут.</string>
+    <string name="n0uk_error">Чат N0UK недоступен: %1$s</string>
 </resources>

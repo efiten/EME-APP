@@ -90,4 +90,9 @@
     <string name="log_out">ログアウト</string>
     <string name="log_in">ログイン</string>
     <string name="logged_out">HB9Q チャットからログアウトしました。</string>
+    <string name="n0uk_info">N0UK WSJT EME チャット · 144 MHz · 閲覧のみ · 90 秒ごとに更新</string>
+    <string name="n0uk_cq_title">N0UK チャットの CQ 呼び出し（144 MHz）、直近 60 分：%1$d</string>
+    <string name="n0uk_cq_header">UTC - 周波数 - 周期 - コール - モード - ロケーター - 月</string>
+    <string name="n0uk_cq_empty">直近 60 分、N0UK チャットに CQ 呼び出しはありません。</string>
+    <string name="n0uk_error">N0UK チャットに接続できません：%1$s</string>
 </resources>

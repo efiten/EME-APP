@@ -90,4 +90,9 @@
     <string name="log_out">退出登录</string>
     <string name="log_in">登录</string>
     <string name="logged_out">你已退出 HB9Q 聊天。</string>
+    <string name="n0uk_info">N0UK WSJT EME 聊天 · 144 MHz · 只读 · 每 90 秒更新</string>
+    <string name="n0uk_cq_title">N0UK 聊天中的 CQ 呼叫（144 MHz），最近 60 分钟：%1$d</string>
+    <string name="n0uk_cq_header">UTC - 频率 - 时段 - 呼号 - 模式 - 定位符 - 月球</string>
+    <string name="n0uk_cq_empty">最近 60 分钟 N0UK 聊天中没有 CQ 呼叫。</string>
+    <string name="n0uk_error">无法连接 N0UK 聊天：%1$s</string>
 </resources>

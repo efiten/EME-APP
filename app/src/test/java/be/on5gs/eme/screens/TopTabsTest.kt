@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-/** De tabbladen bovenaan: Maan, Deg, HB9Q, Live CQ, in die volgorde (issue #33). */
+/** De tabbladen bovenaan: Maan, Deg, HB9Q, N0UK, Live CQ, in die volgorde (issues #33 en #35). */
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [34], qualifiers = "en-w411dp-h891dp")
 class TopTabsTest {
@@ -30,7 +30,7 @@ class TopTabsTest {
     @Test
     fun topTabsInOrderWithoutChatCq() {
         compose.setContent { EmeTheme { EmeApp() } }
-        val expected = listOf("Moon", "Deg", "HB9Q", "Live CQ")
+        val expected = listOf("Moon", "Deg", "HB9Q", "N0UK", "Live CQ")
         val lefts = expected.map { label ->
             compose.onNodeWithText(label).assertIsDisplayed().getBoundsInRoot().left
         }

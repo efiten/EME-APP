@@ -90,4 +90,9 @@
     <string name="log_out">Logga ut</string>
     <string name="log_in">Logga in</string>
     <string name="logged_out">Du är utloggad från HB9Q-chatten.</string>
+    <string name="n0uk_info">N0UK WSJT EME-chatt · 144 MHz · endast läsning · uppdateras var 90:e s</string>
+    <string name="n0uk_cq_title">CQ-anrop i N0UK-chatten (144 MHz), senaste 60 minuterna: %1$d</string>
+    <string name="n0uk_cq_header">UTC - frekv - period - anrop - mod - lokator - måne</string>
+    <string name="n0uk_cq_empty">Inga CQ-anrop i N0UK-chatten de senaste 60 minuterna.</string>
+    <string name="n0uk_error">N0UK-chatten ej nåbar: %1$s</string>
 </resources>

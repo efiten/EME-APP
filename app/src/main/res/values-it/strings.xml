@@ -90,4 +90,9 @@
     <string name="log_out">Esci</string>
     <string name="log_in">Accedi</string>
     <string name="logged_out">Sei uscito dalla chat HB9Q.</string>
+    <string name="n0uk_info">Chat WSJT EME N0UK · 144 MHz · sola lettura · aggiornata ogni 90 s</string>
+    <string name="n0uk_cq_title">Chiamate CQ nella chat N0UK (144 MHz), ultimi 60 minuti: %1$d</string>
+    <string name="n0uk_cq_header">UTC - freq - periodo - nominativo - modo - locatore - luna</string>
+    <string name="n0uk_cq_empty">Nessuna chiamata CQ nella chat N0UK negli ultimi 60 minuti.</string>
+    <string name="n0uk_error">Chat N0UK non raggiungibile: %1$s</string>
 </resources>

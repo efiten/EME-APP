@@ -90,4 +90,9 @@
     <string name="log_out">Kirjaudu ulos</string>
     <string name="log_in">Kirjaudu sisään</string>
     <string name="logged_out">Olet kirjautunut ulos HB9Q-chatista.</string>
+    <string name="n0uk_info">N0UK WSJT EME -chat · 144 MHz · vain luku · päivitetään 90 s välein</string>
+    <string name="n0uk_cq_title">CQ-kutsut N0UK-chatissa (144 MHz), viimeiset 60 minuuttia: %1$d</string>
+    <string name="n0uk_cq_header">UTC - taajuus - jakso - kutsu - lähetelaji - lokaattori - kuu</string>
+    <string name="n0uk_cq_empty">Ei CQ-kutsuja N0UK-chatissa viimeisen 60 minuutin aikana.</string>
+    <string name="n0uk_error">N0UK-chat ei saatavilla: %1$s</string>
 </resources>
