@@ -13,6 +13,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -86,7 +87,21 @@ fun EmeApp() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (showSettings) stringResource(R.string.settings) else stringResource(R.string.app_title)) },
+                title = {
+                    if (showSettings) {
+                        Text(stringResource(R.string.settings))
+                    } else {
+                        Row {
+                            Text(stringResource(R.string.app_title), modifier = Modifier.alignByBaseline())
+                            Text(
+                                "v${BuildConfig.VERSION_NAME}",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.alignByBaseline().padding(start = 8.dp),
+                            )
+                        }
+                    }
+                },
                 navigationIcon = {
                     if (showSettings) {
                         IconButton(onClick = { showSettings = false }) {
