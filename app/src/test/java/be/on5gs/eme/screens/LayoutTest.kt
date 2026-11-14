@@ -85,8 +85,6 @@ class LayoutTest(private val device: String, private val language: String, priva
             Known(66, "moon", Regex("""^"(\s+\S+|.*\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}:\d{2}|\d+\.\d°)": text cut off$""")),
             // #67: roepnaamkolom van Chat CQ te smal
             Known(67, "chatCq", Regex("""^".*": text cut off$""")),
-            // #68: regel "via ... · DT ... · programma" ingekort
-            Known(68, "liveCq", Regex("""^".* · DT .*": text cut off$""")),
         )
 
         @JvmStatic
