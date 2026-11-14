@@ -30,7 +30,7 @@ class LiveCqStoreTest {
         LiveCqStore.seedForTest(emptyList(), lastFetch = 0L)
     }
 
-    /** Scherm verlaten tijdens het ophalen is geen fout: geen melding, en de volgende keer meteen opnieuw. */
+    /** Scherm verlaten tijdens het ophalen is geen fout: geen melding, en lastFetch blijft leeg. */
     @Test
     fun cancelledFetchIsNotStoredAsError() = runBlocking {
         val started = CompletableDeferred<Unit>()
@@ -46,6 +46,29 @@ class LiveCqStoreTest {
         assertNull(s.error)
         assertEquals(0L, s.lastFetch)
         assertFalse(s.loading)
+    }
+
+    /**
+     * De afgebroken aanvraag bereikte W3SZ toch (blokkerende HttpURLConnection). Wie tijdens het
+     * ophalen tussen Maan en Live CQ wisselt, mag binnen 30 s geen tweede aanvraag sturen.
+     */
+    @Test
+    fun cancelledFetchStillCountsForTheMinimumInterval() = runBlocking {
+        var calls = 0
+        val started = CompletableDeferred<Unit>()
+        LiveCqStore.fetcher = {
+            calls++
+            started.complete(Unit)
+            awaitCancellation()
+        }
+        val job = launch(Dispatchers.Default) { LiveCqStore.refreshIfOlderThan(0) }
+        started.await()
+        job.cancelAndJoin()
+
+        LiveCqStore.fetcher = { calls++; emptyList() }
+        LiveCqStore.refreshIfOlderThan(0)
+
+        assertEquals(1, calls)
     }
 
     /** Een echte fout blijft wel een fout, en telt als ophaalpoging. */

@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,8 @@ object LiveCqStore {
     data class State(
         val spots: List<LiveCqSpot> = emptyList(),
         val lastFetch: Long = 0L,
+        /** Start van de laatste aanvraag, ook een afgebroken: die bereikte W3SZ toch. */
+        val lastAttempt: Long = 0L,
         val error: String? = null,
         val loading: Boolean = false,
     )
@@ -35,6 +38,7 @@ object LiveCqStore {
     }
 
     /** Haalt de spots op bij W3SZ. Alleen voor tests vervangbaar, zodat er geen netwerk nodig is. */
+    @VisibleForTesting
     internal var fetcher: suspend () -> List<LiveCqSpot> = { LiveCqRepository.fetch() }
 
     /**
@@ -42,13 +46,16 @@ object LiveCqStore {
      * Twee schermen die tegelijk vragen, leiden tot maar één aanvraag.
      */
     suspend fun refreshIfOlderThan(maxAgeMs: Long) = lock.withLock {
-        val s = _state.value
-        if (System.currentTimeMillis() - s.lastFetch < maxOf(maxAgeMs, MIN_FETCH_INTERVAL_MS)) return@withLock
+        val now = System.currentTimeMillis()
+        val prev = _state.value
+        if (now - prev.lastFetch < maxOf(maxAgeMs, MIN_FETCH_INTERVAL_MS)) return@withLock
+        if (now - prev.lastAttempt < MIN_FETCH_INTERVAL_MS) return@withLock
+        val s = prev.copy(lastAttempt = now)
         _state.value = s.copy(loading = true)
         _state.value = try {
-            State(spots = fetcher(), lastFetch = System.currentTimeMillis())
+            State(spots = fetcher(), lastFetch = System.currentTimeMillis(), lastAttempt = now)
         } catch (e: CancellationException) {
-            // Scherm verlaten tijdens het ophalen: geen fout, de volgende keer gewoon opnieuw
+            // Scherm verlaten tijdens het ophalen: geen fout. De aanvraag liep wel, dus lastAttempt blijft.
             _state.value = s.copy(loading = false)
             throw e
         } catch (e: Exception) {

@@ -20,7 +20,7 @@ import java.io.IOException
 class ChatStoreTest {
 
     private val realFetchMessages = ChatStore.fetchMessages
-    private val creds = CredentialStore.Credentials("ON0TEST", "secret")
+    private val creds = CredentialStore.Credentials("ON0TEST", "dummy-password")
 
     @Before
     fun setUp() {
@@ -33,7 +33,7 @@ class ChatStoreTest {
         ChatStore.logInAgain()
     }
 
-    /** Tabblad verlaten tijdens het ophalen is geen fout: geen melding, en de volgende keer meteen opnieuw. */
+    /** Tabblad verlaten tijdens het ophalen is geen fout: geen melding, en lastFetch blijft leeg. */
     @Test
     fun cancelledFetchIsNotStoredAsError() = runBlocking {
         val started = CompletableDeferred<Unit>()
@@ -50,6 +50,31 @@ class ChatStoreTest {
         assertEquals(0L, s.lastFetch)
         assertFalse(s.loading)
         assertEquals(Hb9qBand.B1296, s.band)
+    }
+
+    /**
+     * De afgebroken aanvraag bereikte HB9Q toch (blokkerende HttpURLConnection). Wie het tabblad
+     * verlaat en meteen terugkomt, mag dus binnen de wachttijd geen tweede aanvraag sturen.
+     */
+    @Test
+    fun cancelledFetchStillCountsForTheWaitTime() = runBlocking {
+        var calls = 0
+        val started = CompletableDeferred<Unit>()
+        ChatStore.fetchMessages = { _, _ ->
+            calls++
+            started.complete(Unit)
+            awaitCancellation()
+        }
+        val job = launch(Dispatchers.Default) {
+            ChatStore.refreshIfOlderThan(ChatStore.MESSAGES_REFRESH_MS, Hb9qBand.B1296, creds)
+        }
+        started.await()
+        job.cancelAndJoin()
+
+        ChatStore.fetchMessages = { _, _ -> calls++; emptyList() }
+        ChatStore.refreshIfOlderThan(ChatStore.MESSAGES_REFRESH_MS, Hb9qBand.B1296, creds)
+
+        assertEquals(1, calls)
     }
 
     /** Een echte fout blijft wel een fout, en telt als ophaalpoging. */
