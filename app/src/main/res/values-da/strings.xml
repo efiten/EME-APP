@@ -58,9 +58,9 @@
     <string name="language">Sprog</string>
     <string name="language_system">Telefonens sprog (automatisk)</string>
     <string name="recent_in_chat">Skrev for nylig i chatten:</string>
-    <string name="chatcq_title">CQ-kald i HB9Q-chatten (%1$s), seneste 30 minutter: %2$d</string>
+    <string name="chatcq_title">CQ-kald i HB9Q-chatten (%1$s), seneste 60 minutter: %2$d</string>
     <string name="chatcq_header">UTC - frekv - periode - kaldesignal - mode - CFOM - Hz</string>
-    <string name="chatcq_empty">Ingen CQ-kald i HB9Q-chatten de seneste 30 minutter.</string>
+    <string name="chatcq_empty">Ingen CQ-kald i HB9Q-chatten de seneste 60 minutter.</string>
     <string name="deg_now">Degradering nu (%1$s)</string>
     <string name="deg_excellent">Fremragende</string>
     <string name="deg_good">God</string>

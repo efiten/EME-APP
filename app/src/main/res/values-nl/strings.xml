@@ -58,9 +58,9 @@
     <string name="language">Taal</string>
     <string name="language_system">Taal van de telefoon (automatisch)</string>
     <string name="recent_in_chat">Schreven recent in de chat:</string>
-    <string name="chatcq_title">CQ-aanroepen in de HB9Q-chat (%1$s), laatste 30 minuten: %2$d</string>
+    <string name="chatcq_title">CQ-aanroepen in de HB9Q-chat (%1$s), laatste 60 minuten: %2$d</string>
     <string name="chatcq_header">UTC - freq - periode - call - mode - CFOM - Hz</string>
-    <string name="chatcq_empty">Geen CQ-aanroepen in de HB9Q-chat in de laatste 30 minuten.</string>
+    <string name="chatcq_empty">Geen CQ-aanroepen in de HB9Q-chat in de laatste 60 minuten.</string>
     <string name="deg_now">Degradatie nu (%1$s)</string>
     <string name="deg_excellent">Uitstekend</string>
     <string name="deg_good">Goed</string>

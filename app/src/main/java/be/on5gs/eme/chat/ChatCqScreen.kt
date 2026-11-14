@@ -51,9 +51,6 @@ import be.on5gs.eme.settings.CredentialStore
 import be.on5gs.eme.settings.SettingsRepository
 import kotlinx.coroutines.delay
 
-/** CQ's van het laatste half uur. */
-private const val CQ_WINDOW_MINUTES = 30
-
 private val CQ_ORANGE = Color(0xFFFFB74D)
 private val DIM = Color(0xFF9FB0C8)
 private val ERROR_RED = Color(0xFFEF5350)
@@ -110,7 +107,7 @@ fun ChatCqScreen(settings: SettingsRepository, credentialStore: CredentialStore)
             ) { Text(stringResource(it.first, it.second), color = ERROR_RED, modifier = Modifier.padding(10.dp)) }
         }
 
-        val cqs = if (chat.band == band) ChatCqParser.recent(chat.messages, now, CQ_WINDOW_MINUTES) else emptyList()
+        val cqs = if (chat.band == band) ChatCqParser.recent(chat.messages, now) else emptyList()
         ChatCqList(band.label, cqs)
     }
 }

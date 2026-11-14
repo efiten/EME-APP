@@ -27,6 +27,9 @@ data class ChatCq(
  */
 object ChatCqParser {
 
+    /** Zelfde venster als Live CQ en de CQ-stations op de wereldkaart. */
+    const val WINDOW_MINUTES = 60
+
     private val FREQ = Regex("""\b(\d{2,5})\.(\d{0,3})""")
     private val PERIOD = Regex("""(?i)\b(1st|2nd)\b""")
     private val Q65 = Regex("""(?i)\bQ65[A-E]?\s*-?\s*(\d{2,3})\s*([A-E])\b""")
@@ -89,7 +92,7 @@ object ChatCqParser {
      * CQ's van de laatste [minutes] minuten, nieuwste bovenaan.
      * Dezelfde aanroep die meerdere keren in dezelfde minuut gepost werd, wordt één keer getoond.
      */
-    fun recent(messages: List<ChatMessage>, nowMillis: Long, minutes: Int = 30): List<ChatCq> =
+    fun recent(messages: List<ChatMessage>, nowMillis: Long, minutes: Int = WINDOW_MINUTES): List<ChatCq> =
         messages.mapNotNull { parse(it, nowMillis) }
             .filter { nowMillis - it.utcMillis in -120_000L..minutes * 60_000L }
             .distinctBy { Triple(it.callsign, it.time, it.freq) }

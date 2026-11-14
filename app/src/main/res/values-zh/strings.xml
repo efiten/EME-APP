@@ -58,9 +58,9 @@
     <string name="language">语言</string>
     <string name="language_system">手机语言（自动）</string>
     <string name="recent_in_chat">最近在聊天中发言：</string>
-    <string name="chatcq_title">HB9Q 聊天中的 CQ 呼叫（%1$s），最近 30 分钟：%2$d</string>
+    <string name="chatcq_title">HB9Q 聊天中的 CQ 呼叫（%1$s），最近 60 分钟：%2$d</string>
     <string name="chatcq_header">UTC - 频率 - 时段 - 呼号 - 模式 - CFOM - Hz</string>
-    <string name="chatcq_empty">最近 30 分钟 HB9Q 聊天中没有 CQ 呼叫。</string>
+    <string name="chatcq_empty">最近 60 分钟 HB9Q 聊天中没有 CQ 呼叫。</string>
     <string name="deg_now">当前衰减（%1$s）</string>
     <string name="deg_excellent">极好</string>
     <string name="deg_good">好</string>

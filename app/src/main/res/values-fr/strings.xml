@@ -58,9 +58,9 @@
     <string name="language">Langue</string>
     <string name="language_system">Langue du téléphone (automatique)</string>
     <string name="recent_in_chat">Ont écrit récemment dans le chat :</string>
-    <string name="chatcq_title">Appels CQ dans le chat HB9Q (%1$s), 30 dernières minutes : %2$d</string>
+    <string name="chatcq_title">Appels CQ dans le chat HB9Q (%1$s), 60 dernières minutes : %2$d</string>
     <string name="chatcq_header">UTC - fréq - période - indicatif - mode - CFOM - Hz</string>
-    <string name="chatcq_empty">Aucun appel CQ dans le chat HB9Q depuis 30 minutes.</string>
+    <string name="chatcq_empty">Aucun appel CQ dans le chat HB9Q depuis 60 minutes.</string>
     <string name="deg_now">Dégradation maintenant (%1$s)</string>
     <string name="deg_excellent">Excellente</string>
     <string name="deg_good">Bonne</string>
