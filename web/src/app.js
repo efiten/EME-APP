@@ -36,13 +36,19 @@ function iconButton(action, labelKey) {
   return b;
 }
 
+/** Sets the texts and the lang of the page (screen readers, hyphenation) to the effective language. */
+function applyLanguage(code) {
+  setLanguage(code);
+  document.documentElement.lang = code;
+}
+
 /** screens: tab id -> factory returning { mount(el, ctx), unmount() }. */
 export function mountApp(root, screens = SCREENS) {
   const state = { view: 'tabs', tab: 'moon', draft: null, screen: null, content: null };
   const settingsScreen = createSettingsScreen();
   const now = () => Date.now();
 
-  setLanguage(effectiveLanguage(loadSettings()));
+  applyLanguage(effectiveLanguage(loadSettings()));
 
   function stopScreen() {
     state.screen?.unmount();
@@ -82,7 +88,7 @@ export function mountApp(root, screens = SCREENS) {
       draft: state.draft,
       onLanguage: (code) => {
         saveSettings({ language: code });
-        setLanguage(effectiveLanguage({ language: code }));
+        applyLanguage(effectiveLanguage({ language: code }));
         render();
       },
       onSaved: () => show('tabs'),

@@ -23,6 +23,13 @@ What changed in each version: [Releases](https://github.com/on5gsdirk-cmd/EME-AP
 Also: settings for callsign, locator and HB9Q login (stored encrypted with the Android Keystore),
 a dark blue theme, and 13 languages (NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, RU, ZH, JA).
 
+## Web app (iPhone)
+
+iPhone users cannot install the APK. Open **https://eme.on8ar.eu** in Safari instead. It has the same
+screens as the app (Moon, Deg, N0UK, Live CQ and Settings), except the HB9Q chat.
+
+To keep it on your home screen, tap the share button in Safari and choose "Add to Home Screen".
+
 ## Building
 
 Requirements: Android Studio (or JDK 17+ and the Android SDK, platform 35).

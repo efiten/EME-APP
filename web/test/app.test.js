@@ -172,6 +172,19 @@ describe('settings', () => {
     expect(tabs()[0].textContent).toBe(strings.fr.tab_moon);
   });
 
+  test('the html lang follows the effective language, also after a switch', () => {
+    mountApp(root);
+    expect(document.documentElement.lang).toBe('en');
+    openSettings();
+    const select = root.querySelector('select');
+    select.value = 'nl';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(document.documentElement.lang).toBe('nl');
+    select.value = '';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(document.documentElement.lang).toBe('fr'); // automatic: the browser language (fr-BE)
+  });
+
   test('release notes link opens the tag of this version in a new tab', () => {
     mountApp(root);
     openSettings();

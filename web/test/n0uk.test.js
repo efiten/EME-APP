@@ -100,3 +100,27 @@ describe('N0ukParser', () => {
     expect(w.find((m) => m.callsign === 'F4HBY').dateTime).toBe('10Nov 16:28');
   });
 });
+
+describe('N0UK entity decoding', () => {
+  const now = millis('2026-11-13T15:02:00Z');
+  const textOf = (text) => {
+    const page = `<pre>
+13Nov 12:03 ${text} ====== {<a href="javascript:mailto('xxxx','test.com','')">DF2ZC/1X18H/750</a> Bernd xx JO62 }
+</pre>`;
+    return parseN0uk(page, now)[0].text;
+  };
+
+  test('numeric entity', () => expect(textOf('a&#65;b')).toBe('aAb'));
+  test('hex entity, either case of x', () => {
+    expect(textOf('a&#x42;b')).toBe('aBb');
+    expect(textOf('a&#X43;b')).toBe('aCb');
+  });
+  test('latin1 named entity as in the title of the real page', () => expect(textOf('N&Oslash;UK')).toBe('NØUK'));
+  test('named entity outside latin1', () => expect(textOf('a&euro;b')).toBe('a€b'));
+  test('unknown name stays as written', () => expect(textOf('a&bogus;b')).toBe('a&bogus;b'));
+  test('entity without semicolon stays as written', () => expect(textOf('a&amp b')).toBe('a&amp b'));
+  test('invalid code points stay as written', () => {
+    expect(textOf('a&#0;b')).toBe('a&#0;b');
+    expect(textOf('a&#xD800;b')).toBe('a&#xD800;b');
+  });
+});
