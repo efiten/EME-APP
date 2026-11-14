@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import be.on5gs.eme.AppClock
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -43,7 +44,7 @@ object LiveCqStore {
     internal var fetchN6nu: suspend () -> List<LiveCqSpot> = { LiveCqRepository.fetchN6nu() }
 
     /** Alleen voor tests (schermafdrukken): vaste gegevens instellen zonder netwerk. */
-    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = System.currentTimeMillis()) {
+    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = AppClock.now()) {
         w3szSpots = emptyList(); n6nuSpots = emptyList()
         _state.value = State(spots = spots, lastFetch = lastFetch)
     }
@@ -59,7 +60,7 @@ object LiveCqStore {
      * binnen [MIN_FETCH_INTERVAL_MS] na het begin van de vorige poging.
      * Twee schermen die tegelijk vragen, leiden tot maar één aanvraag per bron.
      */
-    suspend fun refreshIfOlderThan(maxAgeMs: Long, now: () -> Long = System::currentTimeMillis) = lock.withLock {
+    suspend fun refreshIfOlderThan(maxAgeMs: Long, now: () -> Long = AppClock::now) = lock.withLock {
         val s = _state.value
         val t = now()
         if (t - s.lastFetch < maxOf(maxAgeMs, MIN_FETCH_INTERVAL_MS)) return@withLock

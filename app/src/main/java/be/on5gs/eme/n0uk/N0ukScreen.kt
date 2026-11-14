@@ -1,5 +1,6 @@
 package be.on5gs.eme.n0uk
 
+import be.on5gs.eme.AppClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -73,7 +74,7 @@ private val HHMM = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneOffset.UTC)
 fun N0ukScreen(myCallsign: String) {
     val st by N0ukStore.state.collectAsState()
     var subTab by remember { mutableIntStateOf(0) }       // 0 = berichten, 1 = deelnemers, 2 = Chat CQ
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var now by remember { mutableLongStateOf(AppClock.now()) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     // Alleen ophalen zolang het tabblad op het scherm staat; N0ukStore houdt minstens 90 s tussen twee aanvragen
@@ -81,7 +82,7 @@ fun N0ukScreen(myCallsign: String) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
                 N0ukStore.refreshIfDue()
-                now = System.currentTimeMillis()
+                now = AppClock.now()
                 delay(5_000)
             }
         }

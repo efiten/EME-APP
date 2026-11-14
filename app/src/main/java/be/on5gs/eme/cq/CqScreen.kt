@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import be.on5gs.eme.AppClock
 import be.on5gs.eme.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
@@ -66,7 +67,7 @@ private val HHMM = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneOffset.UTC)
 fun CqScreen(settings: SettingsRepository, myLocator: String) {
     var bands by remember { mutableStateOf(settings.cqBands) }
     val store by LiveCqStore.state.collectAsState()
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var now by remember { mutableLongStateOf(AppClock.now()) }
     val scope = rememberCoroutineScope()
     val allSpots = store.spots
     val lastFetch = store.lastFetch
@@ -89,7 +90,7 @@ fun CqScreen(settings: SettingsRepository, myLocator: String) {
     LaunchedEffect(Unit) {
         while (true) {
             delay(15_000)
-            now = System.currentTimeMillis()
+            now = AppClock.now()
         }
     }
 

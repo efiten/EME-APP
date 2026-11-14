@@ -1,5 +1,6 @@
 package be.on5gs.eme.chat
 
+import be.on5gs.eme.AppClock
 import androidx.annotation.VisibleForTesting
 import be.on5gs.eme.R
 import be.on5gs.eme.settings.CredentialStore
@@ -54,7 +55,7 @@ object ChatStore {
             s = State(band = band)            // andere band: lijst leegmaken
             _state.value = s
         }
-        val now = System.currentTimeMillis()
+        val now = AppClock.now()
         if (now - s.lastAttempt < maxAgeMs) return@withLock
         s = s.copy(lastAttempt = now)
         _state.value = s.copy(loading = true)
