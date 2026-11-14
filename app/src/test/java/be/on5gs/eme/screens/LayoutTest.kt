@@ -81,8 +81,6 @@ class LayoutTest(private val device: String, private val language: String, priva
          * oplost, haalt zijn regel hier weg. Voeg geen nieuwe toe zonder issue.
          */
         private val KNOWN = listOf(
-            // #67: roepnaamkolom van Chat CQ te smal
-            Known(67, "chatCq", Regex("""^".*": text cut off$""")),
             // #68: regel "via ... · DT ... · programma" ingekort
             Known(68, "liveCq", Regex("""^".* · DT .*": text cut off$""")),
         )
