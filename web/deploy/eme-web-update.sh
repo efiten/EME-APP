@@ -157,7 +157,9 @@ code=$(curl -sSL --max-time 120 -o "$tmp/eme-web.zip" -w '%{http_code}' \
 }
 if [ "$code" = 404 ]; then
   echo "eme-web-$tag.zip does not exist (HTTP 404)" >&2
-  mark_failed "$version"
+  # Only a timer run saw the asset in the API listing. An explicit run can come before
+  # web-upload has finished, so it must not mark the version failed.
+  [ "$explicit" = 1 ] || mark_failed "$version"
   exit 1
 elif [ "$code" != 200 ]; then
   echo "download returned HTTP $code, not marking $version failed" >&2

@@ -32,7 +32,7 @@ func TestEndpointsServeBodiesAndHeaders(t *testing.T) {
 	cases := []struct{ path, body, ctype string }{
 		{"/api/livecq/w3sz", "csv", "text/plain; charset=utf-8"},
 		{"/api/livecq/n6nu", `{"a":1}`, "application/json; charset=utf-8"},
-		{"/api/n0uk", "<é", "text/html; charset=utf-8"},
+		{"/api/n0uk", "<é", "text/plain; charset=utf-8"},
 	}
 	for _, tc := range cases {
 		rec := do(h, "GET", tc.path)
@@ -220,5 +220,26 @@ func TestOnly200Accepted(t *testing.T) {
 	}
 	if rec := do(h, "GET", "/api/livecq/w3sz"); rec.Header().Get("X-Upstream-Error") != "W3SZ HTTP 500" {
 		t.Fatalf("%q", rec.Header().Get("X-Upstream-Error"))
+	}
+}
+
+func TestNosniffOnAllResponses(t *testing.T) {
+	w, n, c, clk := newUpstream(t), newUpstream(t), newUpstream(t), newFakeClock()
+	h := testHandler(w, n, c, clk)
+	for _, path := range []string{"/api/livecq/w3sz", "/api/livecq/n6nu", "/api/n0uk", "/api/version"} {
+		if rec := do(h, "GET", path); rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+			t.Fatalf("%s: no nosniff on 200", path)
+		}
+		if rec := do(h, "POST", path); rec.Code != 405 || rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+			t.Fatalf("%s: no nosniff on 405", path)
+		}
+	}
+	c.set(func(u *upstream) { u.code = 500 })
+	clk.Advance(time.Hour)
+	if rec := do(h, "GET", "/api/n0uk"); rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+		t.Fatal("no nosniff on error answer")
+	}
+	if rec := do(h, "GET", "/api/nope"); rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+		t.Fatal("no nosniff on 404")
 	}
 }

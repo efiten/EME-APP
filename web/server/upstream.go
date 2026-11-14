@@ -28,7 +28,6 @@ type source struct {
 	url         string
 	contentType string // Content-Type sent to the browser (the body is always UTF-8)
 	maxAge      time.Duration
-	minInterval time.Duration
 
 	// Request, exactly as the Android app sends it. Empty method means GET.
 	method  string
@@ -62,6 +61,8 @@ type cache struct {
 	lastAttempt time.Time
 	hasAttempt  bool
 	errText     string
+
+	attempts *attemptStore // nil: the gate lives in memory only
 }
 
 func newCache(src source, userAgent string, timeout time.Duration, now func() time.Time) *cache {
@@ -79,8 +80,10 @@ func (c *cache) get() result {
 
 	t := c.now()
 	// Gate on the last attempt, success or failure, like the app (LiveCqStore.lastFetch):
-	// a site that is down is retried at the normal cadence, not at minInterval.
-	due := !c.hasAttempt || t.Sub(c.lastAttempt) >= max(c.src.maxAge, c.src.minInterval)
+	// a site that is down is retried at the normal cadence.
+	// The gate is maxAge since the last attempt, for all web users together. That is
+	// stricter than the app's 30 s manual refresh.
+	due := !c.hasAttempt || t.Sub(c.lastAttempt) >= c.src.maxAge
 	if due {
 		c.fetch(t)
 	}
@@ -98,6 +101,7 @@ func (c *cache) current() result {
 func (c *cache) fetch(attemptAt time.Time) {
 	start := time.Now()
 	c.lastAttempt, c.hasAttempt = attemptAt, true
+	c.attempts.record(c.src.name, attemptAt)
 	body, status, errText := c.download()
 	log.Printf("fetch source=%s status=%d duration=%s", c.src.name, status, time.Since(start).Round(time.Millisecond))
 	if errText != "" {
@@ -105,9 +109,10 @@ func (c *cache) fetch(attemptAt time.Time) {
 		return
 	}
 	c.body, c.hasBody, c.fetchedAt, c.errText = body, true, c.now(), ""
+	c.attempts.saveCopy(c.src.name, body, c.fetchedAt)
 }
 
-// download does a plain GET. errText is short and never contains the URL.
+// download sends the request the source describes (GET, or POST for W3SZ). errText is short and never contains the URL.
 func (c *cache) download() (body []byte, status int, errText string) {
 	method := c.src.method
 	if method == "" {

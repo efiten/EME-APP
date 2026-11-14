@@ -1,6 +1,6 @@
 # EME web app (eme.on8ar.eu): design
 
-Date: 14 November 2026. Status: waiting for approval.
+Date: 14 November 2026. Status: approved, phase 1 built.
 
 ## Intent
 

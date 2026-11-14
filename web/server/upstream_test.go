@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -79,7 +83,7 @@ func (u *upstream) request() *http.Request {
 func newTestCache(u *upstream, clk *fakeClock, timeout time.Duration) *cache {
 	return newCache(source{
 		name: "test", url: u.srv.URL, contentType: "text/plain; charset=utf-8",
-		maxAge: 120 * time.Second, minInterval: 30 * time.Second,
+		maxAge: 120 * time.Second,
 	}, "EME-ON8AR-Web/1.2.3", timeout, clk.Now)
 }
 
@@ -109,27 +113,26 @@ func TestAfterMaxAgeFetchesAgain(t *testing.T) {
 	}
 }
 
-func TestNeverTwiceWithinMinInterval(t *testing.T) {
-	// maxAge shorter than minInterval: expired cache must still not be refetched within 30 s.
+func TestNeverTwiceWithinMaxAge(t *testing.T) {
 	u, clk := newUpstream(t), newFakeClock()
-	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 10 * time.Second, minInterval: 30 * time.Second},
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 30 * time.Second},
 		"ua", time.Second, clk.Now)
 	c.get()
 	clk.Advance(29 * time.Second)
 	c.get()
 	if u.hits.Load() != 1 {
-		t.Fatalf("hits=%d, want 1 within minInterval", u.hits.Load())
+		t.Fatalf("hits=%d, want 1 within maxAge", u.hits.Load())
 	}
 	clk.Advance(1 * time.Second)
 	c.get()
 	if u.hits.Load() != 2 {
-		t.Fatalf("hits=%d, want 2 after minInterval", u.hits.Load())
+		t.Fatalf("hits=%d, want 2 after maxAge", u.hits.Load())
 	}
 }
 
-func TestFailedAttemptAlsoCountsForMinInterval(t *testing.T) {
+func TestFailedAttemptAlsoCountsForMaxAge(t *testing.T) {
 	u, clk := newUpstream(t), newFakeClock()
-	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 10 * time.Second, minInterval: 30 * time.Second},
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 30 * time.Second},
 		"ua", time.Second, clk.Now)
 	c.get()
 	u.set(func(u *upstream) { u.code = 500 })
@@ -141,7 +144,7 @@ func TestFailedAttemptAlsoCountsForMinInterval(t *testing.T) {
 	clk.Advance(10 * time.Second)
 	c.get()
 	if u.hits.Load() != 2 {
-		t.Fatalf("hits=%d, want 2 (no retry within minInterval after failure)", u.hits.Load())
+		t.Fatalf("hits=%d, want 2 (no retry within maxAge after failure)", u.hits.Load())
 	}
 }
 
@@ -295,16 +298,14 @@ func TestProductionDefaults(t *testing.T) {
 		c.url != "https://www.chris.org/cgi-bin/jt65emeA" {
 		t.Fatalf("urls %q %q %q", w.url, n.url, c.url)
 	}
-	if w.maxAge != 120*time.Second || w.minInterval != 30*time.Second ||
-		n.maxAge != 120*time.Second || n.minInterval != 30*time.Second ||
-		c.maxAge != 90*time.Second || c.minInterval != 90*time.Second {
+	if w.maxAge != 120*time.Second || n.maxAge != 120*time.Second || c.maxAge != 90*time.Second {
 		t.Fatalf("intervals %+v %+v %+v", w, n, c)
 	}
 }
 
 func TestFailingSiteRetriedOnlyAtMaxAgeCadence(t *testing.T) {
 	u, clk := newUpstream(t), newFakeClock()
-	c := newTestCache(u, clk, time.Second) // maxAge 120 s, minInterval 30 s
+	c := newTestCache(u, clk, time.Second) // maxAge 120 s
 	good := c.get()
 	u.set(func(u *upstream) { u.code = 500 })
 	clk.Advance(120 * time.Second)
@@ -337,7 +338,7 @@ func TestFailingSiteRetriedOnlyAtMaxAgeCadence(t *testing.T) {
 
 func TestN0ukFailureRetriedAt90sNotEarlier(t *testing.T) {
 	u, clk := newUpstream(t), newFakeClock()
-	c := newCache(source{name: "n0uk", url: u.srv.URL, maxAge: 90 * time.Second, minInterval: 90 * time.Second},
+	c := newCache(source{name: "n0uk", url: u.srv.URL, maxAge: 90 * time.Second},
 		"ua", time.Second, clk.Now)
 	c.get()
 	u.set(func(u *upstream) { u.code = 500 })
@@ -352,5 +353,141 @@ func TestN0ukFailureRetriedAt90sNotEarlier(t *testing.T) {
 	c.get()
 	if u.hits.Load() != 3 {
 		t.Fatalf("hits=%d, want retry at +90 s", u.hits.Load())
+	}
+}
+
+func TestGateHoldsAcrossRestart(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	src := source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}
+	c1 := newCache(src, "ua", time.Second, clk.Now)
+	c1.attachAttempts(loadAttempts(path))
+	c1.get()
+	clk.Advance(60 * time.Second)
+	c2 := newCache(src, "ua", time.Second, clk.Now) // restart
+	c2.attachAttempts(loadAttempts(path))
+	c2.get()
+	if u.hits.Load() != 1 {
+		t.Fatalf("hits=%d, want 1: restart must not reset the gate", u.hits.Load())
+	}
+	clk.Advance(60 * time.Second)
+	c2.get()
+	if u.hits.Load() != 2 {
+		t.Fatalf("hits=%d, want 2 after maxAge", u.hits.Load())
+	}
+	if m, _ := filepath.Glob(path + ".tmp-*"); len(m) != 0 {
+		t.Fatalf("temp files left: %v", m)
+	}
+}
+
+func TestCorruptStateFileIgnored(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	os.WriteFile(path, []byte("{not json"), 0o644)
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}, "ua", time.Second, clk.Now)
+	c.attachAttempts(loadAttempts(path))
+	c.get()
+	if u.hits.Load() != 1 {
+		t.Fatalf("hits=%d, want a first fetch", u.hits.Load())
+	}
+}
+
+func TestFutureAttemptIgnored(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	future := clk.Now().Add(time.Hour).UnixMilli()
+	os.WriteFile(path, []byte(fmt.Sprintf(`{"t":%d}`, future)), 0o644)
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}, "ua", time.Second, clk.Now)
+	c.attachAttempts(loadAttempts(path))
+	c.get()
+	if u.hits.Load() != 1 {
+		t.Fatalf("hits=%d, want a first fetch", u.hits.Load())
+	}
+}
+
+func TestHandlerStateDirSeedsGate(t *testing.T) {
+	w, n, c, clk := newUpstream(t), newUpstream(t), newUpstream(t), newFakeClock()
+	cfg := config{version: "1", timeout: time.Second, now: clk.Now, stateDir: t.TempDir(),
+		w3szURL: w.srv.URL, n6nuURL: n.srv.URL, n0ukURL: c.srv.URL}
+	do(newHandler(cfg), "GET", "/api/n0uk")
+	clk.Advance(10 * time.Second)
+	do(newHandler(cfg), "GET", "/api/n0uk") // restart
+	if c.hits.Load() != 1 {
+		t.Fatalf("hits=%d, want 1", c.hits.Load())
+	}
+}
+
+func TestRestartInsideGateServesPersistedCopy(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	src := source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}
+	c1 := newCache(src, "ua", time.Second, clk.Now)
+	c1.attachAttempts(loadAttempts(path))
+	first := c1.get()
+	clk.Advance(60 * time.Second)
+	c2 := newCache(src, "ua", time.Second, clk.Now) // restart
+	c2.attachAttempts(loadAttempts(path))
+	r := c2.get()
+	if u.hits.Load() != 1 {
+		t.Fatalf("hits=%d, want no request after the restart", u.hits.Load())
+	}
+	if r.status != 200 || string(r.body) != "v1" || !r.fetchedAt.Equal(first.fetchedAt) || r.errText != "" {
+		t.Fatalf("%+v, want the copy of before the restart with its original fetchedAt %v", r, first.fetchedAt)
+	}
+}
+
+func TestCorruptCopyIgnored(t *testing.T) {
+	cases := map[string]func(dir string){
+		"corrupt metadata": func(dir string) { os.WriteFile(filepath.Join(dir, "t.meta"), []byte("{no"), 0o644) },
+		"missing body":     func(dir string) { os.Remove(filepath.Join(dir, "t.body")) },
+		"size mismatch":    func(dir string) { os.WriteFile(filepath.Join(dir, "t.body"), []byte("short"), 0o644) },
+		"oversized claim": func(dir string) {
+			os.WriteFile(filepath.Join(dir, "t.meta"), []byte(fmt.Sprintf(`{"fetchedAt":1,"size":%d}`, maxBodyBytes+1)), 0o644)
+		},
+		"null metadata": func(dir string) { os.WriteFile(filepath.Join(dir, "t.meta"), []byte("null"), 0o644) },
+	}
+	for name, damage := range cases {
+		t.Run(name, func(t *testing.T) {
+			u, clk := newUpstream(t), newFakeClock()
+			dir := t.TempDir()
+			path := filepath.Join(dir, attemptsFile)
+			src := source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}
+			c1 := newCache(src, "ua", time.Second, clk.Now)
+			c1.attachAttempts(loadAttempts(path))
+			c1.get()
+			damage(dir)
+			c2 := newCache(src, "ua", time.Second, clk.Now)
+			c2.attachAttempts(loadAttempts(path))
+			if r := c2.get(); r.status != http.StatusBadGateway {
+				t.Fatalf("status %d, want 502 (no copy, still inside the gate)", r.status)
+			}
+			if u.hits.Load() != 1 {
+				t.Fatalf("hits=%d", u.hits.Load())
+			}
+		})
+	}
+}
+
+func TestFutureCopyIgnored(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "t.body"), []byte("x"), 0o644)
+	os.WriteFile(filepath.Join(dir, "t.meta"), []byte(fmt.Sprintf(`{"fetchedAt":%d,"size":1}`, clk.Now().Add(time.Hour).UnixMilli())), 0o644)
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}, "ua", time.Second, clk.Now)
+	c.attachAttempts(loadAttempts(filepath.Join(dir, attemptsFile)))
+	if r := c.get(); string(r.body) != "v1" || u.hits.Load() != 1 {
+		t.Fatalf("%+v hits=%d, want a fresh fetch", r, u.hits.Load())
+	}
+}
+
+func TestNullStateFileDoesNotPanic(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	os.WriteFile(path, []byte("null"), 0o644)
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}, "ua", time.Second, clk.Now)
+	c.attachAttempts(loadAttempts(path))
+	c.get() // writes the file
+	if b, _ := os.ReadFile(path); !strings.Contains(string(b), `"t"`) {
+		t.Fatalf("state file %q", b)
 	}
 }

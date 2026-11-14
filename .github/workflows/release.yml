@@ -132,7 +132,7 @@ jobs:
   # web-build runs npm and Go with a read-only token and no stored credentials, then hands the
   # zip over as an artifact. web-upload holds the write token but runs no third-party code.
   # Zip layout: dist/ (the web app) and eme-web (Linux amd64 server) at the root.
-  # Deploy with web/deploy/deploy-release.sh.
+  # The server updates itself from the zip (eme-web-update.timer); web/deploy/deploy-release.sh deploys at once by hand.
   web-build:
     needs: [check, release]
     if: needs.check.outputs.publish == 'true'
