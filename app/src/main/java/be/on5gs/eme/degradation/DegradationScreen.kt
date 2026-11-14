@@ -215,7 +215,9 @@ fun DegradationScreen(settings: SettingsRepository, locator: String) {
         )
         val dayFormat = remember(locale) { DateTimeFormatter.ofPattern("EEE dd-MM-yyyy", locale) }
         days.sortedBy { it.second.degDb }.take(5).sortedBy { it.first }.forEach { (date, r) ->
-            Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
+            // Past de toestand niet meer naast datum en DEG, dan komt hij op de volgende regel
+            // (anders wordt hij midden in het woord afgebroken)
+            FlowRow(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
                 Text(dayFormat.format(date), modifier = Modifier.width(150.dp))
                 Text(String.format(Locale.US, "%.1f dB", r.degDb), fontWeight = FontWeight.Bold, modifier = Modifier.width(70.dp))
                 Text(r.condition.label(), color = r.condition.color())
