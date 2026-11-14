@@ -105,6 +105,38 @@ class LiveCqStoreTest {
         assertFalse(s.loading)
     }
 
+    // ---- "bijgewerkt" na een mislukte ophaling (#13, bevinding 5) ----
+
+    /** Beide bronnen falen: de lijst is niet nieuw, dus "bijgewerkt" blijft op de vorige tijd. */
+    @Test
+    fun bothSourcesFailingKeepsTheLastSuccessTime() = runBlocking {
+        LiveCqStore.refreshIfOlderThan(0) { t0 }
+        LiveCqStore.fetchW3sz = { throw IOException("W3SZ HTTP 500") }
+        LiveCqStore.fetchN6nu = { throw IOException("N6NU HTTP 503") }
+        LiveCqStore.refreshIfOlderThan(0) { t0 + 30_000 }
+        val s = LiveCqStore.state.value
+        assertEquals(t0, s.lastSuccess)
+        assertEquals(t0 + 30_000, s.lastFetch)   // telt wel als ophaling: niet vaker dan vroeger
+    }
+
+    /** Eén bron lukt: er is nieuwe informatie, de fout staat in de foutregel. */
+    @Test
+    fun oneSourceSucceedingUpdatesTheSuccessTime() = runBlocking {
+        LiveCqStore.refreshIfOlderThan(0) { t0 }
+        LiveCqStore.fetchN6nu = { throw IOException("N6NU HTTP 503") }
+        LiveCqStore.refreshIfOlderThan(0) { t0 + 30_000 }
+        assertEquals(t0 + 30_000, LiveCqStore.state.value.lastSuccess)
+    }
+
+    /** De allereerste ophaling faalt: nog niets opgehaald. */
+    @Test
+    fun firstFetchFailingHasNoSuccessTime() = runBlocking {
+        LiveCqStore.fetchW3sz = { throw IOException("W3SZ HTTP 500") }
+        LiveCqStore.fetchN6nu = { throw IOException("N6NU HTTP 503") }
+        LiveCqStore.refreshIfOlderThan(0) { t0 }
+        assertEquals(0L, LiveCqStore.state.value.lastSuccess)
+    }
+
     // ---- N6NU ----
 
     /** Ook #14: een afgebroken aanvraag telt mee voor de 30 s (hier met een vaste klok). */

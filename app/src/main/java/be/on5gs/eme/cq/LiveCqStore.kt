@@ -25,6 +25,8 @@ object LiveCqStore {
     data class State(
         val spots: List<LiveCqSpot> = emptyList(),
         val lastFetch: Long = 0L,
+        /** Laatste ophaling waarbij minstens één bron lukte (voor "bijgewerkt"). */
+        val lastSuccess: Long = 0L,
         /** Start van de laatste aanvraag, ook een afgebroken: die bereikte de servers toch. */
         val lastAttempt: Long = 0L,
         val error: String? = null,
@@ -44,9 +46,9 @@ object LiveCqStore {
     internal var fetchN6nu: suspend () -> List<LiveCqSpot> = { LiveCqRepository.fetchN6nu() }
 
     /** Alleen voor tests (schermafdrukken): vaste gegevens instellen zonder netwerk. */
-    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = AppClock.now()) {
+    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = AppClock.now(), lastSuccess: Long = lastFetch) {
         w3szSpots = emptyList(); n6nuSpots = emptyList()
-        _state.value = State(spots = spots, lastFetch = lastFetch)
+        _state.value = State(spots = spots, lastFetch = lastFetch, lastSuccess = lastSuccess)
     }
 
     /** Alleen voor tests: alles leeg, zoals bij het starten van de app. */
@@ -77,9 +79,11 @@ object LiveCqStore {
             // Technisch detail per bron; het scherm zet er een vertaalde zin rond
             val errors = listOfNotNull(w3sz.exceptionOrNull(), n6nu.exceptionOrNull())
                 .map { it.message ?: it.javaClass.simpleName }
+            val done = now()
             _state.value = State(
                 spots = LiveCqParser.merge(w3szSpots, n6nuSpots),
-                lastFetch = now(),
+                lastFetch = done,
+                lastSuccess = if (w3sz.isSuccess || n6nu.isSuccess) done else s.lastSuccess,
                 lastAttempt = t,
                 error = errors.joinToString("; ").ifEmpty { null },
             )

@@ -71,7 +71,7 @@ fun CqScreen(settings: SettingsRepository, myLocator: String) {
     var now by remember { mutableLongStateOf(AppClock.now()) }
     val scope = rememberCoroutineScope()
     val allSpots = store.spots
-    val lastFetch = store.lastFetch
+    val lastSuccess = store.lastSuccess
     val error = store.error
     val loading = store.loading
 
@@ -124,7 +124,7 @@ fun CqScreen(settings: SettingsRepository, myLocator: String) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                val updated = if (lastFetch == 0L) stringResource(R.string.not_fetched) else stringResource(R.string.updated, HHMM.format(Instant.ofEpochMilli(lastFetch)))
+                val updated = if (lastSuccess == 0L) stringResource(R.string.not_fetched) else stringResource(R.string.updated, HHMM.format(Instant.ofEpochMilli(lastSuccess)))
                 Text(stringResource(R.string.cq_summary, shown.size, MAX_AGE_MINUTES, updated), style = MaterialTheme.typography.bodySmall)
                 if (myMoon != null) {
                     Text(
