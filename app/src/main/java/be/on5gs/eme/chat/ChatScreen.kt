@@ -57,6 +57,7 @@ import be.on5gs.eme.settings.rememberCredentials
 import be.on5gs.eme.settings.SettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import be.on5gs.eme.ui.rememberNewestOnTopListState
 
 private val CQ_COLOR = Color(0xFFFFB74D)
 private val TO_ME_BG = Color(0xFF1E3326)
@@ -148,7 +149,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
         Box(Modifier.weight(1f)) {
             if (subTab == 0) {
                 // Nieuwste bericht bovenaan, zoals op de HB9Q-site
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
+                LazyColumn(state = rememberNewestOnTopListState(messages.firstOrNull()?.id), verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
                     items(messages, key = { it.id }) { msg -> MessageRow(msg, myCallsign) }
                 }
             } else if (subTab == 1) {

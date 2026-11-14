@@ -55,6 +55,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import be.on5gs.eme.ui.rememberNewestOnTopListState
 
 /** Alleen CQ's van het laatste uur tonen. */
 private const val MAX_AGE_MINUTES = 60
@@ -62,6 +63,7 @@ private const val MAX_AGE_MINUTES = 60
 private val GREEN = Color(0xFF66BB6A)
 private val RED = Color(0xFFEF5350)
 private val HHMM = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneOffset.UTC)
+private fun spotKey(spot: LiveCqSpot) = "${spot.callsign}-${spot.band}"
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -161,8 +163,8 @@ fun CqScreen(settings: SettingsRepository, myLocator: String) {
             )
         }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            items(shown, key = { "${it.callsign}-${it.band}" }) { spot -> SpotCard(spot, now) }
+        LazyColumn(state = rememberNewestOnTopListState(shown.firstOrNull()?.let(::spotKey)), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            items(shown, key = ::spotKey) { spot -> SpotCard(spot, now) }
         }
     }
 }

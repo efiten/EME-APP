@@ -57,6 +57,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import be.on5gs.eme.ui.rememberNewestOnTopListState
 
 /** Chat CQ van N0UK toont de CQ's van het laatste uur, zoals Live CQ en HB9Q. */
 internal const val N0UK_CQ_WINDOW_MINUTES = 60
@@ -65,6 +66,8 @@ private val ERROR_RED = Color(0xFFEF5350)
 private val GREEN = Color(0xFF66BB6A)
 private val RED = Color(0xFFEF5350)
 private val HHMM = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneOffset.UTC)
+private fun messageKey(m: N0ukMessage) = "${m.utcMillis}-${m.callsign}-${m.text.hashCode()}"
+private fun cqKey(c: N0ukCq) = "${c.utcMillis}-${c.callsign}-${c.freq}"
 
 /**
  * Tabblad N0UK (WSJT EME-chat op 144 MHz, www.chris.org), ALLEEN LEZEN.
@@ -132,8 +135,8 @@ fun N0ukScreen(myCallsign: String) {
 
         Box(Modifier.weight(1f)) {
             when (subTab) {
-                0 -> LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
-                    items(st.messages, key = { "${it.utcMillis}-${it.callsign}-${it.text.hashCode()}" }) { MessageRow(it, myCallsign) }
+                0 -> LazyColumn(state = rememberNewestOnTopListState(st.messages.firstOrNull()?.let(::messageKey)), verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
+                    items(st.messages, key = ::messageKey) { MessageRow(it, myCallsign) }
                 }
                 1 -> WriterList(writers)
                 else -> N0ukCqList(N0ukCqParser.recent(st.messages, now, N0UK_CQ_WINDOW_MINUTES), now)
@@ -228,8 +231,8 @@ internal fun N0ukCqList(cqs: List<N0ukCq>, now: Long) = FixedFontScale {
             HeaderCell(t(6), COL_MOON, align = TextAlign.End)
         }
         if (cqs.isEmpty()) Text(stringResource(R.string.n0uk_cq_empty), modifier = Modifier.padding(top = 16.dp))
-        LazyColumn {
-            itemsIndexed(cqs, key = { _, c -> "${c.utcMillis}-${c.callsign}-${c.freq}" }) { i, c ->
+        LazyColumn(state = rememberNewestOnTopListState(cqs.firstOrNull()?.let(::cqKey))) {
+            itemsIndexed(cqs, key = { _, c -> cqKey(c) }) { i, c ->
                 val dim = if (c.ended) DIM else Color.Unspecified
                 val el = stationLatLon(c.locator)?.let { MoonCalculator.quickElevationDeg(sub, it.latDeg, it.lonDeg) }
                 Row(

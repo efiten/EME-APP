@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import be.on5gs.eme.R
 import be.on5gs.eme.ui.theme.FixedFontScale
+import be.on5gs.eme.ui.rememberNewestOnTopListState
 
 internal val CQ_ORANGE = Color(0xFFFFB74D)
 internal val DIM = Color(0xFF9FB0C8)
@@ -94,7 +95,7 @@ private fun CqTable(titles: List<String>, cqs: List<ChatCq>) {
         if (cqs.isEmpty()) {
             Text(stringResource(R.string.chatcq_empty), modifier = Modifier.padding(top = 16.dp))
         }
-        LazyColumn {
+        LazyColumn(state = rememberNewestOnTopListState(cqs.firstOrNull()?.messageId)) {
             itemsIndexed(cqs, key = { _, cq -> cq.messageId }) { i, cq -> CqRow(cq, odd = i % 2 == 1) }
         }
     }
