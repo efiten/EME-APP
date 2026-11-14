@@ -1,0 +1,25 @@
+name: Feature request
+description: An idea for something new or a change in how the app works
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do that the app cannot do today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: How would you like it to work?
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Data source
+      description: >
+        If the idea needs data from a website or service (HB9Q, W3SZ, another one),
+        name it and say whether its operator allows this kind of use.
+    validations:
+      required: false

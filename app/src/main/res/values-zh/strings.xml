@@ -2,7 +2,7 @@
 <!-- Gegenereerd: zh -->
 <resources>
     <string name="tab_moon">月球</string>
-    <string name="tab_chat">HB9Q 聊天</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">设置</string>
     <string name="back">返回</string>
     <string name="time_local">本地</string>
@@ -37,7 +37,7 @@
     <string name="login_failed">登录 HB9Q 失败。请检查用户名和密码。</string>
     <string name="need_login">请先在设置中输入你的 HB9Q 用户名和密码（右上角 ⚙）。</string>
     <string name="messages">消息</string>
-    <string name="participants">参与者（%1$d）</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">电台</string>
     <string name="callsign">呼号</string>
     <string name="locator_label">Maidenhead 定位符（4 或 6 个字符）</string>
@@ -58,9 +58,9 @@
     <string name="language">语言</string>
     <string name="language_system">手机语言（自动）</string>
     <string name="recent_in_chat">最近在聊天中发言：</string>
-    <string name="chatcq_title">HB9Q 聊天中的 CQ 呼叫（%1$s），最近 30 分钟：%2$d</string>
+    <string name="chatcq_title">HB9Q 聊天中的 CQ 呼叫（%1$s），最近 60 分钟：%2$d</string>
     <string name="chatcq_header">UTC - 频率 - 时段 - 呼号 - 模式 - CFOM - Hz</string>
-    <string name="chatcq_empty">最近 30 分钟 HB9Q 聊天中没有 CQ 呼叫。</string>
+    <string name="chatcq_empty">最近 60 分钟 HB9Q 聊天中没有 CQ 呼叫。</string>
     <string name="deg_now">当前衰减（%1$s）</string>
     <string name="deg_excellent">极好</string>
     <string name="deg_good">好</string>
@@ -90,4 +90,9 @@
     <string name="log_out">退出登录</string>
     <string name="log_in">登录</string>
     <string name="logged_out">你已退出 HB9Q 聊天。</string>
+    <string name="n0uk_info">N0UK WSJT EME 聊天 · 144 MHz · 只读 · 每 90 秒更新</string>
+    <string name="n0uk_cq_title">N0UK 聊天中的 CQ 呼叫（144 MHz），最近 60 分钟：%1$d</string>
+    <string name="n0uk_cq_header">UTC - 频率 - 时段 - 呼号 - 模式 - 定位符 - 月球</string>
+    <string name="n0uk_cq_empty">最近 60 分钟 N0UK 聊天中没有 CQ 呼叫。</string>
+    <string name="n0uk_error">无法连接 N0UK 聊天：%1$s</string>
 </resources>

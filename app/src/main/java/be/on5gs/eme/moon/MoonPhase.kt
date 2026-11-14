@@ -1,6 +1,5 @@
 package be.on5gs.eme.moon
 
-import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -31,27 +30,25 @@ object MoonPhase {
         val l0 = 280.46646 + 36000.76983 * t + 0.0003032 * t * t
         val m = 357.52911 + 35999.05029 * t - 0.0001537 * t * t
         val e = 0.016708634 - 0.000042037 * t
-        val c = (1.914602 - 0.004817 * t - 0.000014 * t * t) * sinD(m) +
-            (0.019993 - 0.000101 * t) * sinD(2 * m) + 0.000289 * sinD(3 * m)
-        val lon = norm(l0 + c)
+        val c = (1.914602 - 0.004817 * t - 0.000014 * t * t) * MoonCalculator.sinD(m) +
+            (0.019993 - 0.000101 * t) * MoonCalculator.sinD(2 * m) + 0.000289 * MoonCalculator.sinD(3 * m)
+        val lon = MoonCalculator.norm(l0 + c)
         val v = m + c
-        val r = 1.000001018 * (1 - e * e) / (1 + e * cosD(v))
+        val r = 1.000001018 * (1 - e * e) / (1 + e * MoonCalculator.cosD(v))
         return lon to r * AU_KM
     }
 
     fun at(epochMillis: Long): Phase {
-        val jde = MoonCalculator.julianDay(epochMillis) + 69.2 / 86_400.0
+        // Zelfde ΔT als de AZ/EL-berekening (MoonCalculator), zodat beide schermen niet uit
+        // elkaar kunnen lopen als die waarde later wordt bijgewerkt.
+        val jde = MoonCalculator.julianDay(epochMillis) + MoonCalculator.DELTA_T_SECONDS / 86_400.0
         val moon = MoonCalculator.eclipticPosition(jde)
         val (sunLon, sunDist) = sun(jde)
-        val age = norm(moon.lonDeg - sunLon)
+        val age = MoonCalculator.norm(moon.lonDeg - sunLon)
         // Elongatie en fasehoek (Meeus 48.2 en 48.3)
-        val cosPsi = cosD(moon.latDeg) * cosD(moon.lonDeg - sunLon)
+        val cosPsi = MoonCalculator.cosD(moon.latDeg) * MoonCalculator.cosD(moon.lonDeg - sunLon)
         val psi = Math.acos(cosPsi.coerceIn(-1.0, 1.0))
         val i = atan2(sunDist * sin(psi), moon.distanceKm - sunDist * cos(psi))
         return Phase(illuminated = (1 + cos(i)) / 2, ageDeg = age)
     }
-
-    private fun norm(d: Double): Double { val r = d % 360.0; return if (r < 0) r + 360.0 else r }
-    private fun sinD(d: Double) = sin(d * PI / 180.0)
-    private fun cosD(d: Double) = cos(d * PI / 180.0)
 }

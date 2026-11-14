@@ -64,6 +64,13 @@ private const val DAYS = 30
 /** Plaats van de gekozen dag in de grafiek: 15 dagen ervoor, 14 erna. */
 private const val CENTER_INDEX = 15
 
+/**
+ * Alleen voor tests: hoe vaak de "nu"-waarde van Degradation.compute() daadwerkelijk
+ * herberekend is (in plaats van hergebruikt uit remember()). Een niet-gerelateerde
+ * recompositie (bv. de datumkiezer openen) mag dit niet laten oplopen.
+ */
+internal var currentComputeCallsForTest = 0
+
 /** Kleur per beoordeling. */
 private fun Condition.color(): Color = when (this) {
     Condition.EXCELLENT -> Color(0xFF00E676)
@@ -149,7 +156,10 @@ fun DegradationScreen(settings: SettingsRepository, locator: String) {
         }
 
         // Nu
-        val current = Degradation.compute(now, pos.latDeg, pos.lonDeg, band, tsys.toDouble())
+        val current = remember(now, pos, band, tsys) {
+            currentComputeCallsForTest++
+            Degradation.compute(now, pos.latDeg, pos.lonDeg, band, tsys.toDouble())
+        }
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(12.dp)) {
                 Text(stringResource(R.string.deg_now, locator), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary)

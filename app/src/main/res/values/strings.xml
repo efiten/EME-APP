@@ -7,7 +7,7 @@
     <string name="tab_chatcq" translatable="false">Chat CQ</string>
     <string name="tab_degradation" translatable="false">Deg</string>
     <string name="tab_moon">Moon</string>
-    <string name="tab_chat">HB9Q Chat</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">Settings</string>
     <string name="back">Back</string>
     <string name="time_local">Local</string>
@@ -42,7 +42,7 @@
     <string name="login_failed">Login to HB9Q failed. Check login and password.</string>
     <string name="need_login">First enter your HB9Q login and password in Settings (⚙ top right).</string>
     <string name="messages">Messages</string>
-    <string name="participants">Participants (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Callsign</string>
     <string name="locator_label">Maidenhead locator (4 or 6 characters)</string>
@@ -63,9 +63,9 @@
     <string name="language">Language</string>
     <string name="language_system">Phone language (automatic)</string>
     <string name="recent_in_chat">Wrote recently in the chat:</string>
-    <string name="chatcq_title">CQ calls in the HB9Q chat (%1$s), last 30 minutes: %2$d</string>
+    <string name="chatcq_title">CQ calls in the HB9Q chat (%1$s), last 60 minutes: %2$d</string>
     <string name="chatcq_header">UTC - freq - period - call - mode - CFOM - Hz</string>
-    <string name="chatcq_empty">No CQ calls in the HB9Q chat in the last 30 minutes.</string>
+    <string name="chatcq_empty">No CQ calls in the HB9Q chat in the last 60 minutes.</string>
     <string name="deg_now">Degradation now (%1$s)</string>
     <string name="deg_excellent">Excellent</string>
     <string name="deg_good">Good</string>
@@ -95,4 +95,10 @@
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
     <string name="logged_out">You are logged out of the HB9Q chat.</string>
+    <string name="tab_n0uk" translatable="false">N0UK</string>
+    <string name="n0uk_info">N0UK WSJT EME chat · 144 MHz · read only · updated every 90 s</string>
+    <string name="n0uk_cq_title">CQ calls in the N0UK chat (144 MHz), last 60 minutes: %1$d</string>
+    <string name="n0uk_cq_header">UTC - freq - period - call - mode - locator - moon</string>
+    <string name="n0uk_cq_empty">No CQ calls in the N0UK chat in the last 60 minutes.</string>
+    <string name="n0uk_error">N0UK chat not reachable: %1$s</string>
 </resources>

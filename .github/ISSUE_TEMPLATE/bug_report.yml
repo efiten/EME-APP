@@ -1,0 +1,56 @@
+name: Bug report
+description: Something in the app does not work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never paste your HB9Q login or password here. Issues are public.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: "0.16"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Phone and Android version
+      placeholder: "Samsung Galaxy A54, Android 14"
+    validations:
+      required: true
+  - type: dropdown
+    id: tab
+    attributes:
+      label: Where does it happen?
+      options:
+        - Moon
+        - Deg
+        - HB9Q Chat
+        - Chat CQ
+        - Live CQ
+        - Settings
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What did you do?
+      description: Step by step, so someone else can repeat it.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Include the exact error text. A screenshot helps.
+    validations:
+      required: true

@@ -2,7 +2,7 @@
 <!-- Gegenereerd: de -->
 <resources>
     <string name="tab_moon">Mond</string>
-    <string name="tab_chat">HB9Q Chat</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">Einstellungen</string>
     <string name="back">Zurück</string>
     <string name="time_local">Lokal</string>
@@ -37,7 +37,7 @@
     <string name="login_failed">Anmeldung bei HB9Q fehlgeschlagen. Login und Passwort prüfen.</string>
     <string name="need_login">Gib zuerst dein HB9Q-Login und Passwort in den Einstellungen ein (⚙ oben rechts).</string>
     <string name="messages">Nachrichten</string>
-    <string name="participants">Teilnehmer (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Rufzeichen</string>
     <string name="locator_label">Maidenhead-Locator (4 oder 6 Zeichen)</string>
@@ -58,9 +58,9 @@
     <string name="language">Sprache</string>
     <string name="language_system">Telefonsprache (automatisch)</string>
     <string name="recent_in_chat">Haben kürzlich im Chat geschrieben:</string>
-    <string name="chatcq_title">CQ-Rufe im HB9Q-Chat (%1$s), letzte 30 Minuten: %2$d</string>
+    <string name="chatcq_title">CQ-Rufe im HB9Q-Chat (%1$s), letzte 60 Minuten: %2$d</string>
     <string name="chatcq_header">UTC - Freq - Periode - Rufz. - Mode - CFOM - Hz</string>
-    <string name="chatcq_empty">Keine CQ-Rufe im HB9Q-Chat in den letzten 30 Minuten.</string>
+    <string name="chatcq_empty">Keine CQ-Rufe im HB9Q-Chat in den letzten 60 Minuten.</string>
     <string name="deg_now">Degradation jetzt (%1$s)</string>
     <string name="deg_excellent">Ausgezeichnet</string>
     <string name="deg_good">Gut</string>
@@ -90,4 +90,9 @@
     <string name="log_out">Abmelden</string>
     <string name="log_in">Anmelden</string>
     <string name="logged_out">Du bist vom HB9Q-Chat abgemeldet.</string>
+    <string name="n0uk_info">N0UK WSJT EME-Chat · 144 MHz · nur lesen · alle 90 s aktualisiert</string>
+    <string name="n0uk_cq_title">CQ-Rufe im N0UK-Chat (144 MHz), letzte 60 Minuten: %1$d</string>
+    <string name="n0uk_cq_header">UTC - Freq - Periode - Rufz. - Mode - Locator - Mond</string>
+    <string name="n0uk_cq_empty">Keine CQ-Rufe im N0UK-Chat in den letzten 60 Minuten.</string>
+    <string name="n0uk_error">N0UK-Chat nicht erreichbar: %1$s</string>
 </resources>

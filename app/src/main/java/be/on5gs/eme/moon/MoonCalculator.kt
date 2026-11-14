@@ -21,8 +21,12 @@ import kotlin.math.tan
  */
 object MoonCalculator {
 
-    /** Verschil tussen Terrestrische Tijd en UTC (ΔT), in seconden. Geldig rond 2020-2030. */
-    private const val DELTA_T_SECONDS = 69.2
+    /**
+     * Verschil tussen Terrestrische Tijd en UTC (ΔT), in seconden. Geldig rond 2020-2030.
+     * `internal` zodat [be.on5gs.eme.moon.MoonPhase] dezelfde waarde gebruikt in plaats van
+     * een eigen kopie (die dan niet mee zou opschuiven bij een update hier).
+     */
+    internal const val DELTA_T_SECONDS = 69.2
 
     data class Equatorial(
         val raDeg: Double,      // rechte klimming, graden
@@ -204,13 +208,14 @@ object MoonCalculator {
 
     // ---------- Hulpfuncties ----------
 
-    private fun norm(deg: Double): Double {
+    /** `internal`: ook gebruikt door [be.on5gs.eme.moon.MoonPhase], zie [DELTA_T_SECONDS]. */
+    internal fun norm(deg: Double): Double {
         val r = deg % 360.0
         return if (r < 0) r + 360.0 else r
     }
 
-    private fun sinD(d: Double) = sin(d * PI / 180.0)
-    private fun cosD(d: Double) = cos(d * PI / 180.0)
+    internal fun sinD(d: Double) = sin(d * PI / 180.0)
+    internal fun cosD(d: Double) = cos(d * PI / 180.0)
     private fun tanD(d: Double) = tan(d * PI / 180.0)
     private fun asinD(x: Double) = asin(x) * 180.0 / PI
     private fun atan2D(y: Double, x: Double) = atan2(y, x) * 180.0 / PI
