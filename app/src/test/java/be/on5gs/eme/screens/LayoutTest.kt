@@ -81,8 +81,6 @@ class LayoutTest(private val device: String, private val language: String, priva
          * oplost, haalt zijn regel hier weg. Voeg geen nieuwe toe zonder issue.
          */
         private val KNOWN = listOf(
-            // #66: tijdzone, seconden en azimut afgekapt
-            Known(66, "moon", Regex("""^"(\s+\S+|.*\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}:\d{2}|\d+\.\d°)": text cut off$""")),
             // #68: regel "via ... · DT ... · programma" ingekort
             Known(68, "liveCq", Regex("""^".* · DT .*": text cut off$""")),
         )
