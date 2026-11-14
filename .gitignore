@@ -6,3 +6,5 @@ local.properties
 *.iml
 dist/
 *.apk
+web/node_modules/
+web/dist/

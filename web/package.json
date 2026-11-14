@@ -1,0 +1,15 @@
+{
+  "name": "eme-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0",
+    "vitest": "^5.0.0"
+  }
+}
