@@ -1,13 +1,16 @@
 // Build step: app/src/main/res/values*/strings.xml -> src/generated/strings.json
+// and app/src/main/assets/land110m.txt -> src/generated/land110m.txt (git-ignored copy, one source of truth).
 // { "<lang>": { "<name>": "<text>" } }, folder `values` = en, `values-xx` = xx.
 
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RES = join(HERE, '../../app/src/main/res');
 const OUT = join(HERE, '../src/generated/strings.json');
+const LAND = join(HERE, '../../app/src/main/assets/land110m.txt');
+const LAND_OUT = join(HERE, '../src/generated/land110m.txt');
 
 const ENTITIES = { lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" };
 const BACKSLASH = String.fromCharCode(92);
@@ -81,4 +84,5 @@ export function buildStrings(resDir = RES) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(buildStrings(), null, 2) + '\n');
+  copyFileSync(LAND, LAND_OUT);
 }
