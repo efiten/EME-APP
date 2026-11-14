@@ -148,3 +148,92 @@ body {
 .moon .event.past .time { opacity: 0.6; }
 .moon .event .extra { font-size: 12px; margin-left: 10px; width: 64px; }
 .moon .event .none { font-size: 12px; }
+
+/* Deg tab (DegradationScreen.kt, DegCalendar.kt colours) */
+:root {
+  --deg-excellent: #00e676;
+  --deg-good: #b2ff59;
+  --deg-fair: #ffeb3b;
+  --deg-poor: #ff9800;
+  --deg-very-poor: #ff5252;
+  --deg-line: #ff5252;
+  --deg-dist: #ffff99;
+  --deg-dec: #3399ff;
+  --deg-axis: #9fb0c8;
+  --deg-grid: #ffffff22;
+  --deg-center-line: #ffffffcc;
+  --deg-today-line: #ffffff66;
+  --deg-full-moon: #ffffff;
+  --scrim: #00000099;
+}
+
+.cond-excellent { color: var(--deg-excellent); }
+.cond-good { color: var(--deg-good); }
+.cond-fair { color: var(--deg-fair); }
+.cond-poor { color: var(--deg-poor); }
+.cond-very-poor { color: var(--deg-very-poor); }
+
+.deg { padding: 0 12px 12px; max-width: 720px; min-width: 0; margin: 0 auto; }
+.deg .small { font-size: 12px; }
+.deg .accent { color: var(--secondary); }
+.deg .error { color: var(--error); margin-top: 8px; }
+.deg .bands { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 12px; }
+.deg .chip {
+  font: inherit; font-size: 14px; color: var(--on-surface-variant); background: transparent; cursor: pointer;
+  border: 1px solid var(--outline); border-radius: 8px; padding: 0 12px; min-height: 32px;
+}
+.deg .chip[aria-pressed="true"] { background: var(--surface-variant); border-color: transparent; color: var(--on-surface); }
+.deg .center-row { margin-top: 8px; }
+.deg .center-buttons { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.deg .outlined, .deg .text-button { font: inherit; font-size: 14px; font-weight: 500; color: var(--primary); background: none; cursor: pointer; min-height: 40px; }
+.deg .outlined { border: 1px solid var(--outline); border-radius: 20px; padding: 0 24px; }
+.deg .text-button { border: 0; padding: 0 12px; }
+.deg .now { margin-top: 8px; padding: 12px; border-radius: 12px; background: var(--surface-variant); }
+.deg .values { display: flex; align-items: flex-end; flex-wrap: wrap; column-gap: 10px; }
+.deg .big { font-size: 40px; font-weight: 700; line-height: 1.2; }
+.deg .condition { font-size: 22px; font-weight: 700; }
+.deg h3 { margin: 14px 0 4px; font-size: 14px; font-weight: 500; }
+.deg .chart { display: block; width: 100%; height: auto; max-width: 720px; }
+.deg .chart .axis { font-size: 9px; fill: var(--deg-axis); }
+.deg .chart .axis.dist { fill: var(--deg-dist); }
+.deg .chart .axis.dec { fill: var(--deg-dec); }
+.deg .chart .zone, .deg .chart .deg-dot { fill: currentColor; }
+.deg .chart .grid { stroke: var(--deg-grid); stroke-width: 1; }
+.deg .chart path { fill: none; stroke-linejoin: round; }
+.deg .chart .line-deg { stroke: var(--deg-line); stroke-width: 2; }
+.deg .chart .line-dist { stroke: var(--deg-dist); stroke-width: 1.5; }
+.deg .chart .line-dec { stroke: var(--deg-dec); stroke-width: 1.5; }
+.deg .chart .center-line { stroke: var(--deg-center-line); stroke-width: 2; }
+.deg .chart .today-line { stroke: var(--deg-today-line); stroke-width: 1; }
+.deg .chart .new-moon { fill: var(--map-moon-dark); }
+.deg .chart .full-moon { fill: var(--deg-full-moon); }
+.deg .series { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.deg .series .chip { font-size: 12px; padding: 0 12px; }
+.deg .series-deg .swatch { color: var(--deg-line); }
+.deg .series-dist .swatch { color: var(--deg-dist); }
+.deg .series-dec .swatch { color: var(--deg-dec); }
+.deg .series .swatch { font-weight: 700; white-space: pre; }
+.deg .moons { margin-top: 2px; font-size: 12px; white-space: pre-wrap; }
+.deg .moons .full { color: var(--deg-full-moon); }
+.deg .moons .new { color: var(--map-moon-dark); }
+.deg .best { display: grid; grid-template-columns: minmax(0, 9.5em) 4.5em minmax(0, 1fr); padding: 3px 0; }
+.deg .bold { font-weight: 700; }
+.deg .info { margin: 14px 0; }
+
+.deg-dialog { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; background: var(--scrim); padding: 16px; }
+.deg-dialog .card { width: 100%; max-width: 360px; max-height: 100%; overflow: auto; padding: 16px; border-radius: 28px; background: var(--surface-container-high); }
+.deg-dialog .cal-head { display: flex; align-items: center; }
+.deg-dialog .cal-title { flex: 1; text-align: center; font-size: 16px; font-weight: 500; }
+.deg-dialog .icon { width: 48px; height: 48px; border: 0; border-radius: 50%; background: none; color: var(--on-surface); font-size: 28px; cursor: pointer; }
+.deg-dialog .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; row-gap: 4px; }
+.deg-dialog .weekday { font-size: 11px; font-weight: 500; padding: 4px 0; }
+.deg-dialog .day {
+  width: 100%; max-width: 44px; aspect-ratio: 1; padding: 0; font: inherit; color: var(--on-surface); background: none;
+  border: 2px solid transparent; border-radius: 50%; cursor: pointer;
+}
+.deg-dialog .day.today { color: var(--primary); font-weight: 700; }
+.deg-dialog .day.selected { background: var(--primary); color: var(--on-primary); font-weight: 700; }
+.deg-dialog .day[data-best] { border-color: var(--deg-excellent); }
+.deg-dialog .cal-legend { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; }
+.deg-dialog .cal-legend .ring { flex: none; width: 14px; height: 14px; border: 2px solid var(--deg-excellent); border-radius: 50%; }
+.deg-dialog .text-button { display: block; margin: 8px 0 0 auto; font: inherit; font-size: 14px; font-weight: 500; color: var(--primary); background: none; border: 0; padding: 10px 12px; cursor: pointer; }
