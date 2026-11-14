@@ -1,0 +1,9 @@
+# Install as /etc/systemd/system/eme-web-update.service. Started by eme-web-update.timer.
+[Unit]
+Description=Update the EME web app from the latest GitHub release
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/eme-web-update

@@ -1,0 +1,12 @@
+# Install as /etc/systemd/system/eme-web-update.timer, then: systemctl enable --now eme-web-update.timer
+# One run every 15 minutes is 4 GitHub API requests per hour, well under the unauthenticated limit of 60.
+[Unit]
+Description=Check GitHub for a new EME web release
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

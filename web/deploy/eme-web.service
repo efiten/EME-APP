@@ -1,5 +1,5 @@
 # Install as /etc/systemd/system/eme-web.service (task 14), then: systemctl enable eme-web
-# /etc/default/eme-web holds EME_VERSION=<version>; deploy-release.sh writes it.
+# /etc/default/eme-web holds EME_VERSION=<version>; eme-web-update writes it.
 [Unit]
 Description=EME web server (eme.on8ar.eu)
 After=network-online.target

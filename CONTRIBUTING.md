@@ -85,8 +85,11 @@ A release is its own pull request: it raises `versionCode` and `versionName` and
 release notes `docs/releases/vX.Y.Z.md`, nothing else. When it is merged, GitHub builds, signs
 and publishes the APK as a GitHub release (`.github/workflows/release.yml`). Claude prepares
 that pull request when the maintainer asks "make a release" (`.claude/skills/release/SKILL.md`).
-The same workflow also attaches `eme-web-vX.Y.Z.zip` (the web app and its server). The maintainer
-of eme.on8ar.eu (ON8AR) deploys it with `web/deploy/deploy-release.sh`.
+The same workflow also attaches `eme-web-vX.Y.Z.zip` (the web app and its server). eme.on8ar.eu
+updates itself from it within about 15 minutes (`eme-web-update.timer` on the server). The maintainer
+(ON8AR) can deploy at once with `web/deploy/deploy-release.sh vX.Y.Z`. A failed deploy rolls back by
+itself and is not retried for that version until someone deploys it by hand
+(see `web/deploy/README.md`).
 
 ## Reporting a bug
 

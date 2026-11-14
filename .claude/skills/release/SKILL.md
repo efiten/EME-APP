@@ -88,8 +88,10 @@ gh run watch <id>
 
 - Green: give the release link and the download link
   `https://github.com/on5gsdirk-cmd/EME-APP/releases/latest/download/EME-APP.apk`.
-  The release also holds `eme-web-vX.Y.Z.zip`. The maintainer of eme.on8ar.eu (ON8AR) deploys
-  it with `web/deploy/deploy-release.sh vX.Y.Z`. Tell him the release is published; do not
+  The release also holds `eme-web-vX.Y.Z.zip`. eme.on8ar.eu updates itself from it within about
+  15 minutes (`eme-web-update.timer` on the server), so there is nothing to deploy. To deploy at
+  once, the maintainer (ON8AR) runs `web/deploy/deploy-release.sh vX.Y.Z`. A failed deploy rolls
+  back by itself and is not retried for that version until someone deploys it by hand. Do not
   deploy yourself.
 - Only `web-build` or `web-upload` red: the APK release is already published and stays valid, and no patch release is needed. Use "Re-run failed jobs" on that workflow run (`gh run rerun <run-id> --failed`). `gh workflow run release.yml` does not help here: `check` sees the release and skips everything.
 - Red (the `release` job or `check`): nothing was published. Show the failing step and its error. Fix it in a new pull request;
