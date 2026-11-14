@@ -45,3 +45,9 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: npm ci
       - run: npm test
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: web/server/go.mod
+          cache: false
+      - run: go test -race ./...
+        working-directory: web/server
