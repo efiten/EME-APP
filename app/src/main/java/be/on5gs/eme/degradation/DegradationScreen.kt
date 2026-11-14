@@ -1,5 +1,6 @@
 package be.on5gs.eme.degradation
 
+import be.on5gs.eme.AppClock
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedButton
@@ -95,15 +96,15 @@ fun DegradationScreen(settings: SettingsRepository, locator: String) {
     // Tsys: vaste standaardwaarde per band (op 144 MHz 80 K, zoals MMMonVHF)
     val tsys = band.defaultTsys
     // Dag in het midden van de grafiek (standaard vandaag), gekozen via een kalender
-    val today = LocalDate.now(ZoneOffset.UTC)
+    val today = LocalDate.ofEpochDay(Math.floorDiv(AppClock.now(), 86_400_000L))
     var centerEpochDay by rememberSaveable { mutableLongStateOf(today.toEpochDay()) }
     val centerDay = LocalDate.ofEpochDay(centerEpochDay)
     var showPicker by remember { mutableStateOf(false) }
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var now by remember { mutableLongStateOf(AppClock.now()) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            while (true) { now = System.currentTimeMillis(); delay(60_000) }
+            while (true) { now = AppClock.now(); delay(60_000) }
         }
     }
     val pos = Maidenhead.toLatLon(locator)

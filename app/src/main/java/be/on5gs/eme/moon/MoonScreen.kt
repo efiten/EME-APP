@@ -1,5 +1,6 @@
 package be.on5gs.eme.moon
 
+import be.on5gs.eme.AppClock
 import androidx.compose.ui.platform.LocalConfiguration
 import be.on5gs.eme.R
 import androidx.compose.ui.res.stringResource
@@ -65,12 +66,12 @@ private val GREEN = Color(0xFF66BB6A)
 
 @Composable
 fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) {
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var now by remember { mutableLongStateOf(AppClock.now()) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
-                now = System.currentTimeMillis()
+                now = AppClock.now()
                 delay(REFRESH_MS)
             }
         }

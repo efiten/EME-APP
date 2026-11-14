@@ -1,5 +1,6 @@
 package be.on5gs.eme.n0uk
 
+import be.on5gs.eme.AppClock
 import be.on5gs.eme.UserAgent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +46,7 @@ object N0ukStore {
     internal var fetchPage: suspend () -> String = { download() }
 
     /** Haalt de chat op als de vorige poging minstens 90 s geleden is. Anders gebeurt er niets. */
-    suspend fun refreshIfDue(nowMillis: Long = System.currentTimeMillis()) = lock.withLock {
+    suspend fun refreshIfDue(nowMillis: Long = AppClock.now()) = lock.withLock {
         val s = _state.value
         if (s.lastAttempt != 0L && nowMillis - s.lastAttempt < REFRESH_MS) return@withLock
         // De poging telt vanaf nu, ook als ze afgebroken wordt (geen extra aanvragen bij snel wisselen)

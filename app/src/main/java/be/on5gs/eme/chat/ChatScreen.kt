@@ -1,5 +1,6 @@
 package be.on5gs.eme.chat
 
+import be.on5gs.eme.AppClock
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.OutlinedButton
@@ -73,7 +74,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
     val messages = if (chat.band == band) chat.messages else emptyList()
     val participants = if (chat.band == band) ChatStore.recentParticipants(chat, myCallsign) else emptyList()
     var subTab by remember { mutableIntStateOf(0) }          // 0 = berichten, 1 = deelnemers, 2 = Chat CQ
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }   // voor het venster van Chat CQ
+    var now by remember { mutableLongStateOf(AppClock.now()) }   // voor het venster van Chat CQ
     // load() leest de Android Keystore: niet op de UI-draad (zie CredentialStore.loadAsync)
     val loadedCreds = rememberCredentials(credentialStore)
     val creds = loadedCreds.credentials
@@ -86,7 +87,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
                 ChatStore.refreshIfOlderThan(ChatStore.MESSAGES_REFRESH_MS, band, c)
-                now = System.currentTimeMillis()
+                now = AppClock.now()
                 delay(5_000)
             }
         }
