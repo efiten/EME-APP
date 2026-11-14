@@ -12,6 +12,7 @@ import {
   selectSpots,
   sourceLabel,
   splitCsvLine,
+  stationLatLon,
 } from '../src/lib/livecq.js';
 
 const resource = (name) => readFileSync(new URL(`../../app/src/test/resources/${name}`, import.meta.url), 'utf8');
@@ -92,8 +93,6 @@ describe('LiveCqParser (W3SZ)', () => {
   });
 
   test('stationGridWith8Characters', () => {
-    // stationLatLon lives in CqScreen.kt (UI); same logic inline here.
-    const stationLatLon = (grid) => toLatLon(grid.slice(0, 6)) ?? toLatLon(grid.slice(0, 4));
     const p = stationLatLon('JO21sc45');
     const q = toLatLon('JO21SC');
     expect(p.latDeg).toBeCloseTo(q.latDeg, 9);

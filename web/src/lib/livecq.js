@@ -1,6 +1,8 @@
 // Port of LiveCqParser.kt, N6nuParser.kt and LiveCqSpot.kt (Band, LiveCqSource):
 // W3SZ CSV and N6NU JSON parsing, merge and select. All timestamps are UTC.
 
+import { toLatLon } from './maidenhead.js';
+
 /** Band buttons as on the W3SZ Live CQ site. Frequencies in MHz. */
 export const BANDS = [
   { id: 'B50', label: '50', minMhz: 50.0, maxMhz: 54.0 },
@@ -236,4 +238,9 @@ export function selectSpots(spots, bandIds, nowMs, maxAgeMinutes) {
     });
   }
   return result.sort((a, b) => b.utcMillis - a.utcMillis);
+}
+
+/** Port of CqScreen.kt stationLatLon: 6-character locator, else the 4-character one, else null. */
+export function stationLatLon(grid) {
+  return toLatLon(grid.slice(0, 6)) ?? toLatLon(grid.slice(0, 4));
 }
