@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import be.on5gs.eme.R
 import be.on5gs.eme.settings.CredentialStore
+import be.on5gs.eme.settings.rememberCredentials
 import be.on5gs.eme.settings.SettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -73,7 +74,9 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
     val participants = if (chat.band == band) ChatStore.recentParticipants(chat, myCallsign) else emptyList()
     var subTab by remember { mutableIntStateOf(0) }          // 0 = berichten, 1 = deelnemers, 2 = Chat CQ
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }   // voor het venster van Chat CQ
-    val creds = remember { credentialStore.load() }
+    // load() leest de Android Keystore: niet op de UI-draad (zie CredentialStore.loadAsync)
+    val loadedCreds = rememberCredentials(credentialStore)
+    val creds = loadedCreds.credentials
     val scope = rememberCoroutineScope()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -90,6 +93,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
     }
 
     Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
+        if (!loadedCreds.loaded) return@Column     // nog aan het laden: geen "need login" laten flitsen
         if (creds == null) {
             Text(stringResource(R.string.need_login), modifier = Modifier.padding(top = 32.dp))
             return@Column

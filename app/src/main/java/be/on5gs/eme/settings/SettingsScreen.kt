@@ -138,19 +138,25 @@ private fun LanguagePicker() {
 /** Login voor de HB9Q-chat. Wordt versleuteld bewaard (zie CredentialStore). */
 @Composable
 private fun Hb9qLoginSection(store: CredentialStore) {
-    val saved = remember { store.load() }
+    Text(stringResource(R.string.hb9q_chat), style = MaterialTheme.typography.titleLarge)
+    Text(
+        stringResource(R.string.login_encrypted),
+        style = MaterialTheme.typography.bodySmall,
+    )
+    // load() leest de Android Keystore: niet op de UI-draad (zie CredentialStore.loadAsync).
+    // De velden verschijnen pas na het laden, zodat het laden niets overschrijft wat al getypt is.
+    val loaded = rememberCredentials(store)
+    if (loaded.loaded) Hb9qLoginFields(store, loaded.credentials)
+}
+
+@Composable
+private fun Hb9qLoginFields(store: CredentialStore, saved: CredentialStore.Credentials?) {
     val savedPassword = remember { SavedPassword(saved?.password) }
     var hasSaved by remember { mutableStateOf(saved != null) }
     var login by remember { mutableStateOf(saved?.login ?: "") }
     var password by remember { mutableStateOf("") }      // wordt nooit terug getoond
     var showPassword by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<Int?>(null) }
-
-    Text(stringResource(R.string.hb9q_chat), style = MaterialTheme.typography.titleLarge)
-    Text(
-        stringResource(R.string.login_encrypted),
-        style = MaterialTheme.typography.bodySmall,
-    )
 
     OutlinedTextField(
         value = login,
