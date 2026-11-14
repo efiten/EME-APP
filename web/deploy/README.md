@@ -31,7 +31,7 @@ The updater needs a running version to start from, so the first one is put in pl
 
 ```
 mkdir -p /var/www/eme.on8ar.eu /opt/eme-web /var/lib/eme-web
-echo 'EME_VERSION=vX.Y.Z' > /etc/default/eme-web
+echo 'EME_VERSION=X.Y.Z' > /etc/default/eme-web
 install -m 644 eme-web.service /etc/systemd/system/
 ```
 
@@ -49,9 +49,21 @@ The release zip holds only the web app and the server binary. `eme-web.service`,
 `eme-web-update.sh` and the timer/service units of the updater are not part of it. When one of them
 changes in the repository, install it on the host by hand: copy the file, `systemctl daemon-reload`,
 and restart the unit (`systemctl restart eme-web` or `eme-web-update.timer`; nginx: `nginx -t && systemctl reload nginx`).
-The `-state-dir` and `StateDirectory=eme-web-server` lines in `eme-web.service` are such a change: the
-server keeps the last upstream attempt per source in `/var/lib/eme-web-server/last-attempt.json`, so that a
-restart does not allow an extra request to W3SZ, N6NU or N0UK.
+The `-state-dir` and `StateDirectory=eme-web-server` lines in `eme-web.service` are such a change. The server
+keeps the last upstream attempt and the last good copy per source in `/var/lib/eme-web-server/`, so that a
+restart neither allows an extra request to W3SZ, N6NU or N0UK nor leaves the web app without data.
+
+The order matters, because a binary older than the `-state-dir` flag (1.1.0 and before) exits with code 2 on
+an unknown flag, and the service then restarts in a loop (all `/api` answers 502):
+
+1. First let the timer install a release whose binary knows `-state-dir`. The old unit is still in place and
+   does not pass the flag.
+2. Then install the new unit (`install -m 644 eme-web.service /etc/systemd/system/`), `systemctl daemon-reload`,
+   `systemctl restart eme-web`, and check `curl 127.0.0.1:5200/api/version` and that
+   `/var/lib/eme-web-server/last-attempt.json` appears after the first request.
+
+After that, a rollback to a binary older than this change needs the old unit back (without `-state-dir`),
+otherwise that binary cannot start.
 
 ## Logs
 
