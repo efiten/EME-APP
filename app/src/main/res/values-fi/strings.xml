@@ -2,7 +2,7 @@
 <!-- Gegenereerd: fi -->
 <resources>
     <string name="tab_moon">Kuu</string>
-    <string name="tab_chat">HB9Q Chat</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">Asetukset</string>
     <string name="back">Takaisin</string>
     <string name="time_local">Paikallinen</string>
@@ -37,7 +37,7 @@
     <string name="login_failed">Kirjautuminen HB9Q:hon epäonnistui. Tarkista tunnus ja salasana.</string>
     <string name="need_login">Syötä ensin HB9Q-tunnuksesi ja salasanasi Asetuksissa (⚙ oikeassa yläkulmassa).</string>
     <string name="messages">Viestit</string>
-    <string name="participants">Osallistujat (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Asema</string>
     <string name="callsign">Kutsu</string>
     <string name="locator_label">Maidenhead-lokaattori (4 tai 6 merkkiä)</string>
@@ -58,9 +58,9 @@
     <string name="language">Kieli</string>
     <string name="language_system">Puhelimen kieli (automaattinen)</string>
     <string name="recent_in_chat">Kirjoittivat äskettäin chattiin:</string>
-    <string name="chatcq_title">CQ-kutsut HB9Q-chatissa (%1$s), viimeiset 30 minuuttia: %2$d</string>
+    <string name="chatcq_title">CQ-kutsut HB9Q-chatissa (%1$s), viimeiset 60 minuuttia: %2$d</string>
     <string name="chatcq_header">UTC - taajuus - jakso - kutsu - lähetelaji - CFOM - Hz</string>
-    <string name="chatcq_empty">Ei CQ-kutsuja HB9Q-chatissa viimeisen 30 minuutin aikana.</string>
+    <string name="chatcq_empty">Ei CQ-kutsuja HB9Q-chatissa viimeisen 60 minuutin aikana.</string>
     <string name="deg_now">Heikkeneminen nyt (%1$s)</string>
     <string name="deg_excellent">Erinomainen</string>
     <string name="deg_good">Hyvä</string>
@@ -90,4 +90,9 @@
     <string name="log_out">Kirjaudu ulos</string>
     <string name="log_in">Kirjaudu sisään</string>
     <string name="logged_out">Olet kirjautunut ulos HB9Q-chatista.</string>
+    <string name="n0uk_info">N0UK WSJT EME -chat · 144 MHz · vain luku · päivitetään 90 s välein</string>
+    <string name="n0uk_cq_title">CQ-kutsut N0UK-chatissa (144 MHz), viimeiset 60 minuuttia: %1$d</string>
+    <string name="n0uk_cq_header">UTC - taajuus - jakso - kutsu - lähetelaji - lokaattori - kuu</string>
+    <string name="n0uk_cq_empty">Ei CQ-kutsuja N0UK-chatissa viimeisen 60 minuutin aikana.</string>
+    <string name="n0uk_error">N0UK-chat ei saatavilla: %1$s</string>
 </resources>

@@ -2,7 +2,7 @@
 <!-- Gegenereerd: ja -->
 <resources>
     <string name="tab_moon">月</string>
-    <string name="tab_chat">HB9Q チャット</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">設定</string>
     <string name="back">戻る</string>
     <string name="time_local">現地</string>
@@ -37,7 +37,7 @@
     <string name="login_failed">HB9Q へのログインに失敗しました。ログイン名とパスワードを確認してください。</string>
     <string name="need_login">まず設定（右上の ⚙）で HB9Q のログイン名とパスワードを入力してください。</string>
     <string name="messages">メッセージ</string>
-    <string name="participants">参加者（%1$d）</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">局</string>
     <string name="callsign">コールサイン</string>
     <string name="locator_label">Maidenhead ロケーター（4 または 6 文字）</string>
@@ -58,9 +58,9 @@
     <string name="language">言語</string>
     <string name="language_system">電話の言語（自動）</string>
     <string name="recent_in_chat">最近チャットに書き込んだ局：</string>
-    <string name="chatcq_title">HB9Q チャットの CQ 呼び出し（%1$s）、直近 30 分：%2$d</string>
+    <string name="chatcq_title">HB9Q チャットの CQ 呼び出し（%1$s）、直近 60 分：%2$d</string>
     <string name="chatcq_header">UTC - 周波数 - 周期 - コール - モード - CFOM - Hz</string>
-    <string name="chatcq_empty">直近 30 分、HB9Q チャットに CQ 呼び出しはありません。</string>
+    <string name="chatcq_empty">直近 60 分、HB9Q チャットに CQ 呼び出しはありません。</string>
     <string name="deg_now">現在のデグラデーション（%1$s）</string>
     <string name="deg_excellent">非常に良い</string>
     <string name="deg_good">良い</string>
@@ -90,4 +90,9 @@
     <string name="log_out">ログアウト</string>
     <string name="log_in">ログイン</string>
     <string name="logged_out">HB9Q チャットからログアウトしました。</string>
+    <string name="n0uk_info">N0UK WSJT EME チャット · 144 MHz · 閲覧のみ · 90 秒ごとに更新</string>
+    <string name="n0uk_cq_title">N0UK チャットの CQ 呼び出し（144 MHz）、直近 60 分：%1$d</string>
+    <string name="n0uk_cq_header">UTC - 周波数 - 周期 - コール - モード - ロケーター - 月</string>
+    <string name="n0uk_cq_empty">直近 60 分、N0UK チャットに CQ 呼び出しはありません。</string>
+    <string name="n0uk_error">N0UK チャットに接続できません：%1$s</string>
 </resources>

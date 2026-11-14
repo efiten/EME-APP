@@ -80,6 +80,15 @@ class ChatCqParserTest {
     }
 
     @Test
+    fun recent_defaultWindowIsSixtyMinutesLikeLiveCq() {
+        val list = listOf(
+            msg("***** CQ 1296.088 1st Q65-60C CFOM 1500 *****", "08:25", "F5AOL").copy(id = 2),    // 45 min oud
+            msg("***** CQ 1296.085 1st Q65-60C CFOM 1500 *****", "08:05", "R4CX").copy(id = 1),     // 65 min oud
+        )
+        assertEquals(listOf("F5AOL"), ChatCqParser.recent(list, now).map { it.callsign })
+    }
+
+    @Test
     fun unparseableTimeIsDroppedExplicitlyInsteadOfShowingAsEpochZero() {
         // "time" komt niet overeen met "H:MM": zonder de fix geeft messageMillis stilzwijgend 0L terug,
         // waardoor de CQ als "veel te oud" wordt weggefilterd in plaats van duidelijk weggelaten.

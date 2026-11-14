@@ -2,7 +2,7 @@
 <!-- Gegenereerd: ru -->
 <resources>
     <string name="tab_moon">Луна</string>
-    <string name="tab_chat">HB9Q Чат</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">Настройки</string>
     <string name="back">Назад</string>
     <string name="time_local">Местное</string>
@@ -37,7 +37,7 @@
     <string name="login_failed">Не удалось войти в HB9Q. Проверьте логин и пароль.</string>
     <string name="need_login">Сначала введите логин и пароль HB9Q в Настройках (⚙ вверху справа).</string>
     <string name="messages">Сообщения</string>
-    <string name="participants">Участники (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Станция</string>
     <string name="callsign">Позывной</string>
     <string name="locator_label">Локатор Maidenhead (4 или 6 символов)</string>
@@ -58,9 +58,9 @@
     <string name="language">Язык</string>
     <string name="language_system">Язык телефона (автоматически)</string>
     <string name="recent_in_chat">Недавно писали в чат:</string>
-    <string name="chatcq_title">Вызовы CQ в чате HB9Q (%1$s), последние 30 минут: %2$d</string>
+    <string name="chatcq_title">Вызовы CQ в чате HB9Q (%1$s), последние 60 минут: %2$d</string>
     <string name="chatcq_header">UTC - частота - период - позывной - вид - CFOM - Гц</string>
-    <string name="chatcq_empty">Нет вызовов CQ в чате HB9Q за последние 30 минут.</string>
+    <string name="chatcq_empty">Нет вызовов CQ в чате HB9Q за последние 60 минут.</string>
     <string name="deg_now">Деградация сейчас (%1$s)</string>
     <string name="deg_excellent">Отлично</string>
     <string name="deg_good">Хорошо</string>
@@ -90,4 +90,9 @@
     <string name="log_out">Выйти</string>
     <string name="log_in">Войти</string>
     <string name="logged_out">Вы вышли из чата HB9Q.</string>
+    <string name="n0uk_info">Чат N0UK WSJT EME · 144 МГц · только чтение · обновление каждые 90 с</string>
+    <string name="n0uk_cq_title">Вызовы CQ в чате N0UK (144 МГц), последние 60 минут: %1$d</string>
+    <string name="n0uk_cq_header">UTC - частота - период - позывной - вид - локатор - луна</string>
+    <string name="n0uk_cq_empty">Нет вызовов CQ в чате N0UK за последние 60 минут.</string>
+    <string name="n0uk_error">Чат N0UK недоступен: %1$s</string>
 </resources>
