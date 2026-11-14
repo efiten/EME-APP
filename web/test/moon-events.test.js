@@ -3,6 +3,7 @@ import { toLatLon } from '../src/lib/maidenhead.js';
 import { position, quickElevationDeg, subLunarPoint } from '../src/lib/moon-calculator.js';
 import { computeEvents } from '../src/lib/moon-events.js';
 import { readExpected } from './expected.js';
+import { withTimeZone } from './tz.js';
 
 const millis = (iso) => Date.parse(iso);
 
@@ -41,10 +42,10 @@ describe('moon events', () => {
   });
 
   describe('time zone independence', () => {
-    const oldTz = process.env.TZ;
+    let restoreTz = null;
     afterEach(() => {
-      if (oldTz === undefined) delete process.env.TZ;
-      else process.env.TZ = oldTz;
+      restoreTz?.();
+      restoreTz = null;
     });
 
     test('same utcMillis under America/New_York', () => {
@@ -52,7 +53,7 @@ describe('moon events', () => {
       const p = toLatLon(row.locator);
       const now = millis(row.now_utc);
       const base = computeEvents(p.latDeg, p.lonDeg, now);
-      process.env.TZ = 'America/New_York';
+      restoreTz = withTimeZone('America/New_York');
       expect(new Date(now).getHours()).not.toBe(new Date(now).getUTCHours());
       const ny = computeEvents(p.latDeg, p.lonDeg, now);
       expect(ny.nextRise.utcMillis).toBe(base.nextRise.utcMillis);
