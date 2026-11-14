@@ -58,9 +58,9 @@
     <string name="language">Язык</string>
     <string name="language_system">Язык телефона (автоматически)</string>
     <string name="recent_in_chat">Недавно писали в чат:</string>
-    <string name="chatcq_title">Вызовы CQ в чате HB9Q (%1$s), последние 30 минут: %2$d</string>
+    <string name="chatcq_title">Вызовы CQ в чате HB9Q (%1$s), последние 60 минут: %2$d</string>
     <string name="chatcq_header">UTC - частота - период - позывной - вид - CFOM - Гц</string>
-    <string name="chatcq_empty">Нет вызовов CQ в чате HB9Q за последние 30 минут.</string>
+    <string name="chatcq_empty">Нет вызовов CQ в чате HB9Q за последние 60 минут.</string>
     <string name="deg_now">Деградация сейчас (%1$s)</string>
     <string name="deg_excellent">Отлично</string>
     <string name="deg_good">Хорошо</string>

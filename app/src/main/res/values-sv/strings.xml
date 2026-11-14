@@ -58,9 +58,9 @@
     <string name="language">Språk</string>
     <string name="language_system">Telefonens språk (automatiskt)</string>
     <string name="recent_in_chat">Skrev nyligen i chatten:</string>
-    <string name="chatcq_title">CQ-anrop i HB9Q-chatten (%1$s), senaste 30 minuterna: %2$d</string>
+    <string name="chatcq_title">CQ-anrop i HB9Q-chatten (%1$s), senaste 60 minuterna: %2$d</string>
     <string name="chatcq_header">UTC - frekv - period - anrop - mod - CFOM - Hz</string>
-    <string name="chatcq_empty">Inga CQ-anrop i HB9Q-chatten de senaste 30 minuterna.</string>
+    <string name="chatcq_empty">Inga CQ-anrop i HB9Q-chatten de senaste 60 minuterna.</string>
     <string name="deg_now">Degradering nu (%1$s)</string>
     <string name="deg_excellent">Utmärkt</string>
     <string name="deg_good">Bra</string>

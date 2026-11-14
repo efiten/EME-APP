@@ -58,9 +58,9 @@
     <string name="language">言語</string>
     <string name="language_system">電話の言語（自動）</string>
     <string name="recent_in_chat">最近チャットに書き込んだ局：</string>
-    <string name="chatcq_title">HB9Q チャットの CQ 呼び出し（%1$s）、直近 30 分：%2$d</string>
+    <string name="chatcq_title">HB9Q チャットの CQ 呼び出し（%1$s）、直近 60 分：%2$d</string>
     <string name="chatcq_header">UTC - 周波数 - 周期 - コール - モード - CFOM - Hz</string>
-    <string name="chatcq_empty">直近 30 分、HB9Q チャットに CQ 呼び出しはありません。</string>
+    <string name="chatcq_empty">直近 60 分、HB9Q チャットに CQ 呼び出しはありません。</string>
     <string name="deg_now">現在のデグラデーション（%1$s）</string>
     <string name="deg_excellent">非常に良い</string>
     <string name="deg_good">良い</string>
