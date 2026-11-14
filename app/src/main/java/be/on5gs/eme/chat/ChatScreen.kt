@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,7 +71,8 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
     val chat by ChatStore.state.collectAsState()
     val messages = if (chat.band == band) chat.messages else emptyList()
     val participants = if (chat.band == band) ChatStore.recentParticipants(chat, myCallsign) else emptyList()
-    var subTab by remember { mutableIntStateOf(0) }          // 0 = berichten, 1 = deelnemers
+    var subTab by remember { mutableIntStateOf(0) }          // 0 = berichten, 1 = deelnemers, 2 = Chat CQ
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }   // voor het venster van Chat CQ
     val creds = remember { credentialStore.load() }
     val scope = rememberCoroutineScope()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -81,6 +83,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
                 ChatStore.refreshIfOlderThan(ChatStore.MESSAGES_REFRESH_MS, band, c)
+                now = System.currentTimeMillis()
                 delay(5_000)
             }
         }
@@ -110,6 +113,7 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
             TabRow(selectedTabIndex = subTab, modifier = Modifier.weight(1f)) {
                 Tab(selected = subTab == 0, onClick = { subTab = 0 }, text = { Text(stringResource(R.string.messages)) })
                 Tab(selected = subTab == 1, onClick = { subTab = 1 }, text = { Text(stringResource(R.string.participants, participants.size)) })
+                Tab(selected = subTab == 2, onClick = { subTab = 2 }, text = { Text(stringResource(R.string.tab_chatcq)) })
             }
             if (chat.loading) {
                 CircularProgressIndicator(Modifier.padding(12.dp).width(24.dp), strokeWidth = 2.dp)
@@ -142,8 +146,11 @@ fun ChatScreen(settings: SettingsRepository, credentialStore: CredentialStore, m
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 6.dp)) {
                     items(messages, key = { it.id }) { msg -> MessageRow(msg, myCallsign) }
                 }
-            } else {
+            } else if (subTab == 1) {
                 ParticipantList(participants)
+            } else {
+                // Venster: ChatCqParser.WINDOW_MINUTES (60 min, zoals Live CQ)
+                ChatCqList(band.label, ChatCqParser.recent(messages, now))
             }
         }
     }

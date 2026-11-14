@@ -6,111 +6,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
 import be.on5gs.eme.R
 import be.on5gs.eme.ui.theme.FixedFontScale
-import be.on5gs.eme.settings.CredentialStore
-import be.on5gs.eme.settings.SettingsRepository
-import kotlinx.coroutines.delay
 
 private val CQ_ORANGE = Color(0xFFFFB74D)
 private val DIM = Color(0xFF9FB0C8)
 private val ERROR_RED = Color(0xFFEF5350)
-
-/**
- * Tabblad "Chat CQ": de CQ-aanroepen uit de HB9Q-chat van het laatste half uur, nieuwste bovenaan.
- * Getoond als tabel: UTC | freq | periode | call | mode | CFOM | Hz
- */
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun ChatCqScreen(settings: SettingsRepository, credentialStore: CredentialStore) {
-    var band by remember { mutableStateOf(settings.chatBand) }
-    val chat by ChatStore.state.collectAsState()
-    val creds = remember { credentialStore.load() }
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    LaunchedEffect(band, creds) {
-        val c = creds ?: return@LaunchedEffect
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            while (true) {
-                ChatStore.refreshIfOlderThan(ChatStore.MESSAGES_REFRESH_MS, band, c)
-                now = System.currentTimeMillis()
-                delay(5_000)
-            }
-        }
-    }
-
-    Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
-        if (creds == null) {
-            Text(stringResource(R.string.need_login), modifier = Modifier.padding(top = 32.dp))
-            return@Column
-        }
-        if (chat.loggedOut) {
-            LoggedOut()
-            return@Column
-        }
-
-        // Zelfde bandkeuze als het tabblad Chat (wordt onthouden)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Hb9qBand.entries.forEach { b ->
-                FilterChip(
-                    selected = b == band,
-                    onClick = { if (b != band) { band = b; settings.chatBand = b } },
-                    label = { Text(b.label) },
-                )
-            }
-        }
-
-        chat.error?.takeIf { chat.band == band }?.let {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF3B1F1F)),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-            ) { Text(stringResource(it.first, it.second), color = ERROR_RED, modifier = Modifier.padding(10.dp)) }
-        }
-
-        val cqs = if (chat.band == band) ChatCqParser.recent(chat.messages, now) else emptyList()
-        ChatCqList(band.label, cqs)
-    }
-}
 
 /** Kolombreedtes van de tabel (dp). De kolom "call" krijgt de overblijvende ruimte. */
 private val COL_UTC = 40.dp

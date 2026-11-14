@@ -107,7 +107,7 @@ class ScreenshotTest {
     @Config(qualifiers = "+ja")
     fun chatJapanese() {
         compose.setContent { EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { Box(Modifier.fillMaxSize()) { EmeApp() } } } }
-        compose.onNodeWithText("HB9Q チャット").performClick()
+        compose.onNodeWithText("HB9Q").performClick()
         compose.waitForIdle()
         save("chat-ja")
     }

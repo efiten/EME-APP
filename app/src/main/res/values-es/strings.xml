@@ -2,7 +2,7 @@
 <!-- Gegenereerd: es -->
 <resources>
     <string name="tab_moon">Luna</string>
-    <string name="tab_chat">HB9Q Chat</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">Ajustes</string>
     <string name="back">Atrás</string>
     <string name="time_local">Local</string>

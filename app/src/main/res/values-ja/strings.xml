@@ -2,7 +2,7 @@
 <!-- Gegenereerd: ja -->
 <resources>
     <string name="tab_moon">月</string>
-    <string name="tab_chat">HB9Q チャット</string>
+    <string name="tab_chat">HB9Q</string>
     <string name="settings">設定</string>
     <string name="back">戻る</string>
     <string name="time_local">現地</string>
