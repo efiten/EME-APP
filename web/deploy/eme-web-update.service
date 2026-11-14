@@ -6,4 +6,5 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
+TimeoutStartSec=10min
 ExecStart=/usr/local/sbin/eme-web-update

@@ -29,7 +29,7 @@ ssh "${ssh_opts[@]}" "$EME_DEPLOY_HOST" "/usr/local/sbin/eme-web-update" "$tag"
 
 echo "3/3 Waiting for $URL_VERSION to report $version"
 for _ in $(seq 1 30); do
-  if curl -fsS --max-time 3 "$URL_VERSION" 2>/dev/null | grep -qF "\"version\":\"$version\""; then
+  if body=$(curl -fsS --max-time 3 "$URL_VERSION" 2>/dev/null) && [[ $body == *"\"version\":\"$version\""* ]]; then
     echo "OK: eme.on8ar.eu runs $version"
     exit 0
   fi

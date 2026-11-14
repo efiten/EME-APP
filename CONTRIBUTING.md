@@ -88,8 +88,9 @@ that pull request when the maintainer asks "make a release" (`.claude/skills/rel
 The same workflow also attaches `eme-web-vX.Y.Z.zip` (the web app and its server). eme.on8ar.eu
 updates itself from it within about 15 minutes (`eme-web-update.timer` on the server). The maintainer
 (ON8AR) can deploy at once with `web/deploy/deploy-release.sh vX.Y.Z`. A failed deploy rolls back by
-itself and is not retried for that version until someone deploys it by hand
-(see `web/deploy/README.md`).
+itself and is not retried for that version until someone deploys that version by hand; newer
+releases are still deployed. To stay on an older version, first run
+`systemctl stop eme-web-update.timer` on the server (see `web/deploy/README.md`).
 
 ## Reporting a bug
 
