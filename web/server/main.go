@@ -39,9 +39,12 @@ func defaultConfig(version string) config {
 func (c config) sources() map[string]source {
 	return map[string]source{
 		"/api/livecq/w3sz": {name: "w3sz", url: c.w3szURL, contentType: "text/plain; charset=utf-8",
-			maxAge: 120 * time.Second, minInterval: 30 * time.Second},
+			maxAge: 120 * time.Second, minInterval: 30 * time.Second,
+			method: http.MethodPost, reqType: "application/x-www-form-urlencoded", reqBody: "time_period=1d",
+			check: checkW3sz},
 		"/api/livecq/n6nu": {name: "n6nu", url: c.n6nuURL, contentType: "application/json; charset=utf-8",
-			maxAge: 120 * time.Second, minInterval: 30 * time.Second},
+			maxAge: 120 * time.Second, minInterval: 30 * time.Second,
+			accept: "application/json", check: checkN6nu},
 		"/api/n0uk": {name: "n0uk", url: c.n0ukURL, contentType: "text/html; charset=utf-8",
 			maxAge: 90 * time.Second, minInterval: 90 * time.Second},
 	}

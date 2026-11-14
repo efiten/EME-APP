@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -27,6 +29,13 @@ type source struct {
 	contentType string // Content-Type sent to the browser (the body is always UTF-8)
 	maxAge      time.Duration
 	minInterval time.Duration
+
+	// Request, exactly as the Android app sends it. Empty method means GET.
+	method  string
+	reqType string // Content-Type of the request body
+	reqBody string
+	accept  string
+	check   func(body []byte) string // content check on the decoded body; returns error text or ""
 }
 
 // result is one answer for a browser.
@@ -99,11 +108,25 @@ func (c *cache) fetch(attemptAt time.Time) {
 
 // download does a plain GET. errText is short and never contains the URL.
 func (c *cache) download() (body []byte, status int, errText string) {
-	req, err := http.NewRequest(http.MethodGet, c.src.url, nil)
+	method := c.src.method
+	if method == "" {
+		method = http.MethodGet
+	}
+	var reqBody io.Reader
+	if c.src.reqBody != "" {
+		reqBody = strings.NewReader(c.src.reqBody)
+	}
+	req, err := http.NewRequest(method, c.src.url, reqBody)
 	if err != nil {
 		return nil, 0, "upstream request error"
 	}
 	req.Header.Set("User-Agent", c.userAgent)
+	if c.src.reqType != "" {
+		req.Header.Set("Content-Type", c.src.reqType)
+	}
+	if c.src.accept != "" {
+		req.Header.Set("Accept", c.src.accept)
+	}
 	resp, err := c.client.Do(req)
 	if err != nil {
 		var ne net.Error
@@ -113,8 +136,8 @@ func (c *cache) download() (body []byte, status int, errText string) {
 		return nil, 0, "upstream unreachable"
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, resp.StatusCode, fmt.Sprintf("upstream HTTP %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		return nil, resp.StatusCode, fmt.Sprintf("%s HTTP %d", strings.ToUpper(c.src.name), resp.StatusCode)
 	}
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes+1))
 	if err != nil {
@@ -127,7 +150,28 @@ func (c *cache) download() (body []byte, status int, errText string) {
 	if len(raw) > maxBodyBytes {
 		return nil, resp.StatusCode, "upstream response too large"
 	}
-	return decodeBody(raw, resp.Header.Get("Content-Type")), resp.StatusCode, ""
+	body = decodeBody(raw, resp.Header.Get("Content-Type"))
+	if c.src.check != nil {
+		if msg := c.src.check(body); msg != "" {
+			return nil, resp.StatusCode, msg
+		}
+	}
+	return body, resp.StatusCode, ""
+}
+
+// Content checks as in LiveCqRepository.kt.
+func checkW3sz(body []byte) string {
+	if bytes.HasPrefix(bytes.TrimLeftFunc(body, unicode.IsSpace), []byte("<")) {
+		return "W3SZ: no CSV data"
+	}
+	return ""
+}
+
+func checkN6nu(body []byte) string {
+	if !bytes.HasPrefix(bytes.TrimLeftFunc(body, unicode.IsSpace), []byte("{")) {
+		return "N6NU: no JSON data"
+	}
+	return ""
 }
 
 // cp1252High maps bytes 0x80-0x9F of windows-1252. The five undefined bytes map to the

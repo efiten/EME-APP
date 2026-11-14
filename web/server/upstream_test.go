@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -36,13 +37,17 @@ type upstream struct {
 	code  int
 	delay time.Duration
 	lastR *http.Request
+
+	lastBody string
 }
 
 func newUpstream(t *testing.T) *upstream {
 	u := &upstream{body: []byte("v1"), code: 200}
 	u.srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		u.hits.Add(1)
+		rb, _ := io.ReadAll(r.Body)
 		u.mu.Lock()
+		u.lastBody = string(rb)
 		body, ctype, code, delay := u.body, u.ctype, u.code, u.delay
 		u.lastR = r
 		u.mu.Unlock()

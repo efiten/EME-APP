@@ -148,3 +148,77 @@ func TestHandlerHundredParallelOneHit(t *testing.T) {
 		t.Fatalf("hits=%d", w.hits.Load())
 	}
 }
+
+func (u *upstream) lastBodyText() string {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	return u.lastBody
+}
+
+func TestRequestsMatchTheApp(t *testing.T) {
+	w, n, c, clk := newUpstream(t), newUpstream(t), newUpstream(t), newFakeClock()
+	n.set(func(u *upstream) { u.body = []byte(`{"spots":[]}`) })
+	h := testHandler(w, n, c, clk)
+	for _, p := range []string{"/api/livecq/w3sz", "/api/livecq/n6nu", "/api/n0uk"} {
+		if rec := do(h, "GET", p); rec.Code != 200 {
+			t.Fatalf("%s: %d", p, rec.Code)
+		}
+	}
+	r := w.request()
+	if r.Method != "POST" || r.Header.Get("Content-Type") != "application/x-www-form-urlencoded" || w.lastBodyText() != "time_period=1d" {
+		t.Fatalf("w3sz: %s %q %q", r.Method, r.Header.Get("Content-Type"), w.lastBodyText())
+	}
+	if r.Header.Get("User-Agent") != "EME-ON8AR-Web/1.2.3" {
+		t.Fatalf("w3sz UA %q", r.Header.Get("User-Agent"))
+	}
+	r = n.request()
+	if r.Method != "GET" || r.Header.Get("Accept") != "application/json" || n.lastBodyText() != "" {
+		t.Fatalf("n6nu: %s %q %q", r.Method, r.Header.Get("Accept"), n.lastBodyText())
+	}
+	r = c.request()
+	if r.Method != "GET" || c.lastBodyText() != "" {
+		t.Fatalf("n0uk: %s %q", r.Method, c.lastBodyText())
+	}
+}
+
+func TestContentChecks(t *testing.T) {
+	cases := []struct{ path, body, want string }{
+		{"/api/livecq/w3sz", "  \n<html>login</html>", "W3SZ: no CSV data"},
+		{"/api/livecq/n6nu", "<html>", "N6NU: no JSON data"},
+		{"/api/livecq/n6nu", "[1,2]", "N6NU: no JSON data"},
+	}
+	for _, tc := range cases {
+		w, n, c, clk := newUpstream(t), newUpstream(t), newUpstream(t), newFakeClock()
+		w.set(func(u *upstream) { u.body = []byte(tc.body) })
+		n.set(func(u *upstream) { u.body = []byte(tc.body) })
+		rec := do(testHandler(w, n, c, clk), "GET", tc.path)
+		if rec.Code != 502 || rec.Header().Get("X-Upstream-Error") != tc.want {
+			t.Fatalf("%s: %d %q", tc.path, rec.Code, rec.Header().Get("X-Upstream-Error"))
+		}
+	}
+}
+
+func TestContentCheckFailureKeepsLastGood(t *testing.T) {
+	w, n, c, clk := newUpstream(t), newUpstream(t), newUpstream(t), newFakeClock()
+	h := testHandler(w, n, c, clk)
+	do(h, "GET", "/api/livecq/w3sz")
+	w.set(func(u *upstream) { u.body = []byte("<html>") })
+	clk.Advance(121 * time.Second)
+	rec := do(h, "GET", "/api/livecq/w3sz")
+	if rec.Code != 200 || rec.Body.String() != "v1" || rec.Header().Get("X-Upstream-Error") != "W3SZ: no CSV data" {
+		t.Fatalf("%d %q %q", rec.Code, rec.Body.String(), rec.Header().Get("X-Upstream-Error"))
+	}
+}
+
+func TestOnly200Accepted(t *testing.T) {
+	w, n, c, clk := newUpstream(t), newUpstream(t), newUpstream(t), newFakeClock()
+	c.set(func(u *upstream) { u.code = 204 })
+	w.set(func(u *upstream) { u.code = 500 })
+	h := testHandler(w, n, c, clk)
+	if rec := do(h, "GET", "/api/n0uk"); rec.Code != 502 || rec.Header().Get("X-Upstream-Error") != "N0UK HTTP 204" {
+		t.Fatalf("%d %q", rec.Code, rec.Header().Get("X-Upstream-Error"))
+	}
+	if rec := do(h, "GET", "/api/livecq/w3sz"); rec.Header().Get("X-Upstream-Error") != "W3SZ HTTP 500" {
+		t.Fatalf("%q", rec.Header().Get("X-Upstream-Error"))
+	}
+}
