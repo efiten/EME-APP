@@ -12,7 +12,22 @@ let width;
 const clientWidth = Object.getOwnPropertyDescriptor(Element.prototype, 'clientWidth');
 
 const settings = (over = {}) => ({ locator: 'JO21SC', callsign: 'ON5GS', cqBands: new Set(['B23CM']), language: 'en', ...over });
-const ctxOf = (s, extra = {}) => ({ settings: s, t, now: () => Date.now(), ...extra });
+/** Stand-in for the shared Live CQ store: the screen only reads getState() and subscribes. */
+const fakeStore = () => {
+  const store = { state: { spots: [] }, listeners: new Set() };
+  store.getState = () => store.state;
+  store.subscribe = (fn) => {
+    store.listeners.add(fn);
+    return () => store.listeners.delete(fn);
+  };
+  store.emit = (spots) => {
+    store.state = { spots };
+    store.listeners.forEach((fn) => fn(store.state));
+  };
+  return store;
+};
+let liveCq;
+const ctxOf = (s, extra = {}) => ({ settings: s, t, now: () => Date.now(), liveCq, ...extra });
 const q = (role) => host.querySelector(`[data-role="${role}"]`);
 
 beforeEach(() => {
@@ -27,6 +42,7 @@ beforeEach(() => {
     return null;
   };
   Object.defineProperty(HTMLCanvasElement.prototype, 'clientWidth', { get: () => width, configurable: true });
+  liveCq = fakeStore();
   host = document.createElement('div');
   document.body.append(host);
   screen = createMoonScreen();
@@ -115,6 +131,18 @@ describe('moon screen', () => {
     window.dispatchEvent(new Event('resize'));
     window.dispatchEvent(new Event('resize'));
     vi.advanceTimersByTime(50);
+    expect(drawCalls).toBe(2);
+  });
+
+  test('redraws the map at once when the shared Live CQ spots change, and stops listening after unmount', () => {
+    screen.mount(host, ctxOf(settings()));
+    expect(drawCalls).toBe(1);
+    expect(liveCq.listeners.size).toBe(1);
+    liveCq.emit([]);
+    expect(drawCalls).toBe(2);
+    screen.unmount();
+    expect(liveCq.listeners.size).toBe(0);
+    liveCq.emit([]);
     expect(drawCalls).toBe(2);
   });
 });
