@@ -1,4 +1,4 @@
-# Install as /etc/systemd/system/eme-web.service (task 14), then: systemctl enable eme-web
+# Install as /etc/systemd/system/eme-web.service, then: systemctl enable eme-web
 # /etc/default/eme-web holds EME_VERSION=<version>; eme-web-update writes it.
 [Unit]
 Description=EME web server (eme.on8ar.eu)
@@ -8,7 +8,8 @@ Wants=network-online.target
 [Service]
 User=www-data
 EnvironmentFile=/etc/default/eme-web
-ExecStart=/opt/eme-web/eme-web -listen 127.0.0.1:5200 -version ${EME_VERSION}
+ExecStart=/opt/eme-web/eme-web -listen 127.0.0.1:5200 -version ${EME_VERSION} -state-dir /var/lib/eme-web-server
+StateDirectory=eme-web-server
 Restart=on-failure
 NoNewPrivileges=yes
 ProtectSystem=strict
