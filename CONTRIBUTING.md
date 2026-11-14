@@ -38,6 +38,10 @@ Requirements: Android Studio, or JDK 17+ and the Android SDK (platform 35).
 - **Translations.** A new or changed text goes into all 13 `strings.xml` files
   (`app/src/main/res/values*/`). `TranslationsTest` fails when a language is missing a text
   or has different placeholders than the English one.
+- **Layout.** `LayoutTest` renders every screen in all 13 languages on a small phone with a large
+  font, and in English on a phone and a tablet. It fails on text that is cut off, an element
+  outside the screen or a touch target under 48 dp, and writes a picture of each failing screen
+  to `app/build/layout-failures/`. A known problem goes into its `KNOWN` list only with an issue.
 - **Test data.** The samples in `app/src/test/resources/` are real data from the HB9Q chat and
   W3SZ Live CQ. Replace every e-mail address by `xxxx@test.com` before you add a new sample.
 - **No secrets.** Never put a login, password or cookie in code, test data, an issue or a
