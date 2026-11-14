@@ -19,7 +19,13 @@ enum class Band(val label: String, val minMhz: Double, val maxMhz: Double) {
     }
 }
 
-/** Eén CQ-melding uit de Live CQ-lijst. */
+/** Waar een melding vandaan komt. */
+enum class LiveCqSource(val label: String) {
+    W3SZ("W3SZ"),
+    N6NU("N6NU"),
+}
+
+/** Eén CQ-melding uit de Live CQ-lijst (W3SZ, N6NU of allebei). */
 data class LiveCqSpot(
     val utcMillis: Long,        // tijdstip van de decode, UTC
     val callsign: String,
@@ -30,4 +36,11 @@ data class LiveCqSpot(
     val db: String,             // signaalsterkte zoals gemeld
     val spotter: String,
     val spotterGrid: String,
-)
+    val sources: Set<LiveCqSource> = setOf(LiveCqSource.W3SZ),
+    val dt: String = "",        // tijdverschil van de decode in s, of "" als onbekend
+    val app: String = "",       // programma van de spotter (WSJT-X, MAP65, ...), of ""
+) {
+    /** "W3SZ", "N6NU" of "W3SZ+N6NU". */
+    val sourceLabel: String
+        get() = LiveCqSource.entries.filter { it in sources }.joinToString("+") { it.label }
+}

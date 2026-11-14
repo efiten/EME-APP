@@ -14,8 +14,8 @@ object LiveCqParser {
     private val TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     // Dezelfde controles als de W3SZ-pagina zelf doet
-    private val CALL_REGEX = Regex("^(?:[A-Z0-9]{1,3}/)?[A-Z0-9]{1,3}[0-9][A-Z]{1,4}$")
-    private val GRID_REGEX = Regex("^[A-R]{2}[0-9]{2}([A-X]{2}([0-9]{2}([A-X]{2})?)?)?$", RegexOption.IGNORE_CASE)
+    internal val CALL_REGEX = Regex("^(?:[A-Z0-9]{1,3}/)?[A-Z0-9]{1,3}[0-9][A-Z]{1,4}$")
+    internal val GRID_REGEX = Regex("^[A-R]{2}[0-9]{2}([A-X]{2}([0-9]{2}([A-X]{2})?)?)?$", RegexOption.IGNORE_CASE)
 
     /** Alle geldige CQ-meldingen uit de CSV-tekst. Onleesbare regels worden overgeslagen. */
     fun parse(csv: String): List<LiveCqSpot> {
@@ -26,7 +26,7 @@ object LiveCqParser {
         val iFreq = idx("skedfreq"); val iCall = idx("callsign"); val iGrid = idx("grid")
         val iMode = idx("mode"); val iTime = idx("utcdatetime"); val iDb = idx("db")
         val iSpotter = idx("spotter"); val iSpGrid = idx("spottergrid"); val iType = idx("msgtype")
-        val iUpload = idx("uploadtime")
+        val iUpload = idx("uploadtime"); val iDt = idx("dt"); val iApp = idx("apptype")
         require(iFreq >= 0 && iCall >= 0 && iTime >= 0) { "Onverwacht formaat van de Live CQ-gegevens" }
 
         return lines.drop(1).mapNotNull { line ->
@@ -49,14 +49,43 @@ object LiveCqParser {
                 db = col(iDb),
                 spotter = col(iSpotter).uppercase(),
                 spotterGrid = col(iSpGrid),
+                sources = setOf(LiveCqSource.W3SZ),
+                dt = col(iDt),
+                app = col(iApp),
             )
         }
     }
 
     /**
+     * Voegt de meldingen van W3SZ en N6NU samen. Dezelfde decode (zelfde station, band,
+     * spotter en minuut) die op beide sites staat, wordt één melding met beide bronnen;
+     * wat bij de ene ontbreekt (locator, DT, programma) wordt aangevuld met de andere.
+     */
+    fun merge(w3sz: List<LiveCqSpot>, n6nu: List<LiveCqSpot>): List<LiveCqSpot> {
+        val out = LinkedHashMap<List<Any?>, LiveCqSpot>()
+        for (spot in w3sz + n6nu) {
+            val key = listOf(spot.callsign, spot.band, spot.spotter, spot.utcMillis / 60_000)
+            val prev = out[key]
+            out[key] = if (prev == null) spot else combine(prev, spot)
+        }
+        return out.values.toList()
+    }
+
+    private fun combine(a: LiveCqSpot, b: LiveCqSpot) = a.copy(
+        grid = a.grid.ifEmpty { b.grid },
+        db = a.db.ifEmpty { b.db },
+        spotterGrid = a.spotterGrid.ifEmpty { b.spotterGrid },
+        sources = a.sources + b.sources,
+        dt = a.dt.ifEmpty { b.dt },
+        app = a.app.ifEmpty { b.app },
+    )
+
+    /**
      * Wat de app toont: alleen de gekozen banden, niet ouder dan [maxAgeMinutes],
      * zonder meldingen waarbij spotter = station zelf (zoals de standaard op W3SZ),
      * en per callsign + band alleen de nieuwste melding. Nieuwste bovenaan.
+     * Die melding krijgt alle bronnen van de groep, en een locator uit een oudere
+     * melding als de nieuwste er geen heeft (N6NU geeft vaak "--").
      */
     fun select(
         spots: List<LiveCqSpot>,
@@ -68,7 +97,13 @@ object LiveCqParser {
         return spots
             .filter { it.band in bands && it.utcMillis >= oldest && it.spotter != it.callsign }
             .groupBy { it.callsign to it.band }
-            .map { (_, group) -> group.maxBy { it.utcMillis } }
+            .map { (_, group) ->
+                val newest = group.sortedByDescending { it.utcMillis }
+                newest.first().copy(
+                    grid = newest.firstOrNull { it.grid.isNotEmpty() }?.grid ?: "",
+                    sources = group.flatMapTo(mutableSetOf()) { it.sources },
+                )
+            }
             .sortedByDescending { it.utcMillis }
     }
 
