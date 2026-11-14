@@ -10,6 +10,8 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
   can be behind.
 - Check the open issues and pull requests (`gh issue list`, `gh pr list`) to see whether the
   problem is already reported or someone is already working on it.
+- Before you take an issue, read its comments. If someone has already claimed it, ask in the
+  issue first. When you take it, leave a comment that you do.
 
 ## How to make a change
 
@@ -36,6 +38,9 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 - Never put a login, password or cookie in code, test data, a commit, an issue or a pull
   request.
 - Never add an e-mail address to the test data; replace it by `xxxx@test.com`.
+- Never put the signing key (`debug.keystore`) or its base64 text in the repository, a commit,
+  an issue, a pull request or the chat, and never build or sign an APK with it. It is kept only
+  as a secret in the GitHub environment `release`.
 
 ## Releases
 
