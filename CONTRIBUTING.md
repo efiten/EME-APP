@@ -31,6 +31,13 @@ Requirements: Android Studio, or JDK 17+ and the Android SDK (platform 35).
 ./gradlew testDebugUnitTest -Pscreenshots   # also renders screenshots into app/build/screenshots/
 ```
 
+The web app (`web/`) has its own tests. They need Node 24 and Go (the version in `web/server/go.mod`):
+
+```bash
+(cd web && npm ci && npm test)    # web app tests
+(cd web/server && go test ./...)  # web server tests
+```
+
 ## Rules for code changes
 
 - **Tests.** A change in logic (parsers, calculations, stores) comes with a unit test in
@@ -42,6 +49,9 @@ Requirements: Android Studio, or JDK 17+ and the Android SDK (platform 35).
   font, and in English on a phone and a tablet. It fails on text that is cut off, an element
   outside the screen or a touch target under 48 dp, and writes a picture of each failing screen
   to `app/build/layout-failures/`. A known problem goes into its `KNOWN` list only with an issue.
+- **Android and web together.** A change that users see goes into `app/` and `web/` in the
+  same pull request. A change that only exists on one platform says so in the pull request,
+  with the reason.
 - **Test data.** The samples in `app/src/test/resources/` are real data from the HB9Q chat and
   W3SZ Live CQ. Replace every e-mail address by `xxxx@test.com` before you add a new sample.
 - **No secrets.** Never put a login, password or cookie in code, test data, an issue or a
@@ -64,6 +74,8 @@ discuss them in an issue first.
 - **N0UK chat is read only.** The app reads www.chris.org/cgi-bin/jt65emeA and never posts to it.
 - **N6NU Live CQ is read only.** The app reads livecq.n6nu.org/api/spots with a GET request and
   sends nothing else to it.
+- **The web server polls for all web users together.** `web/server` fetches W3SZ, N6NU and
+  N0UK itself and keeps the same limits as the app, however many people have the web app open.
 - **Keep the honest User-Agent** (`EME-ON5GS-Android/<version>`), so the operators of HB9Q and
   W3SZ, N6NU and N0UK can see where the requests come from.
 
@@ -73,6 +85,8 @@ A release is its own pull request: it raises `versionCode` and `versionName` and
 release notes `docs/releases/vX.Y.Z.md`, nothing else. When it is merged, GitHub builds, signs
 and publishes the APK as a GitHub release (`.github/workflows/release.yml`). Claude prepares
 that pull request when the maintainer asks "make a release" (`.claude/skills/release/SKILL.md`).
+The same workflow also attaches `eme-web-vX.Y.Z.zip` (the web app and its server). The maintainer
+of eme.on8ar.eu (ON8AR) deploys it with `web/deploy/deploy-release.sh`.
 
 ## Reporting a bug
 
