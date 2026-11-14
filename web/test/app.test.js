@@ -7,8 +7,11 @@ import strings from '../src/generated/strings.json';
 
 let root;
 let navigatorDescriptor;
+let getContext;
 
 beforeEach(() => {
+  getContext = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = () => null; // jsdom has no canvas
   const m = new Map();
   vi.stubGlobal('localStorage', {
     getItem: (k) => (m.has(k) ? m.get(k) : null),
@@ -22,6 +25,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  HTMLCanvasElement.prototype.getContext = getContext;
   vi.unstubAllGlobals();
   if (navigatorDescriptor) Object.defineProperty(globalThis, 'navigator', navigatorDescriptor);
   else delete globalThis.navigator;
