@@ -6,6 +6,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -34,6 +38,10 @@ private val COL_PERIOD = 36.dp
 private val COL_MODE = 60.dp
 private val COL_CFOM = 40.dp
 private val COL_HZ = 34.dp
+/** Minimale breedte van de kolom "call", genoeg voor een roepnaam als DL1HUH/P. */
+private val COL_CALL_MIN = 60.dp
+/** Breedte die de tabel nodig heeft: vaste kolommen, de kolom "call" en 2 x 4 dp opvulling. */
+private val TABLE_MIN = COL_UTC + COL_FREQ + COL_PERIOD + COL_MODE + COL_CFOM + COL_HZ + COL_CALL_MIN + 8.dp
 
 internal val HEADER_BG = Color(0xFF1B3054)
 internal val ROW_ALT_BG = Color(0xFF102544)
@@ -50,6 +58,28 @@ internal fun ChatCqList(bandLabel: String, cqs: List<ChatCq>) = FixedFontScale {
 
         // Kopregel: de vertaalde verklaring "UTC - freq - periode - ..." opgesplitst in kolommen
         val titles = stringResource(R.string.chatcq_header).split(" - ")
+        FitWidth(TABLE_MIN) { CqTable(titles, cqs) }
+    }
+}
+
+/**
+ * Smaller dan [minWidth]: [content] gelijkmatig verkleinen (breedtes en letters samen),
+ * zodat de kolommen in verhouding blijven. Breder: ongewijzigd.
+ */
+@Composable
+private fun FitWidth(minWidth: Dp, content: @Composable () -> Unit) {
+    BoxWithConstraints {
+        val scale = if (maxWidth >= minWidth) 1f else maxWidth / minWidth
+        val d = LocalDensity.current
+        CompositionLocalProvider(LocalDensity provides Density(d.density * scale, d.fontScale)) {
+            content()
+        }
+    }
+}
+
+@Composable
+private fun CqTable(titles: List<String>, cqs: List<ChatCq>) {
+    Column {
         Row(Modifier.fillMaxWidth().background(HEADER_BG).padding(vertical = 6.dp, horizontal = 4.dp)) {
             val h = { i: Int -> titles.getOrElse(i) { "" } }
             HeaderCell(h(0), COL_UTC)
