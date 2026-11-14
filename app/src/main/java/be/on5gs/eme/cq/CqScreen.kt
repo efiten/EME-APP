@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -182,26 +183,51 @@ private fun SpotCard(spot: LiveCqSpot, now: Long) {
                 String.format(Locale.US, "%.3f MHz   %s   %s dB", spot.freqMhz, spot.mode, spot.db),
                 fontFamily = FontFamily.Monospace,
             )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // DT en programma bij de spotter; is de regel te lang, dan wordt het programma afgekort
-                val dt = if (spot.dt.isNotEmpty()) " · DT ${spot.dt}" else ""
-                val app = if (spot.app.isNotEmpty()) " · ${spot.app}" else ""
-                Text(
-                    stringResource(R.string.via, spot.spotter) + dt + app,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                // Bron van de melding: W3SZ, N6NU of beide
-                Text(
-                    spot.sourceLabel,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                )
-                MoonAtStation(spot.grid, now)
-            }
+            // DT en programma bij de spotter; is de regel te lang, dan wordt alleen het programma afgekort
+            val dt = if (spot.dt.isNotEmpty()) " · DT ${spot.dt}" else ""
+            val app = if (spot.app.isNotEmpty()) " · ${spot.app}" else ""
+            SpotterLine(
+                spotter = { Text(stringResource(R.string.via, spot.spotter) + dt, style = MaterialTheme.typography.bodySmall) },
+                app = { Text(app, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                end = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        // Bron van de melding: W3SZ, N6NU of beide
+                        Text(
+                            spot.sourceLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                        )
+                        MoonAtStation(spot.grid, now)
+                    }
+                },
+            )
+        }
+    }
+}
+
+/**
+ * Regel onder een station: [spotter] ("via I3MEK · DT 2.8") en [app] links, [end] (bron en maanstand)
+ * rechts. De spotter en DT worden nooit afgekort, het programma wel. Past [spotter] samen met [end]
+ * niet op één regel, dan komt [end] rechts op een tweede regel.
+ */
+@Composable
+private fun SpotterLine(spotter: @Composable () -> Unit, app: @Composable () -> Unit, end: @Composable () -> Unit) {
+    Layout(contents = listOf(spotter, app, end), modifier = Modifier.fillMaxWidth()) { (s, a, e), constraints ->
+        val width = constraints.maxWidth
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val spotterP = s.first().measure(loose)
+        val endP = e.first().measure(loose)
+        val oneLine = spotterP.width + endP.width <= width
+        val appRoom = (width - spotterP.width - if (oneLine) endP.width else 0).coerceAtLeast(0)
+        val appP = a.first().measure(loose.copy(maxWidth = appRoom))
+        val firstH = maxOf(spotterP.height, appP.height, if (oneLine) endP.height else 0)
+        val height = if (oneLine) firstH else firstH + endP.height
+        layout(width, height) {
+            spotterP.place(0, (firstH - spotterP.height) / 2)
+            appP.place(spotterP.width, (firstH - appP.height) / 2)
+            if (oneLine) endP.place(width - endP.width, (firstH - endP.height) / 2)
+            else endP.place(width - endP.width, firstH)
         }
     }
 }
