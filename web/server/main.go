@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
@@ -21,6 +22,9 @@ type config struct {
 	now     func() time.Time
 
 	w3szURL, n6nuURL, n0ukURL string
+
+	// stateDir, when set, keeps the last attempt time per source across restarts.
+	stateDir string
 }
 
 func defaultConfig(version string) config {
@@ -36,17 +40,19 @@ func defaultConfig(version string) config {
 
 // sources maps each browser-facing path to its upstream. The intervals are the same as
 // the Android app uses (see CONTRIBUTING.md) and apply to all web users together.
+// The N0UK page is third-party HTML with a script and a form: it is served as text/plain
+// so that it never renders in our origin (the browser only reads it with res.text()).
 func (c config) sources() map[string]source {
 	return map[string]source{
 		"/api/livecq/w3sz": {name: "w3sz", url: c.w3szURL, contentType: "text/plain; charset=utf-8",
-			maxAge: 120 * time.Second, minInterval: 30 * time.Second,
+			maxAge: 120 * time.Second,
 			method: http.MethodPost, reqType: "application/x-www-form-urlencoded", reqBody: "time_period=1d",
 			check: checkW3sz},
 		"/api/livecq/n6nu": {name: "n6nu", url: c.n6nuURL, contentType: "application/json; charset=utf-8",
-			maxAge: 120 * time.Second, minInterval: 30 * time.Second,
+			maxAge: 120 * time.Second,
 			accept: "application/json", check: checkN6nu},
-		"/api/n0uk": {name: "n0uk", url: c.n0ukURL, contentType: "text/html; charset=utf-8",
-			maxAge: 90 * time.Second, minInterval: 90 * time.Second},
+		"/api/n0uk": {name: "n0uk", url: c.n0ukURL, contentType: "text/plain; charset=utf-8",
+			maxAge: 90 * time.Second},
 	}
 }
 
@@ -59,8 +65,13 @@ func newHandler(cfg config) http.Handler {
 	}
 	ua := "EME-ON8AR-Web/" + cfg.version
 	mux := http.NewServeMux()
+	var attempts *attemptStore
+	if cfg.stateDir != "" {
+		attempts = loadAttempts(filepath.Join(cfg.stateDir, attemptsFile))
+	}
 	for path, src := range cfg.sources() {
 		c := newCache(src, ua, cfg.timeout, cfg.now)
+		c.attachAttempts(attempts)
 		ctype := src.contentType
 		mux.HandleFunc(path, allowGetHead(func(w http.ResponseWriter, r *http.Request) {
 			res := c.get()
@@ -86,7 +97,15 @@ func newHandler(cfg config) http.Handler {
 		w.Header().Set("Cache-Control", "no-store")
 		w.Write(versionJSON)
 	}))
-	return mux
+	return noSniff(mux)
+}
+
+// noSniff sets X-Content-Type-Options on every response.
+func noSniff(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func allowGetHead(next http.HandlerFunc) http.HandlerFunc {
@@ -103,11 +122,14 @@ func allowGetHead(next http.HandlerFunc) http.HandlerFunc {
 func main() {
 	listen := flag.String("listen", "127.0.0.1:5200", "listen address")
 	version := flag.String("version", "dev", "version name, sent in the User-Agent and /api/version")
+	stateDir := flag.String("state-dir", "", "directory for last-attempt.json (empty: keep the polling gate in memory only)")
 	flag.Parse()
 
+	cfg := defaultConfig(*version)
+	cfg.stateDir = *stateDir
 	srv := &http.Server{
 		Addr:              *listen,
-		Handler:           newHandler(defaultConfig(*version)),
+		Handler:           newHandler(cfg),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      60 * time.Second,
