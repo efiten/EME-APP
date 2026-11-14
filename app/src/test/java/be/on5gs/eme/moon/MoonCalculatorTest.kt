@@ -1,5 +1,6 @@
 package be.on5gs.eme.moon
 
+import be.on5gs.eme.ExpectedCsv
 import be.on5gs.eme.location.Maidenhead
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -54,22 +55,17 @@ class MoonCalculatorTest {
      */
     @Test
     fun azEl_matchesAstropyReference() {
-        data class Case(val loc: String, val utc: String, val az: Double, val el: Double)
-        val cases = listOf(
-            Case("JO21SC", "2026-11-07T10:00:00Z", 182.374, 25.084),
-            Case("JO21SC", "2026-11-07T14:00:00Z", 238.193, 5.706),
-            Case("JO21SC", "2026-11-06T20:00:00Z", 329.238, -45.671),
-            Case("JO21SC", "2026-11-07T03:30:00Z", 95.439, -11.308),
-            Case("JO21SC", "2025-03-14T12:00:00Z", 1.358, -38.133),
-            Case("FN20", "2026-11-06T23:00:00Z", 283.229, -31.427),
-            Case("QF22", "2026-01-01T10:00:00Z", 32.039, 16.426),
-        )
-        for (c in cases) {
-            val p = Maidenhead.toLatLon(c.loc)!!
-            val m = MoonCalculator.position(p.latDeg, p.lonDeg, millis(c.utc))
-            val msg = "${c.loc} ${c.utc}: AZ ${m.azimuthDeg} / EL ${m.elevationDeg}"
-            assertTrue("AZ $msg", angleDiff(c.az, m.azimuthDeg) < 0.05)
-            assertEquals("EL $msg", c.el, m.elevationDeg, 0.05)
+        for (c in ExpectedCsv.read("moon_azel")) {
+            val loc = c.getValue("locator")
+            val utc = c.getValue("utc")
+            val az = c.getValue("az").toDouble()
+            val el = c.getValue("el").toDouble()
+            val tol = c.getValue("tol_deg").toDouble()
+            val p = Maidenhead.toLatLon(loc)!!
+            val m = MoonCalculator.position(p.latDeg, p.lonDeg, millis(utc))
+            val msg = "$loc $utc: AZ ${m.azimuthDeg} / EL ${m.elevationDeg}"
+            assertTrue("AZ $msg", angleDiff(az, m.azimuthDeg) < tol)
+            assertEquals("EL $msg", el, m.elevationDeg, tol)
         }
     }
 
