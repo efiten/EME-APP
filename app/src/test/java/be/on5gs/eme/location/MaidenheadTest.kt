@@ -1,5 +1,6 @@
 package be.on5gs.eme.location
 
+import be.on5gs.eme.ExpectedCsv
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -9,39 +10,42 @@ import org.junit.Test
 class MaidenheadTest {
 
     private val eps = 1e-6
+    private val expected = ExpectedCsv.read("maidenhead").associateBy { it.getValue("locator") }
+    private fun lat(locator: String) = expected.getValue(locator).getValue("lat").toDouble()
+    private fun lon(locator: String) = expected.getValue(locator).getValue("lon").toDouble()
 
     @Test
     fun sixCharacterLocator_givesCenterOfSubsquare() {
         val p = Maidenhead.toLatLon("JO21SC")!!
-        assertEquals(51.0 + 2 * 2.5 / 60 + 1.25 / 60, p.latDeg, eps)   // 51.104167 N
-        assertEquals(4.0 + 18 * 5.0 / 60 + 2.5 / 60, p.lonDeg, eps)     // 5.541667 O
+        assertEquals(lat("JO21SC"), p.latDeg, eps)   // 51.104167 N
+        assertEquals(lon("JO21SC"), p.lonDeg, eps)     // 5.541667 O
     }
 
     @Test
     fun fourCharacterLocator_givesCenterOfSquare() {
         val p = Maidenhead.toLatLon("JO21")!!
-        assertEquals(51.5, p.latDeg, eps)
-        assertEquals(5.0, p.lonDeg, eps)
+        assertEquals(lat("JO21"), p.latDeg, eps)
+        assertEquals(lon("JO21"), p.lonDeg, eps)
     }
 
     @Test
     fun westAndSouth_areNegative() {
         val fn20 = Maidenhead.toLatLon("FN20")!!     // oostkust VS
-        assertEquals(40.5, fn20.latDeg, eps)
-        assertEquals(-75.0, fn20.lonDeg, eps)
+        assertEquals(lat("FN20"), fn20.latDeg, eps)
+        assertEquals(lon("FN20"), fn20.lonDeg, eps)
         val qf22 = Maidenhead.toLatLon("QF22")!!     // Melbourne
-        assertEquals(-37.5, qf22.latDeg, eps)
-        assertEquals(145.0, qf22.lonDeg, eps)
+        assertEquals(lat("QF22"), qf22.latDeg, eps)
+        assertEquals(lon("QF22"), qf22.lonDeg, eps)
     }
 
     @Test
     fun corners() {
         val aa00aa = Maidenhead.toLatLon("AA00aa")!!
-        assertEquals(-90.0 + 1.25 / 60, aa00aa.latDeg, eps)
-        assertEquals(-180.0 + 2.5 / 60, aa00aa.lonDeg, eps)
+        assertEquals(lat("AA00aa"), aa00aa.latDeg, eps)
+        assertEquals(lon("AA00aa"), aa00aa.lonDeg, eps)
         val rr99xx = Maidenhead.toLatLon("RR99XX")!!
-        assertEquals(90.0 - 1.25 / 60, rr99xx.latDeg, eps)
-        assertEquals(180.0 - 2.5 / 60, rr99xx.lonDeg, eps)
+        assertEquals(lat("RR99XX"), rr99xx.latDeg, eps)
+        assertEquals(lon("RR99XX"), rr99xx.lonDeg, eps)
     }
 
     @Test

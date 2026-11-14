@@ -1,5 +1,6 @@
 package be.on5gs.eme.moon
 
+import be.on5gs.eme.ExpectedCsv
 import be.on5gs.eme.location.Maidenhead
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -23,25 +24,27 @@ class MoonEventsTest {
     }
 
     /** Referentie: astropy 8, topocentrisch, midden van de maan op 0°, zonder refractie. */
-    @Test
-    fun moonDown_nextPass() {
-        val ev = MoonEvents.compute(jo21sc.latDeg, jo21sc.lonDeg, millis("2026-11-06T20:00:00Z"))
-        assertFalse(ev.isUp)
-        assertTime("2026-11-07T04:48:02Z", ev.nextRise?.utcMillis, 60)
-        assertTime("2026-11-07T14:41:27Z", ev.nextSet?.utcMillis, 60)
-        assertTime("2026-11-07T09:46:00Z", ev.culmination?.utcMillis, 180)
-        assertEquals(25.16, ev.culmination!!.elevationDeg, 0.05)
-        assertEquals(110.2, ev.nextRise!!.azimuthDeg, 0.2)
-        assertEquals(246.1, ev.nextSet!!.azimuthDeg, 0.2)
+    private fun assertEventsMatch(row: Map<String, String>) {
+        val p = Maidenhead.toLatLon(row.getValue("locator"))!!
+        val ev = MoonEvents.compute(p.latDeg, p.lonDeg, millis(row.getValue("now_utc")))
+        assertEquals(row.getValue("is_up").toBoolean(), ev.isUp)
+        row["next_rise_utc"]?.takeIf { it.isNotEmpty() }?.let { assertTime(it, ev.nextRise?.utcMillis, 60) }
+        row["next_set_utc"]?.takeIf { it.isNotEmpty() }?.let { assertTime(it, ev.nextSet?.utcMillis, 60) }
+        row["culmination_utc"]?.takeIf { it.isNotEmpty() }?.let { assertTime(it, ev.culmination?.utcMillis, 180) }
+        row["culmination_el"]?.takeIf { it.isNotEmpty() }?.let { assertEquals(it.toDouble(), ev.culmination!!.elevationDeg, 0.05) }
+        row["rise_az"]?.takeIf { it.isNotEmpty() }?.let { assertEquals(it.toDouble(), ev.nextRise!!.azimuthDeg, 0.2) }
+        row["set_az"]?.takeIf { it.isNotEmpty() }?.let { assertEquals(it.toDouble(), ev.nextSet!!.azimuthDeg, 0.2) }
     }
 
     @Test
+    fun moonDown_nextPass() {
+        assertEventsMatch(ExpectedCsv.read("moon_events").single { it.getValue("is_up") == "false" })
+    }
+
+    /** next_rise_utc is de VOLGENDE opkomst, culmination_utc die van de huidige doorgang. */
+    @Test
     fun moonUp_showsNextRise() {
-        val ev = MoonEvents.compute(jo21sc.latDeg, jo21sc.lonDeg, millis("2026-11-07T10:00:00Z"))
-        assertTrue(ev.isUp)
-        assertTime("2026-11-07T14:41:27Z", ev.nextSet?.utcMillis, 60)
-        assertTime("2026-11-08T06:04:49Z", ev.nextRise?.utcMillis, 60)      // de VOLGENDE opkomst
-        assertTime("2026-11-07T09:46:00Z", ev.culmination?.utcMillis, 180)  // culminatie van de huidige doorgang
+        assertEventsMatch(ExpectedCsv.read("moon_events").single { it.getValue("is_up") == "true" })
     }
 
     @Test

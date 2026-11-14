@@ -1,5 +1,6 @@
 package be.on5gs.eme.degradation
 
+import be.on5gs.eme.ExpectedCsv
 import be.on5gs.eme.moon.MoonPhase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -9,15 +10,21 @@ import java.time.LocalDate
 
 class DegradationTest {
 
+    private fun dailyFor(row: Map<String, String>, days: Int) = Degradation.daily(
+        LocalDate.parse(row.getValue("date")), days, row.getValue("lat").toDouble(), row.getValue("lon").toDouble(),
+        EmeBand.values().first { it.label == row.getValue("band") }, row.getValue("tsys").toDouble(),
+    )
+
     /**
      * Referentie: MMMonVHF eme.php (waarnemer 48N 11E, 12:00 UTC, 144 MHz, Tsys 80 K), bekeken op 10 november 2026.
      * "Todays conditions" komt uit hetzelfde script als deze berekening: moet exact kloppen.
      */
     @Test
     fun matchesMmmonvhfToday() {
-        val r = Degradation.daily(LocalDate.parse("2026-11-10"), 1, 48.0, 11.0, EmeBand.B144, 80.0).single().second
-        assertEquals(4.2, r.degDb, 0.05)
-        assertEquals(Condition.POOR, r.condition)
+        val row = ExpectedCsv.read("degradation_daily").single { it.getValue("condition").isNotEmpty() }
+        val r = dailyFor(row, 1).single().second
+        assertEquals(row.getValue("deg_db").toDouble(), r.degDb, row.getValue("tol").toDouble())
+        assertEquals(Condition.valueOf(row.getValue("condition")), r.condition)
     }
 
     /**
@@ -26,10 +33,11 @@ class DegradationTest {
      */
     @Test
     fun closeToMmmonvhfServerList() {
-        val expected = mapOf("2026-11-27" to 2.1, "2026-11-28" to 1.7, "2026-11-29" to 1.6, "2026-11-30" to 1.7, "2026-12-01" to 1.9)
-        val days = Degradation.daily(LocalDate.parse("2026-11-27"), 5, 48.0, 11.0, EmeBand.B144, 80.0).toMap()
-        for ((date, deg) in expected) {
-            assertEquals(date, deg, days.getValue(LocalDate.parse(date)).degDb, 0.35)
+        val rows = ExpectedCsv.read("degradation_daily").filter { it.getValue("condition").isEmpty() }
+        val days = dailyFor(rows.first(), rows.size).toMap()
+        for (row in rows) {
+            val date = row.getValue("date")
+            assertEquals(date, row.getValue("deg_db").toDouble(), days.getValue(LocalDate.parse(date)).degDb, row.getValue("tol").toDouble())
         }
     }
 
@@ -56,14 +64,11 @@ class DegradationTest {
     @Test
     fun moonPhase() {
         fun at(iso: String) = MoonPhase.at(Instant.parse(iso).toEpochMilli())
-        assertEquals(0.0023, at("2026-11-09T12:00:00Z").illuminated, 0.005)   // nieuwe maan (9 nov 07 UTC)
-        assertEquals(0.5022, at("2026-11-17T12:00:00Z").illuminated, 0.01)    // eerste kwartier
-        assertEquals(0.9979, at("2026-11-24T12:00:00Z").illuminated, 0.005)   // volle maan (24 nov 14 UTC)
-        assertEquals(0.4748, at("2026-12-01T12:00:00Z").illuminated, 0.01)    // laatste kwartier
-        assertEquals(0, at("2026-11-09T12:00:00Z").nameIndex)
-        assertEquals(2, at("2026-11-17T12:00:00Z").nameIndex)
-        assertEquals(4, at("2026-11-24T12:00:00Z").nameIndex)
-        assertEquals(6, at("2026-12-01T12:00:00Z").nameIndex)
+        for (row in ExpectedCsv.read("moon_phase")) {
+            val m = at(row.getValue("utc"))
+            assertEquals(row.getValue("illuminated").toDouble(), m.illuminated, row.getValue("tol").toDouble())
+            assertEquals(row.getValue("name_index").toInt(), m.nameIndex)
+        }
         assertTrue(at("2026-11-17T12:00:00Z").waxing)
         assertTrue(!at("2026-12-01T12:00:00Z").waxing)
     }

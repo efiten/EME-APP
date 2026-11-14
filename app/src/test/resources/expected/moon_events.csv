@@ -1,0 +1,4 @@
+# Reference: astropy 8, topocentric, centre of the moon at 0 deg, no refraction. Empty cell = not asserted.
+locator,now_utc,is_up,next_rise_utc,next_set_utc,culmination_utc,culmination_el,rise_az,set_az
+JO21SC,2026-11-06T20:00:00Z,false,2026-11-07T04:48:02Z,2026-11-07T14:41:27Z,2026-11-07T09:46:00Z,25.16,110.2,246.1
+JO21SC,2026-11-07T10:00:00Z,true,2026-11-08T06:04:49Z,2026-11-07T14:41:27Z,2026-11-07T09:46:00Z,,,
