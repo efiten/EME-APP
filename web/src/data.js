@@ -75,8 +75,10 @@ export async function fetchN0uk({ signal, previous = [], now = Date.now() } = {}
 
 /**
  * Generic store with one poller. load(signal, state, t) resolves to a patch for the state (and rejects only when
- * aborted). lastFetch is the end of the last attempt that was not cancelled, lastAttempt the start of the last
- * attempt, cancelled or not: both count for the minimum time between two requests.
+ * aborted). A check is due when the copy on screen (fetchedAt, the time the server fetched it) is at least the asked
+ * age old, or when there is no copy yet; so a stale copy from the server is replaced after minMs, not after autoMs.
+ * lastAttempt is the start of the last attempt, cancelled or failed or not: it keeps two browser requests at least
+ * minMs apart. lastFetch is the end of the last attempt that was not cancelled (state only, not used for the gate).
  */
 function createStore({ initial, load, autoMs, minMs, checkMs, now = () => Date.now() }) {
   let state = { ...initial, fetchedAt: null, error: null, loading: false, lastFetch: 0, lastAttempt: 0 };
@@ -99,7 +101,7 @@ function createStore({ initial, load, autoMs, minMs, checkMs, now = () => Date.n
   async function refreshIfOlderThan(maxAgeMs) {
     if (controller) return;
     const t = now();
-    if (state.lastFetch !== 0 && t - state.lastFetch < Math.max(maxAgeMs, minMs)) return;
+    if (state.fetchedAt !== null && t - state.fetchedAt < maxAgeMs) return;
     if (state.lastAttempt !== 0 && t - state.lastAttempt < minMs) return;
     const ctl = new AbortController();
     controller = ctl;

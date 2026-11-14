@@ -19,6 +19,9 @@ const n6nuJson = (...calls) =>
     })),
   });
 
+// A server that stamps each answer with the time of the request, as if it fetched upstream just then.
+const stamped = (body) => () => new Response(body, { status: 200, headers: { 'X-Fetched-At': String(Date.now()) } });
+
 let unsubscribe;
 const open = (store) => {
   unsubscribe = store.subscribe(() => {});
@@ -101,8 +104,13 @@ describe('Live CQ store (port of LiveCqStoreTest.kt)', () => {
     expect(s.loading).toBe(false);
   });
 
+  const stampedBoth = () => ({
+    [W3SZ]: stamped(csv(csvRow('OK1DFC'))),
+    [N6NU]: stamped(n6nuJson('OK1DFC', 'K3SK')),
+  });
+
   test('notMoreOftenThanBefore', async () => {
-    const f = stubFetch(both());
+    const f = stubFetch(stampedBoth());
     const store = createLiveCqStore();
     const at = async (ms, maxAge) => {
       vi.setSystemTime(T0 + ms);
@@ -201,7 +209,7 @@ describe('Live CQ store (port of LiveCqStoreTest.kt)', () => {
 
 describe('polling', () => {
   test('two subscribers share one poller: one request per source per 120 s', async () => {
-    const f = stubFetch({ [W3SZ]: ok(csv()), [N6NU]: ok(n6nuJson()) });
+    const f = stubFetch({ [W3SZ]: stamped(csv()), [N6NU]: stamped(n6nuJson()) });
     const store = createLiveCqStore();
     open(store);
     const second = store.subscribe(() => {});
@@ -217,7 +225,7 @@ describe('polling', () => {
   });
 
   test('stops when the last subscriber leaves, restarts with the next one', async () => {
-    const f = stubFetch({ [W3SZ]: ok(csv()), [N6NU]: ok(n6nuJson()) });
+    const f = stubFetch({ [W3SZ]: stamped(csv()), [N6NU]: stamped(n6nuJson()) });
     const store = createLiveCqStore();
     open(store);
     await settle();
@@ -232,7 +240,7 @@ describe('polling', () => {
   test('no request while the page is hidden; catches up when visible again', async () => {
     let state = 'hidden';
     vi.spyOn(document, 'visibilityState', 'get').mockImplementation(() => state);
-    const f = stubFetch({ [W3SZ]: ok(csv()), [N6NU]: ok(n6nuJson()) });
+    const f = stubFetch({ [W3SZ]: stamped(csv()), [N6NU]: stamped(n6nuJson()) });
     const store = createLiveCqStore();
     open(store);
     await vi.advanceTimersByTimeAsync(300_000);
@@ -306,5 +314,64 @@ describe('N0UK store', () => {
     await settle();
     expect(store.getState().error).toBeNull();
     expect(store.getState().loading).toBe(false);
+  });
+});
+
+describe('data age follows the copy of the server', () => {
+  const at = async (store, ms, maxAge) => {
+    vi.setSystemTime(T0 + ms);
+    await store.refreshIfOlderThan(maxAge);
+  };
+  const served = (fetchedAt) => ({
+    [W3SZ]: ok(csv(csvRow('OK1DFC')), { 'X-Fetched-At': String(fetchedAt) }),
+    [N6NU]: ok(n6nuJson('K3SK'), { 'X-Fetched-At': String(fetchedAt) }),
+  });
+
+  test('a stale server copy is checked again after minMs, not after autoMs', async () => {
+    const f = stubFetch(served(T0 - 100_000)); // the server copy is already 100 s old
+    const store = createLiveCqStore();
+    await at(store, 0, 120_000);
+    expect(callsTo(f, W3SZ)).toBe(1);
+    await at(store, 29_999, 120_000);
+    expect(callsTo(f, W3SZ)).toBe(1);
+    await at(store, 30_000, 120_000); // age 130 s >= 120 s
+    expect(callsTo(f, W3SZ)).toBe(2);
+  });
+
+  test('a fresh copy waits until its age reaches autoMs', async () => {
+    const f = stubFetch(served(T0));
+    const store = createLiveCqStore();
+    await at(store, 0, 120_000);
+    await at(store, 119_999, 120_000);
+    expect(callsTo(f, W3SZ)).toBe(1);
+    await at(store, 120_000, 120_000);
+    expect(callsTo(f, W3SZ)).toBe(2);
+  });
+
+  test('repeated taps never fetch twice within minMs, even with an old copy', async () => {
+    const f = stubFetch(served(T0 - 1_000_000));
+    const store = createLiveCqStore();
+    for (const ms of [0, 1, 10_000, 29_999]) await at(store, ms, 0);
+    expect(callsTo(f, W3SZ)).toBe(1);
+    await at(store, 30_000, 0);
+    expect(callsTo(f, W3SZ)).toBe(2);
+  });
+
+  test('N0UK: a copy 95 s old is replaced after 90 s of the browser, not 180 s', async () => {
+    const f = stubFetch({ [N0UK]: ok(resource('n0uk_jt65emeA.html'), { 'X-Fetched-At': String(T0 - 95_000) }) });
+    const store = createN0ukStore();
+    await at(store, 0, 90_000);
+    await at(store, 89_999, 90_000);
+    expect(callsTo(f, N0UK)).toBe(1);
+    await at(store, 90_000, 90_000);
+    expect(callsTo(f, N0UK)).toBe(2);
+  });
+
+  test('in-flight request blocks a second one', async () => {
+    const f = stubFetch({ [W3SZ]: hangs, [N6NU]: hangs });
+    const store = createLiveCqStore();
+    store.refreshIfOlderThan(0);
+    await at(store, 60_000, 0);
+    expect(callsTo(f, W3SZ)).toBe(1);
   });
 });
