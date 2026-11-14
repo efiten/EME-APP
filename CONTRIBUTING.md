@@ -34,8 +34,8 @@ Requirements: Android Studio, or JDK 17+ and the Android SDK (platform 35).
 The web app (`web/`) has its own tests. They need Node 24 and Go (the version in `web/server/go.mod`):
 
 ```bash
-cd web && npm ci && npm test      # web app tests
-cd web/server && go test ./...    # web server tests
+(cd web && npm ci && npm test)    # web app tests
+(cd web/server && go test ./...)  # web server tests
 ```
 
 ## Rules for code changes

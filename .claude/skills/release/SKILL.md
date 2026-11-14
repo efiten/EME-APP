@@ -91,7 +91,8 @@ gh run watch <id>
   The release also holds `eme-web-vX.Y.Z.zip`. The maintainer of eme.on8ar.eu (ON8AR) deploys
   it with `web/deploy/deploy-release.sh vX.Y.Z`. Tell him the release is published; do not
   deploy yourself.
-- Red: nothing was published. Show the failing step and its error. Fix it in a new pull request;
+- Only `web-build` or `web-upload` red: the APK release is already published and stays valid, and no patch release is needed. Use "Re-run failed jobs" on that workflow run (`gh run rerun <run-id> --failed`). `gh workflow run release.yml` does not help here: `check` sees the release and skips everything.
+- Red (the `release` job or `check`): nothing was published. Show the failing step and its error. Fix it in a new pull request;
   a fix to the release notes only can be re-run with `gh workflow run release.yml`.
 - Never delete, move or reuse a tag or release that was published: users may have installed it.
   A wrong release is followed by a new patch release.
