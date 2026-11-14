@@ -139,7 +139,7 @@ CSV columns (one row per existing case, values copied from the current tests, to
 - Test: `web/test/strings.test.js`, `web/test/settings.test.js`
 
 **Interfaces:**
-- Produces: `t(name, ...args) -> string` (Android `%1$s` / `%2$d` placeholders, `\'` unescaped), `setLanguage(code)`, `LANGUAGES` (13 codes, from `AppLanguage.options`); `loadSettings() -> {locator, callsign, cqBands: Set, degBand, language}` with defaults `JO21SC`, `ON5GS`, `{B23CM}`, `B144`, browser language if one of the 13 else `en`; `saveSettings(partial)`; `locatorLatLon(settings) -> {latDeg, lonDeg} | null`.
+- Produces: `t(name, ...args) -> string` (Android `%1$s` / `%2$d` placeholders, `\'` unescaped), `setLanguage(code)`, `LANGUAGES` (13 codes, from `AppLanguage.options`); `loadSettings() -> {locator, callsign, cqBands: Set, degBand, language}` with defaults `""` (locator), `""` (callsign, as the app since #55), `{B23CM}`, `B1296` (as `SettingsRepository.degBand`), browser language if one of the 13 else `en`; `saveSettings(partial)`; `locatorLatLon(settings) -> {latDeg, lonDeg} | null`.
 
 - [ ] **Step 1:** Tests: every language has every key of `en` with the same placeholders (as `TranslationsTest.kt`); `t('chatcq_title', '144', 3)` in `nl` gives the Dutch sentence with 144 and 3; `loadSettings()` on empty `localStorage` gives the defaults; `localStorage` that throws on access still gives the defaults; Review Focus 1: `locatorLatLon` is `null` for `""`, `"XX99"`, `"JO2"`.
 - [ ] **Step 2:** `npm test`; expected: FAIL.
