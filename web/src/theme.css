@@ -1,0 +1,103 @@
+/* Colours of Theme.kt (ShackColors) and BandColors.kt. Components use only var(--...). */
+:root {
+  --primary: #ffb74d;
+  --primary-dim: color-mix(in srgb, var(--primary) 75%, transparent);
+  --secondary: #90caf9;
+  --background: #0b1a33;
+  --surface: #0b1a33;
+  --surface-variant: #1a2e50;
+  --surface-container-lowest: #081429;
+  --surface-container-low: #0f2140;
+  --surface-container: #132646;
+  --surface-container-high: #172b4d;
+  --surface-container-highest: #1b3054;
+  --on-background: #e6e6e6;
+  --on-surface: #e6e6e6;
+  --on-surface-variant: #c4c6d0;
+  --error: #f2b8b5;
+  --outline: #8e9099;
+  --outline-variant: #44474f;
+  --on-primary: #0b1a33;
+  --disabled-fill: color-mix(in srgb, var(--on-surface) 12%, transparent);
+  --disabled-text: color-mix(in srgb, var(--on-surface) 38%, transparent);
+
+  --band-50: #e040fb;
+  --band-144: #ff5252;
+  --band-222: #ffab40;
+  --band-432: #40c4ff;
+  --band-902: #b2ff59;
+  --band-23cm: #00e676;
+  --band-13cm: #ff80ab;
+  --band-9cm: #18ffff;
+  --band-6cm: #ffd180;
+  --band-3cm: #b388ff;
+  --band-1cm: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  background: var(--background);
+  color: var(--on-surface);
+  font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+}
+
+#app { min-height: 100%; display: flex; flex-direction: column; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: env(safe-area-inset-top) calc(4px + env(safe-area-inset-right)) 0 calc(4px + env(safe-area-inset-left));
+  background: var(--surface);
+}
+.topbar h1 { margin: 0 0 0 12px; font-size: 22px; font-weight: 400; flex: 1; display: flex; align-items: baseline; }
+.topbar .version { font-size: 11px; color: var(--on-surface-variant); margin-left: 8px; }
+
+.icon-button {
+  width: 48px; height: 48px; border: 0; border-radius: 50%; background: none;
+  color: var(--on-surface); display: grid; place-items: center; cursor: pointer;
+}
+.icon-button:hover { background: var(--disabled-fill); }
+.icon-button svg { width: 24px; height: 24px; fill: currentColor; }
+
+.tabbar {
+  display: flex;
+  padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--surface);
+}
+.tab {
+  flex: 1; min-width: 0; padding: 14px 0; border: 0; border-bottom: 2px solid transparent;
+  background: none; color: var(--primary-dim); font: inherit; font-size: 12px; font-weight: 500;
+  white-space: nowrap; cursor: pointer;
+}
+.tab[aria-selected="true"] { color: var(--primary); font-weight: 700; border-bottom-color: var(--primary); }
+
+.content {
+  flex: 1;
+  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.settings { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 640px; }
+.settings h2 { margin: 0; font-size: 22px; font-weight: 400; }
+.settings hr { width: 100%; border: 0; border-top: 1px solid var(--outline-variant); margin: 8px 0; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--on-surface-variant); }
+.field input, .settings select {
+  font: inherit; font-size: 16px; color: var(--on-surface); background: transparent;
+  border: 1px solid var(--outline); border-radius: 4px; padding: 14px 16px;
+}
+.field input:focus, .settings select:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
+.field.invalid { color: var(--error); }
+.field.invalid input { border-color: var(--error); }
+.field .support { font-size: 12px; min-height: 16px; padding: 0 16px; }
+.settings select option { background: var(--surface-container); }
+.button {
+  align-self: flex-start; font: inherit; font-weight: 500; padding: 10px 24px; border: 0;
+  border-radius: 20px; background: var(--primary); color: var(--on-primary); cursor: pointer;
+}
+.button:disabled { background: var(--disabled-fill); color: var(--disabled-text); cursor: default; }
+.link { color: var(--primary); font-weight: 500; text-decoration: none; padding: 10px 12px; align-self: flex-start; }
