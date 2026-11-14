@@ -6,7 +6,7 @@ import { isValid, toLatLon } from './lib/maidenhead.js';
 // One JSON object under one key; defaults as in SettingsRepository.kt (locator and callsign empty since #55).
 const KEY = 'eme.settings';
 
-const browserLanguage = () => {
+export const browserLanguage = () => {
   const code = (typeof navigator !== 'undefined' && navigator.language ? navigator.language : '').slice(0, 2).toLowerCase();
   return LANGUAGES.includes(code) ? code : 'en';
 };
@@ -16,7 +16,7 @@ const defaults = () => ({
   callsign: '',
   cqBands: new Set(['B23CM']),
   degBand: 'B1296',
-  language: browserLanguage(),
+  language: '', // '' = automatic: follow the browser (effectiveLanguage)
 });
 
 /** Stored JSON object, or {} when localStorage is missing, throws or holds rubbish. */
@@ -39,6 +39,11 @@ export function loadSettings() {
     degBand: EME_BANDS.some((b) => b.id === s.degBand) ? s.degBand : d.degBand,
     language: LANGUAGES.includes(s.language) ? s.language : d.language,
   };
+}
+
+/** Language to render in: the chosen one, or the browser language (else en) for automatic (''). */
+export function effectiveLanguage(settings) {
+  return LANGUAGES.includes(settings.language) ? settings.language : browserLanguage();
 }
 
 export function saveSettings(partial) {

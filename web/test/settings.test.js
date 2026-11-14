@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { loadSettings, locatorLatLon, saveSettings } from '../src/settings.js';
+import { effectiveLanguage, loadSettings, locatorLatLon, saveSettings } from '../src/settings.js';
 
 const DEFAULTS = {
   locator: '',
   callsign: '',
   cqBands: new Set(['B23CM']),
   degBand: 'B1296',
-  language: 'en',
+  language: '',
 };
 
 function fakeStorage() {
@@ -21,11 +21,18 @@ const throwing = () => {
   throw new Error('SecurityError');
 };
 
+const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+const setNavigatorLanguage = (language) =>
+  Object.defineProperty(globalThis, 'navigator', { value: { language }, configurable: true });
+
 beforeEach(() => {
   globalThis.localStorage = fakeStorage();
+  setNavigatorLanguage('en-US');
 });
 afterEach(() => {
   delete globalThis.localStorage;
+  if (originalNavigator) Object.defineProperty(globalThis, 'navigator', originalNavigator);
+  else delete globalThis.navigator;
 });
 
 describe('loadSettings', () => {
@@ -58,15 +65,24 @@ describe('loadSettings', () => {
     expect(loadSettings()).toEqual(DEFAULTS);
   });
 
-  test('browser language is used when it is one of the 13', () => {
-    Object.defineProperty(globalThis, 'navigator', { value: { language: 'nl-BE' }, configurable: true });
-    try {
-      expect(loadSettings().language).toBe('nl');
-    } finally {
-      Object.defineProperty(globalThis, 'navigator', { value: { language: 'tr-TR' }, configurable: true });
-      expect(loadSettings().language).toBe('en');
-      delete globalThis.navigator;
-    }
+  test('default and unknown stored language mean automatic ("")', () => {
+    expect(loadSettings().language).toBe('');
+    localStorage.setItem('eme.settings', JSON.stringify({ language: 'xx' }));
+    expect(loadSettings().language).toBe('');
+  });
+});
+
+describe('effectiveLanguage', () => {
+  test('automatic follows the browser language when it is one of the 13, else en', () => {
+    setNavigatorLanguage('nl-BE');
+    expect(effectiveLanguage({ language: '' })).toBe('nl');
+    setNavigatorLanguage('tr-TR');
+    expect(effectiveLanguage({ language: '' })).toBe('en');
+  });
+
+  test('a chosen language wins over the browser', () => {
+    setNavigatorLanguage('nl-BE');
+    expect(effectiveLanguage({ language: 'fr' })).toBe('fr');
   });
 });
 

@@ -33,7 +33,12 @@ export function createSettingsScreen() {
       const locatorValid = () => isValid(draft.locator);
       const saveEnabled = () => locatorValid() && draft.callsign.trim() !== '';
 
-      const select = el('select', {}, ...LANGUAGES.map((c) => el('option', { value: c, textContent: LANGUAGE_NAMES[c] })));
+      const select = el(
+        'select',
+        {},
+        el('option', { value: '', textContent: t('language_system') }),
+        ...LANGUAGES.map((c) => el('option', { value: c, textContent: LANGUAGE_NAMES[c] })),
+      );
       select.value = settings.language;
       select.addEventListener('change', () => ctx.onLanguage(select.value));
 

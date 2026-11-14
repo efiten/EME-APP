@@ -1,5 +1,5 @@
 import { setLanguage, t } from './i18n.js';
-import { loadSettings, saveSettings } from './settings.js';
+import { effectiveLanguage, loadSettings, saveSettings } from './settings.js';
 import { createSettingsScreen } from './screens/settings.js';
 import { SCREENS } from './screens/index.js';
 
@@ -42,7 +42,7 @@ export function mountApp(root, screens = SCREENS) {
   const settingsScreen = createSettingsScreen();
   const now = () => Date.now();
 
-  setLanguage(loadSettings().language);
+  setLanguage(effectiveLanguage(loadSettings()));
 
   function stopScreen() {
     state.screen?.unmount();
@@ -81,8 +81,8 @@ export function mountApp(root, screens = SCREENS) {
       now,
       draft: state.draft,
       onLanguage: (code) => {
-        setLanguage(code);
         saveSettings({ language: code });
+        setLanguage(effectiveLanguage({ language: code }));
         render();
       },
       onSaved: () => show('tabs'),

@@ -3,8 +3,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { mountApp } from '../src/app.js';
 import { setLanguage, t } from '../src/i18n.js';
 import { loadSettings } from '../src/settings.js';
+import strings from '../src/generated/strings.json';
 
 let root;
+let navigatorDescriptor;
 
 beforeEach(() => {
   const m = new Map();
@@ -12,6 +14,8 @@ beforeEach(() => {
     getItem: (k) => (m.has(k) ? m.get(k) : null),
     setItem: (k, v) => void m.set(k, String(v)),
   });
+  navigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  Object.defineProperty(globalThis, 'navigator', { value: { language: 'fr-BE' }, configurable: true });
   localStorage.setItem('eme.settings', JSON.stringify({ language: 'en' }));
   document.body.innerHTML = '<div id="app"></div>';
   root = document.getElementById('app');
@@ -19,6 +23,8 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  if (navigatorDescriptor) Object.defineProperty(globalThis, 'navigator', navigatorDescriptor);
+  else delete globalThis.navigator;
   setLanguage('en');
 });
 
@@ -127,6 +133,38 @@ describe('settings', () => {
     expect(loadSettings().language).toBe('nl');
     root.querySelector('[data-action="back"]').click();
     expect(tabs()[3].textContent).toBe(t('tab_livecq'));
+  });
+
+  test('picker starts with the automatic entry (language_system, value "") followed by the 13 languages', () => {
+    mountApp(root);
+    openSettings();
+    const options = [...root.querySelectorAll('select option')];
+    expect(options).toHaveLength(14);
+    expect(options[0].value).toBe('');
+    expect(options[0].textContent).toBe(t('language_system'));
+  });
+
+  test('automatic after nl stores "" and shows the browser language', () => {
+    mountApp(root);
+    openSettings();
+    const pick = (v) => {
+      const select = root.querySelector('select');
+      select.value = v;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    pick('nl');
+    expect(loadSettings().language).toBe('nl');
+    pick('');
+    expect(loadSettings().language).toBe('');
+    expect(root.querySelector('select').value).toBe('');
+    expect(root.querySelector('header').textContent).toContain(strings.fr.settings);
+    expect(strings.fr.settings).not.toBe(strings.en.settings);
+  });
+
+  test('fresh install follows the browser language', () => {
+    localStorage.setItem('eme.settings', '{}');
+    mountApp(root);
+    expect(tabs()[0].textContent).toBe(strings.fr.tab_moon);
   });
 
   test('release notes link opens the tag of this version in a new tab', () => {
