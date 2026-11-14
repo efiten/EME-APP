@@ -6,6 +6,10 @@ import { setLanguage, t } from '../src/i18n.js';
 const NOW = Date.parse('2026-11-07T10:00:00Z');
 let host;
 let screen;
+let getContext;
+let drawCalls;
+let width;
+const clientWidth = Object.getOwnPropertyDescriptor(Element.prototype, 'clientWidth');
 
 const settings = (over = {}) => ({ locator: 'JO21SC', callsign: 'ON5GS', cqBands: new Set(['B23CM']), language: 'en', ...over });
 const ctxOf = (s, extra = {}) => ({ settings: s, t, now: () => Date.now(), ...extra });
@@ -15,7 +19,14 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(NOW);
   setLanguage('en');
-  HTMLCanvasElement.prototype.getContext = () => null;
+  getContext = HTMLCanvasElement.prototype.getContext;
+  drawCalls = 0;
+  width = 375;
+  HTMLCanvasElement.prototype.getContext = () => {
+    drawCalls++;
+    return null;
+  };
+  Object.defineProperty(HTMLCanvasElement.prototype, 'clientWidth', { get: () => width, configurable: true });
   host = document.createElement('div');
   document.body.append(host);
   screen = createMoonScreen();
@@ -24,6 +35,8 @@ afterEach(() => {
   screen.unmount();
   vi.useRealTimers();
   vi.restoreAllMocks();
+  HTMLCanvasElement.prototype.getContext = getContext;
+  delete HTMLCanvasElement.prototype.clientWidth;
   host.remove();
 });
 
@@ -90,5 +103,18 @@ describe('moon screen', () => {
     screen.unmount();
     expect(remove).toHaveBeenCalledWith('visibilitychange', expect.any(Function));
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  test('resize redraws the map only when the width changed, coalesced per frame', () => {
+    screen.mount(host, ctxOf(settings()));
+    expect(drawCalls).toBe(1);
+    window.dispatchEvent(new Event('resize'));
+    vi.advanceTimersByTime(50);
+    expect(drawCalls).toBe(1);
+    width = 390;
+    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event('resize'));
+    vi.advanceTimersByTime(50);
+    expect(drawCalls).toBe(2);
   });
 });

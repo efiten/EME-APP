@@ -172,10 +172,25 @@ export function createMoonScreen() {
         }
         renderEvents(now);
       };
-      const onResize = () => redrawMap(ctx.now());
+      // resize also fires when the mobile URL bar collapses (height only): redraw only for a new width, once per frame
+      let drawnWidth = canvas.clientWidth;
+      let frame = null;
+      const onResize = () => {
+        if (frame !== null) return;
+        frame = requestAnimationFrame(() => {
+          frame = null;
+          if (canvas.clientWidth === drawnWidth) return;
+          drawnWidth = canvas.clientWidth;
+          redrawMap(ctx.now());
+        });
+      };
       window.addEventListener('resize', onResize);
-      cleanup = () => window.removeEventListener('resize', onResize);
+      cleanup = () => {
+        window.removeEventListener('resize', onResize);
+        if (frame !== null) cancelAnimationFrame(frame);
+      };
       tick();
+      drawnWidth = canvas.clientWidth;
       start(tick);
     },
 

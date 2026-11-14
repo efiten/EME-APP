@@ -119,10 +119,11 @@ body {
   --moon-up: #66bb6a;
 }
 
-.moon { display: flex; flex-direction: column; align-items: center; padding: 12px; max-width: 720px; margin: 0 auto; }
-.moon .timelines { display: grid; grid-template-columns: auto auto; column-gap: 10px; align-items: end; font-size: 17px; }
+.moon { display: flex; flex-direction: column; align-items: center; padding: 12px; max-width: 720px; min-width: 0; margin: 0 auto; }
+.moon .timelines { display: grid; grid-template-columns: auto minmax(0, auto); column-gap: 10px; align-items: end; max-width: 100%; font-size: clamp(13px, 4.2vw, 17px); }
 .moon .timelines .label { color: var(--secondary); text-align: end; white-space: nowrap; }
-.moon .timelines .value { font-family: ui-monospace, "Roboto Mono", Consolas, monospace; white-space: nowrap; }
+.moon .timelines .value { font-family: ui-monospace, "Roboto Mono", Consolas, monospace; min-width: 0; }
+.moon .timelines .value > span:first-child { white-space: nowrap; }
 .moon .timelines .zone { font-family: Roboto, system-ui, sans-serif; font-size: 12px; margin-left: 8px; }
 .moon .error { color: var(--error); margin-top: 8px; }
 .moon canvas { display: block; width: 100%; aspect-ratio: 2 / 1; margin-top: 8px; }
@@ -131,9 +132,9 @@ body {
 .moon .phase { width: 100%; font-size: 12px; margin-top: 2px; }
 .moon .where { white-space: pre; margin-top: 12px; font-size: 16px; font-weight: 500; }
 .moon .bigvalues { display: flex; width: 100%; }
-.moon .bigvalue { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.moon .bigvalue { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
 .moon .bigvalue .caption { font-size: 20px; color: var(--secondary); }
-.moon .bigvalue .num { font-size: 46px; font-weight: 700; font-family: ui-monospace, "Roboto Mono", Consolas, monospace; white-space: nowrap; }
+.moon .bigvalue .num { font-size: clamp(32px, 12vw, 46px); font-weight: 700; font-family: ui-monospace, "Roboto Mono", Consolas, monospace; white-space: nowrap; }
 .moon .distance { font-size: 14px; }
 .moon .events {
   width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--surface-variant);
