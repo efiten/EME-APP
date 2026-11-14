@@ -37,7 +37,7 @@
     <string name="login_failed">Inloggen bij HB9Q mislukt. Controleer login en wachtwoord.</string>
     <string name="need_login">Vul eerst je HB9Q-login en wachtwoord in bij Instellingen (⚙ rechtsboven).</string>
     <string name="messages">Berichten</string>
-    <string name="participants">Deelnemers (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Callsign</string>
     <string name="locator_label">Maidenhead locator (4 of 6 tekens)</string>

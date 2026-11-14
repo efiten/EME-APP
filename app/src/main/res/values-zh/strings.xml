@@ -37,7 +37,7 @@
     <string name="login_failed">登录 HB9Q 失败。请检查用户名和密码。</string>
     <string name="need_login">请先在设置中输入你的 HB9Q 用户名和密码（右上角 ⚙）。</string>
     <string name="messages">消息</string>
-    <string name="participants">参与者（%1$d）</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">电台</string>
     <string name="callsign">呼号</string>
     <string name="locator_label">Maidenhead 定位符（4 或 6 个字符）</string>

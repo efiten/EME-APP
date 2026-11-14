@@ -37,7 +37,7 @@
     <string name="login_failed">Kirjautuminen HB9Q:hon epäonnistui. Tarkista tunnus ja salasana.</string>
     <string name="need_login">Syötä ensin HB9Q-tunnuksesi ja salasanasi Asetuksissa (⚙ oikeassa yläkulmassa).</string>
     <string name="messages">Viestit</string>
-    <string name="participants">Osallistujat (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Asema</string>
     <string name="callsign">Kutsu</string>
     <string name="locator_label">Maidenhead-lokaattori (4 tai 6 merkkiä)</string>

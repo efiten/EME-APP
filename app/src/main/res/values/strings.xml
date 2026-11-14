@@ -42,7 +42,7 @@
     <string name="login_failed">Login to HB9Q failed. Check login and password.</string>
     <string name="need_login">First enter your HB9Q login and password in Settings (⚙ top right).</string>
     <string name="messages">Messages</string>
-    <string name="participants">Participants (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Station</string>
     <string name="callsign">Callsign</string>
     <string name="locator_label">Maidenhead locator (4 or 6 characters)</string>

@@ -37,7 +37,7 @@
     <string name="login_failed">Error al iniciar sesión en HB9Q. Compruebe usuario y contraseña.</string>
     <string name="need_login">Primero introduzca su usuario y contraseña de HB9Q en Ajustes (⚙ arriba a la derecha).</string>
     <string name="messages">Mensajes</string>
-    <string name="participants">Participantes (%1$d)</string>
+    <string name="participants">QRV (%1$d)</string>
     <string name="station">Estación</string>
     <string name="callsign">Indicativo</string>
     <string name="locator_label">Locator Maidenhead (4 o 6 caracteres)</string>
