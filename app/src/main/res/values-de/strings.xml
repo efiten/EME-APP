@@ -98,4 +98,5 @@
     <string name="n0uk_cq_header">UTC - Freq - Periode - Rufz. - Mode - Locator - Mond</string>
     <string name="n0uk_cq_empty">Keine CQ-Rufe im N0UK-Chat in den letzten 60 Minuten.</string>
     <string name="n0uk_error">N0UK-Chat nicht erreichbar: %1$s</string>
+    <string name="release_notes">Versionshinweise</string>
 </resources>
