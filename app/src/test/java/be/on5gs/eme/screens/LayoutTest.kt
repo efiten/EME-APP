@@ -84,8 +84,6 @@ class LayoutTest(private val device: String, private val language: String, priva
         private val KNOWN = listOf(
             // #78: toestand in de lijst "beste dagen" van Deg midden in het woord afgebroken
             Known(78, "degradation", Regex("""^".*": word broken over two lines$""")),
-            // #79: subtabblad "Messages" van N0UK midden in het woord afgebroken
-            Known(79, "n0uk", Regex("""^".*": word broken over two lines$""")),
         )
 
         @JvmStatic
