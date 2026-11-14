@@ -49,6 +49,8 @@ The web app (`web/`) has its own tests. They need Node 24 and Go (the version in
   font, and in English on a phone and a tablet. It fails on text that is cut off, an element
   outside the screen or a touch target under 48 dp, and writes a picture of each failing screen
   to `app/build/layout-failures/`. A known problem goes into its `KNOWN` list only with an issue.
+  On a pull request it runs as its own check, `layout`; when it fails, the pictures and the test
+  report are in the artifact `layout-failures` of that run.
 - **Android and web together.** A change that users see goes into `app/` and `web/` in the
   same pull request. A change that only exists on one platform says so in the pull request,
   with the reason.
