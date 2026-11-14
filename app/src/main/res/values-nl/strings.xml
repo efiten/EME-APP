@@ -87,6 +87,9 @@
     <string name="deg_series_dec">Declinatie (°)</string>
     <string name="deg_center_day">Dag in het midden van de grafiek</string>
     <string name="deg_back_today">Terug naar vandaag</string>
+    <string name="deg_calendar_best">Groene cirkel: de %1$d dagen met de laagste degradatie deze maand</string>
+    <string name="deg_prev_month">Vorige maand</string>
+    <string name="deg_next_month">Volgende maand</string>
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
     <string name="logged_out">Je bent uitgelogd bij de HB9Q-chat.</string>

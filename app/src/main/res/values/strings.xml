@@ -92,6 +92,9 @@
     <string name="deg_series_dec">Declination (°)</string>
     <string name="deg_center_day">Day in the middle of the graph</string>
     <string name="deg_back_today">Back to today</string>
+    <string name="deg_calendar_best">Green circle: the %1$d days with the lowest degradation this month</string>
+    <string name="deg_prev_month">Previous month</string>
+    <string name="deg_next_month">Next month</string>
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
     <string name="logged_out">You are logged out of the HB9Q chat.</string>

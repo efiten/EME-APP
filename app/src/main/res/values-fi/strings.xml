@@ -87,6 +87,9 @@
     <string name="deg_series_dec">Deklinaatio (°)</string>
     <string name="deg_center_day">Kaavion keskellä oleva päivä</string>
     <string name="deg_back_today">Takaisin tähän päivään</string>
+    <string name="deg_calendar_best">Vihreä ympyrä: kuukauden %1$d päivää, joina heikkeneminen on pienin</string>
+    <string name="deg_prev_month">Edellinen kuukausi</string>
+    <string name="deg_next_month">Seuraava kuukausi</string>
     <string name="log_out">Kirjaudu ulos</string>
     <string name="log_in">Kirjaudu sisään</string>
     <string name="logged_out">Olet kirjautunut ulos HB9Q-chatista.</string>

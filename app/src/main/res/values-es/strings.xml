@@ -87,6 +87,9 @@
     <string name="deg_series_dec">Declinación (°)</string>
     <string name="deg_center_day">Día en el centro del gráfico</string>
     <string name="deg_back_today">Volver a hoy</string>
+    <string name="deg_calendar_best">Círculo verde: los %1$d días con la menor degradación de este mes</string>
+    <string name="deg_prev_month">Mes anterior</string>
+    <string name="deg_next_month">Mes siguiente</string>
     <string name="log_out">Cerrar sesión</string>
     <string name="log_in">Iniciar sesión</string>
     <string name="logged_out">Ha cerrado la sesión del chat HB9Q.</string>

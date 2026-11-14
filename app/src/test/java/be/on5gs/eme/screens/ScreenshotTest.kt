@@ -172,6 +172,29 @@ class ScreenshotTest {
     }
 
     @Test
+    @Config(qualifiers = "+nl")
+    fun degradationCalendarJanuary2030() {
+        // Kalender van de Deg-tab, januari 2030, JO21 op 144 MHz: de 4 beste dagen in het groen
+        val month = java.time.YearMonth.of(2030, 1)
+        val best = be.on5gs.eme.degradation.Degradation.bestDaysOfMonth(
+            month, 51.15, 4.29, be.on5gs.eme.degradation.EmeBand.B144, 80.0,
+        )
+        compose.setContent {
+            EmeTheme {
+                Surface(color = MaterialTheme.colorScheme.surface) {
+                    Box(Modifier.fillMaxSize().padding(24.dp)) {
+                        be.on5gs.eme.degradation.DegCalendarMonth(
+                            month, month.atDay(15), java.time.LocalDate.of(2030, 1, 9), best, onMonth = {}, onPick = {},
+                        )
+                    }
+                }
+            }
+        }
+        compose.waitForIdle()
+        save("deg-kalender")
+    }
+
+    @Test
     @Config(qualifiers = "+it")
     fun degradationItalian() {
         compose.setContent { EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { Box(Modifier.fillMaxSize()) { EmeApp() } } } }
