@@ -80,12 +80,7 @@ class LayoutTest(private val device: String, private val language: String, priva
          * Bekende problemen op het kleine scherm, elk met een issue. Een pull request die er een
          * oplost, haalt zijn regel hier weg. Voeg geen nieuwe toe zonder issue.
          */
-        private val KNOWN = listOf(
-            // #66: tijdzone, seconden en azimut afgekapt
-            Known(66, "moon", Regex("""^"(\s+\S+|.*\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}:\d{2}|\d+\.\d°)": text cut off$""")),
-            // #67: roepnaamkolom van Chat CQ te smal
-            Known(67, "chatCq", Regex("""^".*": text cut off$""")),
-        )
+        private val KNOWN = emptyList<Known>()
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{1} {0} font {2}")
