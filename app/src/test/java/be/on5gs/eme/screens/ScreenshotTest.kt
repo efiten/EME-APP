@@ -58,6 +58,7 @@ class ScreenshotTest {
     fun setUp() {
         assumeTrue(System.getProperty("screenshots") == "true")
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("Europe/Brussels"))
+        SettingsRepository(ApplicationProvider.getApplicationContext()).apply { callsign = "ON5GS"; locator = "JO21SC" }
         // CQ-voorbeelden uit de echte W3SZ-export, verschoven naar "nu" zodat ze op de kaart komen
         val csv = javaClass.classLoader!!.getResource("livecq_sample.csv")!!.readText()
         val spots = LiveCqParser.parse(csv)
