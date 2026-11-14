@@ -19,6 +19,7 @@ beforeEach(() => {
   });
   navigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
   Object.defineProperty(globalThis, 'navigator', { value: { language: 'fr-BE' }, configurable: true });
+  vi.stubGlobal('fetch', () => new Promise(() => {})); // the Moon tab subscribes to the Live CQ store: no network in tests
   localStorage.setItem('eme.settings', JSON.stringify({ language: 'en' }));
   document.body.innerHTML = '<div id="app"></div>';
   root = document.getElementById('app');

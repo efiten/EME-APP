@@ -1,6 +1,7 @@
 // Port of MoonScreen.kt: date/time, world map, band legend, phase, AZ/EL, distance and moonrise/culmination/moonset.
 // Clock every second, events and map every minute; both pause while the page is hidden.
 
+import { liveCqStore } from '../data.js';
 import { effectiveLanguage, locatorLatLon } from '../settings.js';
 import { BANDS, selectSpots, stationLatLon } from '../lib/livecq.js';
 import { computeEvents } from '../lib/moon-events.js';
@@ -55,7 +56,7 @@ export function localTime(utcMillis, nowMs, tomorrow, yesterday, lang) {
   return `${prefix}${two(t.getHours())}:${two(t.getMinutes())}`;
 }
 
-/** Screen contract { mount(el, ctx), unmount() }; ctx.spots (optional) are the parsed Live CQ spots for the map. */
+/** Screen contract { mount(el, ctx), unmount() }; the CQ spots for the map come from the shared Live CQ store (ctx.liveCq, default the shared one). */
 export function createMoonScreen() {
   let timer = null;
   let cleanup = null;
@@ -63,6 +64,7 @@ export function createMoonScreen() {
   return {
     mount(host, ctx) {
       const { settings, t } = ctx;
+      const liveCq = ctx.liveCq ?? liveCqStore;
       const lang = effectiveLanguage(settings);
       const pos = locatorLatLon(settings);
       const callsign = settings.callsign;
@@ -148,7 +150,7 @@ export function createMoonScreen() {
 
       const redrawMap = (now) => {
         // One dot per station and band, same selection as the Live CQ tab
-        const stations = selectSpots(ctx.spots ?? [], settings.cqBands, now, CQ_MAX_AGE_MINUTES).flatMap((s) => {
+        const stations = selectSpots(liveCq.getState().spots, settings.cqBands, now, CQ_MAX_AGE_MINUTES).flatMap((s) => {
           const p = s.band ? stationLatLon(s.grid) : null;
           return p ? [{ callsign: s.callsign, latDeg: p.latDeg, lonDeg: p.lonDeg, band: s.band }] : [];
         });
@@ -185,7 +187,15 @@ export function createMoonScreen() {
         });
       };
       window.addEventListener('resize', onResize);
+      // New spots: redraw the map at once, not only at the next minute (not for loading or error changes)
+      let drawnSpots = liveCq.getState().spots;
+      const unsubscribe = liveCq.subscribe((state) => {
+        if (state.spots === drawnSpots) return;
+        drawnSpots = state.spots;
+        redrawMap(ctx.now());
+      });
       cleanup = () => {
+        unsubscribe();
         window.removeEventListener('resize', onResize);
         if (frame !== null) cancelAnimationFrame(frame);
       };

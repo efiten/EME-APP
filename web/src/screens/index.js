@@ -1,13 +1,13 @@
 // Tab id -> factory returning a screen { mount(el, ctx), unmount() }.
-// Task 12 replaces the placeholders; screens poll only while mounted and while document.visibilityState === 'visible'.
+// Screens poll only while mounted and while document.visibilityState === 'visible'.
 import { createMoonScreen } from './moon.js';
 import { createDegradationScreen } from './degradation.js';
-
-const placeholder = () => ({ mount() {}, unmount() {} });
+import { createN0ukScreen } from './n0uk.js';
+import { createLiveCqScreen } from './livecq.js';
 
 export const SCREENS = {
   moon: createMoonScreen,
   deg: createDegradationScreen,
-  n0uk: placeholder,
-  livecq: placeholder,
+  n0uk: createN0ukScreen,
+  livecq: createLiveCqScreen,
 };
