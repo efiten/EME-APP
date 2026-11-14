@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -37,5 +38,17 @@ class MainNavigationTest {
 
         assertFalse(compose.activity.isFinishing)
         compose.onAllNodesWithText(moon).onFirst().assertExists()
+    }
+
+    /** Het versienummer staat naast de titel, zoals in de release (bv. "v1.0.0"), niet in de instellingen. */
+    @Test
+    fun versionShownNextToTitle() {
+        LiveCqStore.seedForTest(emptyList())
+        compose.setContent { EmeTheme { EmeApp() } }
+        compose.onNodeWithText("v${BuildConfig.VERSION_NAME}").assertExists()
+
+        compose.onNodeWithContentDescription(compose.activity.getString(R.string.settings)).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("v${BuildConfig.VERSION_NAME}").assertDoesNotExist()
     }
 }
