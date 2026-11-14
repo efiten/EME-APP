@@ -65,6 +65,16 @@ describe('t', () => {
     expect(t('chatcq_title', '144', 3)).toBe('CQ-aanroepen in de HB9Q-chat (144), laatste 60 minuten: 3');
   });
 
+  test('%% becomes % when args are given (moon_phase)', () => {
+    expect(t('moon_phase', 'Full', 75)).toBe('Moon phase: Full (75% lit)');
+    setLanguage('nl');
+    expect(t('moon_phase', 'Vol', 75)).toBe('Maanfase: Vol (75% verlicht)');
+  });
+
+  test('%% stays when no args are given, as Android', () => {
+    expect(t('moon_phase')).toContain('%2$d%% lit');
+  });
+
   test('unescaped apostrophe', () => {
     setLanguage('fr');
     expect(t('moon_down')).toBe("lune ↓ sous l'horizon");

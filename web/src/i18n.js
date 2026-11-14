@@ -9,8 +9,9 @@ export function setLanguage(code) {
   current = code;
 }
 
-/** Android style: %1$s / %2$d are replaced by args[0] / args[1]; falls back to en, then to the name. */
+/** Android style: %1$s / %2$d are replaced by args[0] / args[1], %% becomes % (only with args, as Android getString); falls back to en, then to the name. */
 export function t(name, ...args) {
   const text = strings[current]?.[name] ?? strings.en[name] ?? name;
-  return text.replace(/%(\d)\$[sd]/g, (m, n) => (args[n - 1] === undefined ? m : String(args[n - 1])));
+  if (args.length === 0) return text;
+  return text.replace(/%%|%(\d)\$[sd]/g, (m, n) => (m === '%%' ? '%' : args[n - 1] === undefined ? m : String(args[n - 1])));
 }
