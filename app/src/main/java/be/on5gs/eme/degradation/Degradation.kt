@@ -2,6 +2,7 @@ package be.on5gs.eme.degradation
 
 import be.on5gs.eme.moon.MoonCalculator
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneOffset
 import kotlin.math.log10
 import kotlin.math.pow
@@ -122,4 +123,17 @@ object Degradation {
             val noon = date.atTime(12, 0).toInstant(ZoneOffset.UTC).toEpochMilli()
             date to compute(noon, latDeg, lonDeg, band, tsysK)
         }
+
+    /**
+     * De [count] dagen met de laagste degradatie in [month], elk om 12:00 UTC zoals [daily].
+     * Bij een gelijke waarde gaat de vroegste dag voor.
+     */
+    fun bestDaysOfMonth(
+        month: YearMonth, latDeg: Double, lonDeg: Double, band: EmeBand, tsysK: Double, count: Int = 4,
+    ): Set<LocalDate> =
+        daily(month.atDay(1), month.lengthOfMonth(), latDeg, lonDeg, band, tsysK)
+            .sortedBy { it.second.degDb }   // stabiel: bij gelijke waarde blijft de vroegste eerst
+            .take(count)
+            .map { it.first }
+            .toSet()
 }

@@ -87,6 +87,9 @@
     <string name="deg_series_dec">Склонение (°)</string>
     <string name="deg_center_day">День в центре графика</string>
     <string name="deg_back_today">Вернуться к сегодняшнему дню</string>
+    <string name="deg_calendar_best">Зелёный круг: %1$d дня месяца с наименьшей деградацией</string>
+    <string name="deg_prev_month">Предыдущий месяц</string>
+    <string name="deg_next_month">Следующий месяц</string>
     <string name="log_out">Выйти</string>
     <string name="log_in">Войти</string>
     <string name="logged_out">Вы вышли из чата HB9Q.</string>

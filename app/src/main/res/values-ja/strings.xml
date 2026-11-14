@@ -87,6 +87,9 @@
     <string name="deg_series_dec">赤緯（°）</string>
     <string name="deg_center_day">グラフ中央の日</string>
     <string name="deg_back_today">今日に戻る</string>
+    <string name="deg_calendar_best">緑の丸：今月デグラデーションが最も小さい%1$d日</string>
+    <string name="deg_prev_month">前の月</string>
+    <string name="deg_next_month">次の月</string>
     <string name="log_out">ログアウト</string>
     <string name="log_in">ログイン</string>
     <string name="logged_out">HB9Q チャットからログアウトしました。</string>

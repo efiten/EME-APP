@@ -87,6 +87,9 @@
     <string name="deg_series_dec">Deklination (°)</string>
     <string name="deg_center_day">Dag midt i grafen</string>
     <string name="deg_back_today">Tilbage til i dag</string>
+    <string name="deg_calendar_best">Grøn cirkel: de %1$d dage med den laveste degradering i denne måned</string>
+    <string name="deg_prev_month">Forrige måned</string>
+    <string name="deg_next_month">Næste måned</string>
     <string name="log_out">Log ud</string>
     <string name="log_in">Log ind</string>
     <string name="logged_out">Du er logget ud af HB9Q-chatten.</string>

@@ -1,12 +1,9 @@
 package be.on5gs.eme.degradation
 
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePicker
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -133,21 +130,17 @@ fun DegradationScreen(settings: SettingsRepository, locator: String) {
             }
         }
         if (showPicker) {
-            val pickerState = rememberDatePickerState(
-                initialSelectedDateMillis = centerDay.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+            // Eigen maandkalender: de 4 beste dagen van de maand krijgen een groene cirkel
+            DegCalendarDialog(
+                selected = centerDay,
+                today = today,
+                bestDays = { month ->
+                    if (pos == null) emptySet()
+                    else Degradation.bestDaysOfMonth(month, pos.latDeg, pos.lonDeg, band, tsys.toDouble(), BEST_DAYS_PER_MONTH)
+                },
+                onPick = { centerEpochDay = it.toEpochDay(); showPicker = false },
+                onDismiss = { showPicker = false },
             )
-            DatePickerDialog(
-                onDismissRequest = { showPicker = false },
-                confirmButton = {
-                    TextButton(onClick = {
-                        pickerState.selectedDateMillis?.let { centerEpochDay = Math.floorDiv(it, 86_400_000L) }
-                        showPicker = false
-                    }) { Text(stringResource(android.R.string.ok)) }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showPicker = false }) { Text(stringResource(android.R.string.cancel)) }
-                },
-            ) { DatePicker(state = pickerState) }
         }
 
         if (pos == null) {
