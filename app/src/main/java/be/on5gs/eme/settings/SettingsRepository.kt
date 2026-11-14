@@ -11,11 +11,11 @@ class SettingsRepository(context: Context) {
     private val prefs = context.getSharedPreferences("eme_settings", Context.MODE_PRIVATE)
 
     var locator: String
-        get() = prefs.getString(KEY_LOCATOR, DEFAULT_LOCATOR) ?: DEFAULT_LOCATOR
+        get() = prefs.getString(KEY_LOCATOR, "") ?: ""
         set(value) = prefs.edit().putString(KEY_LOCATOR, value).apply()
 
     var callsign: String
-        get() = prefs.getString(KEY_CALLSIGN, DEFAULT_CALLSIGN) ?: DEFAULT_CALLSIGN
+        get() = prefs.getString(KEY_CALLSIGN, "") ?: ""
         set(value) = prefs.edit().putString(KEY_CALLSIGN, value).apply()
 
     /** Gekozen banden in de Live CQ-lijst. Standaard alleen 23cm. */
@@ -42,7 +42,5 @@ class SettingsRepository(context: Context) {
         private const val KEY_LOCATOR = "locator"
         private const val KEY_CALLSIGN = "callsign"
         private const val KEY_CQ_BANDS = "cq_bands"
-        const val DEFAULT_LOCATOR = "JO21SC"
-        const val DEFAULT_CALLSIGN = "ON5GS"
     }
 }
