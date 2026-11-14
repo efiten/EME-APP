@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import be.on5gs.eme.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -31,7 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +58,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
+import java.time.format.TextStyle as DateTextStyle
 import java.util.Locale
 
 private const val REFRESH_MS = 2_000L
@@ -110,7 +114,7 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
     ) {
         // Datum en tijd: lokaal en UTC
         val instant = Instant.ofEpochMilli(now)
-        val zoneName = zone.getDisplayName(TextStyle.SHORT, locale)
+        val zoneName = zone.getDisplayName(DateTextStyle.SHORT, locale)
         TimeLines(
             stringResource(R.string.time_local) to (dateTime.format(instant.atZone(zone)) to zoneName),
             "UTC" to (dateTime.format(instant.atZone(ZoneOffset.UTC)) to ""),
@@ -189,18 +193,31 @@ private fun BandLegend(bands: Set<Band>) {
 /** Datum/tijd-regels in twee kolommen; de labelkolom past zich aan de langste vertaling aan. */
 @Composable
 private fun TimeLines(vararg lines: Pair<String, Pair<String, String>>) = FixedFontScale {
-    Row(verticalAlignment = Alignment.Bottom) {
-        Column(horizontalAlignment = Alignment.End) {
-            lines.forEach { (label, _) ->
-                Text(label, color = MaterialTheme.colorScheme.secondary, fontSize = 17.sp, maxLines = 1, softWrap = false)
+    val measurer = rememberTextMeasurer()
+    val label = TextStyle(fontSize = 17.sp)
+    val value = TextStyle(fontSize = 17.sp, fontFamily = FontFamily.Monospace)
+    val zone = MaterialTheme.typography.bodySmall
+    BoxWithConstraints {
+        // Op een smal scherm alles samen kleiner, zodat de seconden en de tijdzone op de regel blijven
+        val gap = with(LocalDensity.current) { 10.dp.roundToPx() }
+        fun width(text: String, style: TextStyle) =
+            measurer.measure(text, style, maxLines = 1, softWrap = false).size.width
+        val needed = lines.maxOf { width(it.first, label) } + gap +
+            lines.maxOf { (_, v) -> width(v.first, value) + if (v.second.isEmpty()) 0 else width("  ${v.second}", zone) }
+        val scale = fitScale(needed, constraints.maxWidth)
+        Row(verticalAlignment = Alignment.Bottom) {
+            Column(horizontalAlignment = Alignment.End) {
+                lines.forEach { (text, _) ->
+                    Text(text, color = MaterialTheme.colorScheme.secondary, style = label.scaled(scale), maxLines = 1, softWrap = false)
+                }
             }
-        }
-        Spacer(Modifier.width(10.dp))
-        Column {
-            lines.forEach { (_, value) ->
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text(value.first, fontFamily = FontFamily.Monospace, fontSize = 17.sp, maxLines = 1, softWrap = false)
-                    if (value.second.isNotEmpty()) Text("  ${value.second}", style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.width(10.dp * scale))
+            Column {
+                lines.forEach { (_, v) ->
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(v.first, style = value.scaled(scale), maxLines = 1, softWrap = false)
+                        if (v.second.isNotEmpty()) Text("  ${v.second}", style = zone.scaled(scale), maxLines = 1, softWrap = false)
+                    }
                 }
             }
         }
@@ -209,17 +226,24 @@ private fun TimeLines(vararg lines: Pair<String, Pair<String, String>>) = FixedF
 
 @Composable
 private fun BigValue(label: String, value: Double, modifier: Modifier = Modifier) {
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, fontSize = 20.sp, color = MaterialTheme.colorScheme.secondary)
-        Text(
-            String.format(Locale.US, "%.1f°", value),
-            fontSize = 46.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-        )
+    val text = String.format(Locale.US, "%.1f°", value)
+    val style = TextStyle(fontSize = 46.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+    val measurer = rememberTextMeasurer()
+    BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
+        // Smal scherm of grote letters: kleiner, zodat AZ en EL elk in hun eigen helft blijven
+        val scale = fitScale(measurer.measure(text, style, maxLines = 1, softWrap = false).size.width, constraints.maxWidth)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(label, fontSize = 20.sp, color = MaterialTheme.colorScheme.secondary)
+            Text(text, style = style.scaled(scale), maxLines = 1, softWrap = false)
+        }
     }
 }
+
+/** Factor (hoogstens 1) waarmee iets van [needed] px breed in [available] px past. */
+internal fun fitScale(needed: Int, available: Int): Float =
+    if (needed <= available || needed <= 0) 1f else available.toFloat() / needed * 0.98f
+
+private fun TextStyle.scaled(scale: Float) = if (scale >= 1f) this else copy(fontSize = fontSize * scale)
 
 /**
  * Staat de maan op: culminatie (huidige doorgang), ondergang en VOLGENDE opkomst.
@@ -233,7 +257,7 @@ private fun EventsCard(ev: MoonEvents.Events, now: Long, zone: ZoneId, locale: L
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
-                stringResource(R.string.times_local, zone.getDisplayName(TextStyle.SHORT, locale)),
+                stringResource(R.string.times_local, zone.getDisplayName(DateTextStyle.SHORT, locale)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary,
             )
@@ -251,6 +275,7 @@ private fun EventsCard(ev: MoonEvents.Events, now: Long, zone: ZoneId, locale: L
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun EventLine(
     label: String,
@@ -259,18 +284,22 @@ private fun EventLine(
     format: (Long) -> String,
     extra: (MoonEvents.Event) -> String,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(label, modifier = Modifier.weight(1f))
-        if (event == null) {
-            Text(stringResource(R.string.not_within_48h), style = MaterialTheme.typography.bodySmall)
-        } else {
-            Text(
-                format(event.utcMillis),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (event.utcMillis < now) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) else Color.Unspecified,
-            )
-            Text(extra(event), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(start = 10.dp).width(64.dp))
+    // Label links, tijd rechts; is het scherm te smal, dan komt de tijd op de volgende regel
+    // (anders wordt het label midden in een woord afgebroken)
+    FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(label, modifier = Modifier.align(Alignment.CenterVertically).padding(end = 8.dp))
+        Row(Modifier.align(Alignment.CenterVertically), verticalAlignment = Alignment.CenterVertically) {
+            if (event == null) {
+                Text(stringResource(R.string.not_within_48h), style = MaterialTheme.typography.bodySmall)
+            } else {
+                Text(
+                    format(event.utcMillis),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (event.utcMillis < now) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) else Color.Unspecified,
+                )
+                Text(extra(event), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(start = 10.dp).width(64.dp))
+            }
         }
     }
 }
@@ -291,7 +320,7 @@ internal fun localTime(
         today -> ""
         today.plusDays(1) -> "$tomorrow "
         today.minusDays(1) -> "$yesterday "
-        else -> t.dayOfWeek.getDisplayName(TextStyle.SHORT, locale) + " "
+        else -> t.dayOfWeek.getDisplayName(DateTextStyle.SHORT, locale) + " "
     }
     return prefix + HHMM.format(t)
 }
