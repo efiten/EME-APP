@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -413,5 +414,80 @@ func TestHandlerStateDirSeedsGate(t *testing.T) {
 	do(newHandler(cfg), "GET", "/api/n0uk") // restart
 	if c.hits.Load() != 1 {
 		t.Fatalf("hits=%d, want 1", c.hits.Load())
+	}
+}
+
+func TestRestartInsideGateServesPersistedCopy(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	src := source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}
+	c1 := newCache(src, "ua", time.Second, clk.Now)
+	c1.attachAttempts(loadAttempts(path))
+	first := c1.get()
+	clk.Advance(60 * time.Second)
+	c2 := newCache(src, "ua", time.Second, clk.Now) // restart
+	c2.attachAttempts(loadAttempts(path))
+	r := c2.get()
+	if u.hits.Load() != 1 {
+		t.Fatalf("hits=%d, want no request after the restart", u.hits.Load())
+	}
+	if r.status != 200 || string(r.body) != "v1" || !r.fetchedAt.Equal(first.fetchedAt) || r.errText != "" {
+		t.Fatalf("%+v, want the copy of before the restart with its original fetchedAt %v", r, first.fetchedAt)
+	}
+}
+
+func TestCorruptCopyIgnored(t *testing.T) {
+	cases := map[string]func(dir string){
+		"corrupt metadata": func(dir string) { os.WriteFile(filepath.Join(dir, "t.meta"), []byte("{no"), 0o644) },
+		"missing body":     func(dir string) { os.Remove(filepath.Join(dir, "t.body")) },
+		"size mismatch":    func(dir string) { os.WriteFile(filepath.Join(dir, "t.body"), []byte("short"), 0o644) },
+		"oversized claim": func(dir string) {
+			os.WriteFile(filepath.Join(dir, "t.meta"), []byte(fmt.Sprintf(`{"fetchedAt":1,"size":%d}`, maxBodyBytes+1)), 0o644)
+		},
+		"null metadata": func(dir string) { os.WriteFile(filepath.Join(dir, "t.meta"), []byte("null"), 0o644) },
+	}
+	for name, damage := range cases {
+		t.Run(name, func(t *testing.T) {
+			u, clk := newUpstream(t), newFakeClock()
+			dir := t.TempDir()
+			path := filepath.Join(dir, attemptsFile)
+			src := source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}
+			c1 := newCache(src, "ua", time.Second, clk.Now)
+			c1.attachAttempts(loadAttempts(path))
+			c1.get()
+			damage(dir)
+			c2 := newCache(src, "ua", time.Second, clk.Now)
+			c2.attachAttempts(loadAttempts(path))
+			if r := c2.get(); r.status != http.StatusBadGateway {
+				t.Fatalf("status %d, want 502 (no copy, still inside the gate)", r.status)
+			}
+			if u.hits.Load() != 1 {
+				t.Fatalf("hits=%d", u.hits.Load())
+			}
+		})
+	}
+}
+
+func TestFutureCopyIgnored(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "t.body"), []byte("x"), 0o644)
+	os.WriteFile(filepath.Join(dir, "t.meta"), []byte(fmt.Sprintf(`{"fetchedAt":%d,"size":1}`, clk.Now().Add(time.Hour).UnixMilli())), 0o644)
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}, "ua", time.Second, clk.Now)
+	c.attachAttempts(loadAttempts(filepath.Join(dir, attemptsFile)))
+	if r := c.get(); string(r.body) != "v1" || u.hits.Load() != 1 {
+		t.Fatalf("%+v hits=%d, want a fresh fetch", r, u.hits.Load())
+	}
+}
+
+func TestNullStateFileDoesNotPanic(t *testing.T) {
+	u, clk := newUpstream(t), newFakeClock()
+	path := filepath.Join(t.TempDir(), attemptsFile)
+	os.WriteFile(path, []byte("null"), 0o644)
+	c := newCache(source{name: "t", url: u.srv.URL, maxAge: 120 * time.Second}, "ua", time.Second, clk.Now)
+	c.attachAttempts(loadAttempts(path))
+	c.get() // writes the file
+	if b, _ := os.ReadFile(path); !strings.Contains(string(b), `"t"`) {
+		t.Fatalf("state file %q", b)
 	}
 }

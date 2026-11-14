@@ -109,6 +109,7 @@ func (c *cache) fetch(attemptAt time.Time) {
 		return
 	}
 	c.body, c.hasBody, c.fetchedAt, c.errText = body, true, c.now(), ""
+	c.attempts.saveCopy(c.src.name, body, c.fetchedAt)
 }
 
 // download sends the request the source describes (GET, or POST for W3SZ). errText is short and never contains the URL.
