@@ -46,9 +46,9 @@ object LiveCqStore {
     internal var fetchN6nu: suspend () -> List<LiveCqSpot> = { LiveCqRepository.fetchN6nu() }
 
     /** Alleen voor tests (schermafdrukken): vaste gegevens instellen zonder netwerk. */
-    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = AppClock.now()) {
+    internal fun seedForTest(spots: List<LiveCqSpot>, lastFetch: Long = AppClock.now(), lastSuccess: Long = lastFetch) {
         w3szSpots = emptyList(); n6nuSpots = emptyList()
-        _state.value = State(spots = spots, lastFetch = lastFetch, lastSuccess = lastFetch)
+        _state.value = State(spots = spots, lastFetch = lastFetch, lastSuccess = lastSuccess)
     }
 
     /** Alleen voor tests: alles leeg, zoals bij het starten van de app. */
