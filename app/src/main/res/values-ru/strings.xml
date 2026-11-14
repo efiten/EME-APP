@@ -98,4 +98,5 @@
     <string name="n0uk_cq_header">UTC - частота - период - позывной - вид - локатор - луна</string>
     <string name="n0uk_cq_empty">Нет вызовов CQ в чате N0UK за последние 60 минут.</string>
     <string name="n0uk_error">Чат N0UK недоступен: %1$s</string>
+    <string name="release_notes">Примечания к выпуску</string>
 </resources>

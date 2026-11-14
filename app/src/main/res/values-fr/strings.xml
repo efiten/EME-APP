@@ -98,4 +98,5 @@
     <string name="n0uk_cq_header">UTC - fréq - période - indicatif - mode - locator - lune</string>
     <string name="n0uk_cq_empty">Aucun appel CQ dans le chat N0UK depuis 60 minutes.</string>
     <string name="n0uk_error">Chat N0UK inaccessible : %1$s</string>
+    <string name="release_notes">Notes de version</string>
 </resources>

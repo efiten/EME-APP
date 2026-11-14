@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import be.on5gs.eme.BuildConfig
 import be.on5gs.eme.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
@@ -101,8 +103,17 @@ fun SettingsScreen(
 
         HorizontalDivider(Modifier.padding(vertical = 8.dp))
         Hb9qLoginSection(credentialStore)
+
+        HorizontalDivider(Modifier.padding(vertical = 8.dp))
+        val uriHandler = LocalUriHandler.current
+        TextButton(onClick = { uriHandler.openUri(RELEASE_NOTES_URL) }) {
+            Text("${stringResource(R.string.release_notes)}  v${BuildConfig.VERSION_NAME}")
+        }
     }
 }
+
+/** De release notes van deze versie op GitHub. */
+private val RELEASE_NOTES_URL = "https://github.com/on5gsdirk-cmd/EME-APP/releases/tag/v${BuildConfig.VERSION_NAME}"
 
 /** Taalkeuze. Na een keuze wordt het scherm opnieuw opgebouwd in de nieuwe taal. */
 @Composable
