@@ -57,6 +57,7 @@ import java.util.TimeZone
 
 /**
  * Layout van elk scherm (issue #64): geen knop of tekst buiten het scherm, geen afgekapte tekst,
+ * geen woord dat over twee regels gebroken wordt,
  * tikdoelen van minstens 48 dp en de tabbladen bovenaan zichtbaar.
  *
  * Alle 13 talen op een klein scherm met grote letters (de moeilijkste situatie), plus Engels op
@@ -80,7 +81,12 @@ class LayoutTest(private val device: String, private val language: String, priva
          * Bekende problemen op het kleine scherm, elk met een issue. Een pull request die er een
          * oplost, haalt zijn regel hier weg. Voeg geen nieuwe toe zonder issue.
          */
-        private val KNOWN = emptyList<Known>()
+        private val KNOWN = listOf(
+            // #78: toestand in de lijst "beste dagen" van Deg midden in het woord afgebroken
+            Known(78, "degradation", Regex("""^".*": word broken over two lines$""")),
+            // #79: subtabblad "Messages" van N0UK midden in het woord afgebroken
+            Known(79, "n0uk", Regex("""^".*": word broken over two lines$""")),
+        )
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{1} {0} font {2}")
@@ -224,6 +230,15 @@ class LayoutTest(private val device: String, private val language: String, priva
                         (0 until l.lineCount).any { i -> l.isLineEllipsized(i) || l.getLineRight(i) - l.getLineLeft(i) > node.size.width + 1f }
                 }
                 if (cutOff) problems += "${node.describe()}: text cut off"
+                // Een regeleinde midden in een woord: de kolom is smaller dan het langste woord
+                val brokenWord = layouts.any { l ->
+                    val text = l.layoutInput.text.text
+                    (0 until l.lineCount - 1).any { i ->
+                        val end = l.getLineEnd(i)
+                        end in 1 until text.length && text[end - 1].isWordChar() && text[end].isWordChar()
+                    }
+                }
+                if (brokenWord) problems += "${node.describe()}: word broken over two lines"
             }
             if (node.config.getOrNull(SemanticsActions.OnClick) != null) clickable += node.id
             node.children.forEach { visit(it, inHorizontalScroll || scrollsSideways) }
@@ -287,6 +302,14 @@ class LayoutTest(private val device: String, private val language: String, priva
     private fun string(id: Int) = compose.activity.getString(id)
 
     private fun resource(name: String) = javaClass.classLoader!!.getResource(name)!!.readText()
+}
+
+/** Letter of cijfer van een schrift met spaties tussen de woorden (Chinees en Japans breken overal af). */
+private fun Char.isWordChar(): Boolean {
+    if (!isLetterOrDigit()) return false
+    val script = Character.UnicodeScript.of(code)
+    return script != Character.UnicodeScript.HAN && script != Character.UnicodeScript.HIRAGANA &&
+        script != Character.UnicodeScript.KATAKANA && script != Character.UnicodeScript.HANGUL
 }
 
 /** Een bekend layoutprobleem: [issue] op GitHub, in test [test], meldingen die op [problem] passen. */
