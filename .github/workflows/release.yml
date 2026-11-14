@@ -124,3 +124,55 @@ jobs:
       - name: Remove the signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/release.keystore"
+
+  # The web app has no signing key: this job has no environment and no secrets.
+  # It adds eme-web-vX.Y.Z.zip to the release that the job "release" created.
+  # Zip layout: dist/ (the web app) and eme-web (Linux amd64 server) at the root.
+  # Deploy with web/deploy/deploy-release.sh.
+  web:
+    needs: [check, release]
+    if: needs.check.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build and test the web app
+        working-directory: web
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: web/server/go.mod
+          cache: false
+
+      - name: Build and test the web server
+        working-directory: web/server
+        run: |
+          go test ./...
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -o eme-web .
+
+      - name: Zip dist/ and the server
+        run: |
+          mkdir "$RUNNER_TEMP/pack"
+          cp -r web/dist "$RUNNER_TEMP/pack/dist"
+          cp web/server/eme-web "$RUNNER_TEMP/pack/eme-web"
+          (cd "$RUNNER_TEMP/pack" && zip -r -q "$GITHUB_WORKSPACE/eme-web-v$VERSION.zip" dist eme-web)
+          unzip -l "eme-web-v$VERSION.zip" | tail -n 5
+
+      - name: Attach the zip to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "v$VERSION" "eme-web-v$VERSION.zip" --repo "$GITHUB_REPOSITORY"

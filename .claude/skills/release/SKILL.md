@@ -63,6 +63,8 @@ Tell the maintainer the version and the reason in one sentence before you contin
    - Installs over the previous version; settings and HB9Q login are kept.
    ```
 
+   - The web app is part of the release: list what changed for web users too, and say in
+     the line when a change is only in the app or only in the web app.
    - Written for radio amateurs, not developers: no class names, no file names.
    - Every line links its pull request. Leave out sections that are empty.
    - Changes users never see (tests, CI, refactoring) get at most one line, "Under the hood".
@@ -86,6 +88,9 @@ gh run watch <id>
 
 - Green: give the release link and the download link
   `https://github.com/on5gsdirk-cmd/EME-APP/releases/latest/download/EME-APP.apk`.
+  The release also holds `eme-web-vX.Y.Z.zip`. The maintainer of eme.on8ar.eu (ON8AR) deploys
+  it with `web/deploy/deploy-release.sh vX.Y.Z`. Tell him the release is published; do not
+  deploy yourself.
 - Red: nothing was published. Show the failing step and its error. Fix it in a new pull request;
   a fix to the release notes only can be re-run with `gh workflow run release.yml`.
 - Never delete, move or reuse a tag or release that was published: users may have installed it.
