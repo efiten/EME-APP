@@ -1,6 +1,6 @@
 # EME web app (eme.on8ar.eu): design
 
-Date: 14 November 2026. Status: approved, phase 1 built.
+Date: 14 November 2026. Status: approved, phase 1 built, phase 2 planned (`docs/superpowers/plans/2026-11-15-eme-web-phase2-hb9q.md`).
 
 ## Intent
 
@@ -92,6 +92,8 @@ Considered:
   the HB9Q tab and without the HB9Q server endpoints. Phase 2: HB9Q, which goes live only after
   ON5GS or efite has agreed it with HB9Q (a server that logs in for web users from 1 IP, under
   its own User-Agent, run by efite).
+- **Phase 2 goes ahead** (efite, 15 November 2026): HB9Q is fine with it; the HB9Q chat is already in
+  the Android app, so it may be in the web app too.
 - **eme.on8ar.eu runs the latest release**, not `main` (efite). The web app is built from the
   release tag, so it shows the same version and the same code as the APK of that release, and
   only changes with a release.
