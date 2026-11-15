@@ -39,6 +39,9 @@ data class Horizon(
     val minElDeg: Double = 0.0,
     val obstacles: List<Obstacle> = emptyList(),
 ) {
+    /** Geen eigen horizon ingesteld: geen ondergrens en geen hindernissen (zoals een nieuwe installatie). */
+    val isDefault: Boolean get() = minElDeg == 0.0 && obstacles.isEmpty()
+
     /**
      * Zicht op een punt aan de hemel. [marginDeg] is een extra marge in elevatie, bv. een halve
      * bundelbreedte: een schotel is pas vrij als ook de rand van de bundel over de hindernis komt.

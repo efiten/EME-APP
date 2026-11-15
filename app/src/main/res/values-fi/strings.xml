@@ -115,4 +115,8 @@
     <string name="horizon_saved">Horisontti tallennettu</string>
     <string name="horizon_moon_today">Kuun rata tänään (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Kuu näkyy horisonttisi yllä</string>
+    <string name="horizon_moon_partial">Kuu osittain horisonttisi takana</string>
+    <string name="horizon_moon_blocked">Kuu horisonttisi takana</string>
+    <string name="horizon_window">Näkyy horisonttisi yllä</string>
 </resources>

@@ -3,6 +3,7 @@
 
 import { liveCqStore } from '../data.js';
 import { effectiveLanguage, locatorLatLon } from '../settings.js';
+import { VISIBILITY, currentOrNextWindow, defaultHorizon, isDefaultHorizon, visibility } from '../lib/horizon.js';
 import { BANDS, selectSpots, stationLatLon } from '../lib/livecq.js';
 import { computeEvents } from '../lib/moon-events.js';
 import { position } from '../lib/moon-calculator.js';
@@ -68,6 +69,9 @@ export function createMoonScreen() {
       const lang = effectiveLanguage(settings);
       const pos = locatorLatLon(settings);
       const callsign = settings.callsign;
+      // Own horizon (settings > My horizon); nothing changes without one, as in MoonScreen.kt
+      const horizon = settings.horizon ?? defaultHorizon();
+      const withHorizon = !isDefaultHorizon(horizon);
 
       const root = el('div', 'moon');
       const timeLines = el('div', 'timelines');
@@ -114,10 +118,12 @@ export function createMoonScreen() {
         bigValues.append(box);
       }
       const distance = tagged(el('div', 'distance'), 'distance');
+      const horizonNow = tagged(el('div', 'horizon-now'), 'horizon-now');
       const events = el('div', 'events');
-      root.append(canvas, legend, phase, where, bigValues, distance, events);
+      root.append(canvas, legend, phase, where, bigValues, distance, ...(withHorizon ? [horizonNow] : []), events);
 
       let eventData = null;
+      let windowData = null;
       let lastMinute = null;
 
       const phaseName = (i) => t(`phase_${i}`);
@@ -145,7 +151,21 @@ export function createMoonScreen() {
         const rows = ev.isUp
           ? [el('div', 'up', t('moon_up_now')), line(t('culmination'), ev.culmination, now, elText), line(t('moonset'), ev.nextSet, now, azText), line(t('next_moonrise'), ev.nextRise, now, azText)]
           : [line(t('moonrise'), ev.nextRise, now, azText), line(t('culmination'), ev.culmination, now, elText), line(t('moonset'), ev.nextSet, now, azText)];
+        if (withHorizon) rows.push(horizonLine(windowData, now));
         events.replaceChildren(head, ...rows);
+      };
+      const VIS_CLASS = { [VISIBILITY.CLEAR]: 'clear', [VISIBILITY.PARTIAL]: 'partial', [VISIBILITY.BLOCKED]: 'blocked' };
+      const VIS_TEXT = { [VISIBILITY.CLEAR]: 'horizon_moon_clear', [VISIBILITY.PARTIAL]: 'horizon_moon_partial', [VISIBILITY.BLOCKED]: 'horizon_moon_blocked' };
+      // "Clear of your horizon   15:55 – tomorrow 02:20", green (clear) or orange (partly with loss)
+      const horizonLine = (w, now) => {
+        const row = tagged(el('div', 'event horizon-window'), 'horizon-window');
+        row.append(el('span', 'label', t('horizon_window')));
+        if (w === null) row.append(el('span', 'none', t('not_within_48h')));
+        else {
+          const fmt = (ms) => localTime(ms, now, t('tomorrow'), t('yesterday'), lang);
+          row.append(el('span', `time ${VIS_CLASS[w.visibility]}`, `${fmt(w.startMillis)} – ${fmt(w.endMillis)}`));
+        }
+        return row;
       };
 
       const redrawMap = (now) => {
@@ -164,10 +184,16 @@ export function createMoonScreen() {
         az.textContent = `${moon.azimuthDeg.toFixed(1)}°`;
         elev.textContent = `${moon.elevationDeg.toFixed(1)}°`;
         distance.textContent = t('distance', moon.distanceKm.toLocaleString(lang, { maximumFractionDigits: 0 }));
+        if (withHorizon) {
+          const v = visibility(horizon, moon.azimuthDeg, moon.elevationDeg);
+          horizonNow.className = `horizon-now ${VIS_CLASS[v]}`;
+          horizonNow.textContent = t(VIS_TEXT[v]);
+        }
         const minute = Math.floor(now / MINUTE_MS);
         if (minute !== lastMinute) {
           lastMinute = minute;
           eventData = computeEvents(pos.latDeg, pos.lonDeg, now);
+          if (withHorizon) windowData = currentOrNextWindow(horizon, pos.latDeg, pos.lonDeg, now);
           const p = phaseAt(now);
           phase.textContent = t('moon_phase', phaseName(p.nameIndex), Math.round(p.illuminated * 100));
           redrawMap(now);

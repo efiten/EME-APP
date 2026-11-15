@@ -70,6 +70,30 @@ class MoonWindowsTest {
         }
     }
 
+    /** Het venster waarin de maan nu staat, of het volgende (zelfde tabel als de webtests). */
+    @Test
+    fun currentOrNextAsInTheSharedTable() {
+        ExpectedCsv.read("horizon_next").forEach { r ->
+            val h = Horizon.decode(r.getValue("horizon"))!!
+            val w = MoonWindows.currentOrNext(h, 51.1, 4.3, Instant.parse(r.getValue("now_utc")).toEpochMilli())
+            if (r.getValue("start_utc").isEmpty()) {
+                assertEquals("$r", null, w)
+            } else {
+                assertTrue("$r start", abs(w!!.startMillis - Instant.parse(r.getValue("start_utc")).toEpochMilli()) <= 61_000)
+                assertTrue("$r end", abs(w.endMillis - Instant.parse(r.getValue("end_utc")).toEpochMilli()) <= 61_000)
+                assertEquals("$r", Visibility.valueOf(r.getValue("visibility")), w.visibility)
+            }
+        }
+    }
+
+    @Test
+    fun defaultHorizonIsRecognised() {
+        assertTrue(Horizon().isDefault)
+        assertTrue(Horizon.decode("1;0")!!.isDefault)
+        assertTrue(!Horizon.decode("1;5")!!.isDefault)
+        assertTrue(!Horizon.decode("1;0;P 180 200 20")!!.isDefault)
+    }
+
     /** Een maan die de hele dag achter een hindernis blijft, geeft geen venster. */
     @Test
     fun moonBehindTheTreeAllDayGivesNoWindow() {

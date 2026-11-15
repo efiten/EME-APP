@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { readExpected } from './expected.js';
-import { chartSpans, chartTopDeg, decode, encode, halfBeamwidthDeg, moonTrack, moonWindows, parseAngle, trackSegments, usableWindows, defaultHorizon, VISIBILITY, visibility } from '../src/lib/horizon.js';
+import { chartSpans, chartTopDeg, currentOrNextWindow, decode, isDefaultHorizon, encode, halfBeamwidthDeg, moonTrack, moonWindows, parseAngle, trackSegments, usableWindows, defaultHorizon, VISIBILITY, visibility } from '../src/lib/horizon.js';
 import { position } from '../src/lib/moon-calculator.js';
 
 const DAY = 86_400_000;
@@ -114,5 +114,26 @@ describe('"My horizon" screen logic (same as HorizonChartTest.kt)', () => {
     for (const p of segs.flat()) expect(p.elDeg).toBeGreaterThan(0);
     const p = (az) => ({ millis: 0, azDeg: az, elDeg: 10 });
     expect(trackSegments([p(350), p(355), p(2), p(8)]).length).toBe(2);
+  });
+});
+
+describe('current or next window (same table as MoonWindowsTest.kt)', () => {
+  test('as in the shared table', () => {
+    for (const r of readExpected('horizon_next')) {
+      const w = currentOrNextWindow(decode(r.horizon), 51.1, 4.3, Date.parse(r.now_utc));
+      if (r.start_utc === '') expect(w, JSON.stringify(r)).toBeNull();
+      else {
+        expect(Math.abs(w.startMillis - Date.parse(r.start_utc)), JSON.stringify(r)).toBeLessThanOrEqual(61_000);
+        expect(Math.abs(w.endMillis - Date.parse(r.end_utc)), JSON.stringify(r)).toBeLessThanOrEqual(61_000);
+        expect(w.visibility).toBe(r.visibility);
+      }
+    }
+  });
+
+  test('default horizon is recognised', () => {
+    expect(isDefaultHorizon(defaultHorizon())).toBe(true);
+    expect(isDefaultHorizon(decode('1;0'))).toBe(true);
+    expect(isDefaultHorizon(decode('1;5'))).toBe(false);
+    expect(isDefaultHorizon(decode('1;0;P 180 200 20'))).toBe(false);
   });
 });

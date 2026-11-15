@@ -1,0 +1,8 @@
+# The window the moon is in now, or else the next one (MoonWindows.currentOrNext, currentOrNextWindow in web/src/lib/horizon.js),
+# JO21 (51.1N 4.3E), searched 24 h back and 48 h ahead. Empty start = none within 48 h. Checked to within 1 minute.
+horizon,now_utc,start_utc,end_utc,visibility
+1;5;B 60 110 25;P 180 200 20,2026-11-20T12:00:00Z,2026-11-20T15:55:00Z,2026-11-21T02:20:00Z,CLEAR
+1;5;B 60 110 25;P 180 200 20,2026-11-20T00:30:00Z,2026-11-19T14:52:00Z,2026-11-20T01:02:00Z,CLEAR
+1;5;B 60 110 25;P 180 200 20,2027-01-04T10:00:00Z,2027-01-04T06:23:00Z,2027-01-04T11:34:00Z,PARTIAL
+1;0,2026-11-20T12:00:00Z,2026-11-20T13:39:00Z,2026-11-21T02:54:00Z,CLEAR
+1;0;B 0 360 90,2026-11-20T12:00:00Z,,,

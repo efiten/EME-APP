@@ -115,4 +115,8 @@
     <string name="horizon_saved">Horizon opgeslagen</string>
     <string name="horizon_moon_today">Maanbaan vandaag (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Maan vrij van je horizon</string>
+    <string name="horizon_moon_partial">Maan gedeeltelijk achter je horizon</string>
+    <string name="horizon_moon_blocked">Maan achter je horizon</string>
+    <string name="horizon_window">Vrij van je horizon</string>
 </resources>

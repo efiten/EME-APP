@@ -1,5 +1,12 @@
 package be.on5gs.eme.moon
 
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
+import be.on5gs.eme.horizon.PARTIAL_ORANGE
+import be.on5gs.eme.horizon.BLOCKED_RED
+import be.on5gs.eme.horizon.Visibility
+import be.on5gs.eme.horizon.MoonWindows
+import be.on5gs.eme.horizon.MoonWindow
 import be.on5gs.eme.AppClock
 import androidx.compose.ui.platform.LocalConfiguration
 import be.on5gs.eme.R
@@ -98,10 +105,16 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
 
     // Opkomst/culminatie/ondergang: elke minuut herberekenen, buiten de UI-thread
     var events by remember { mutableStateOf<MoonEvents.Events?>(null) }
+    // Eigen horizon (instellingen > Mijn horizon): het huidige of volgende vrije venster, ook elke minuut
+    val horizon = remember { settings.horizon }
+    var window by remember { mutableStateOf<MoonWindow?>(null) }
     val minute = now / 60_000
     LaunchedEffect(locator, minute) {
         if (pos != null) {
             events = withContext(Dispatchers.Default) { MoonEvents.compute(pos.latDeg, pos.lonDeg, now) }
+            if (!horizon.isDefault) {
+                window = withContext(Dispatchers.Default) { MoonWindows.currentOrNext(horizon, pos.latDeg, pos.lonDeg, now) }
+            }
         }
     }
 
@@ -154,9 +167,25 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
             stringResource(R.string.distance, String.format(locale, "%,.0f", moon.distanceKm)),
             style = MaterialTheme.typography.bodyMedium,
         )
+        // Alleen met een eigen horizon: staat de maan nu vrij, gedeeltelijk of achter je horizon?
+        if (!horizon.isDefault) {
+            val v = horizon.visibility(moon.azimuthDeg, moon.elevationDeg)
+            Text(
+                stringResource(
+                    when (v) {
+                        Visibility.CLEAR -> R.string.horizon_moon_clear
+                        Visibility.PARTIAL -> R.string.horizon_moon_partial
+                        Visibility.BLOCKED -> R.string.horizon_moon_blocked
+                    },
+                ),
+                color = v.color(),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.testTag("horizon-now"),
+            )
+        }
         Spacer(Modifier.height(12.dp))
 
-        events?.let { ev -> EventsCard(ev, now, zone, locale) }
+        events?.let { ev -> EventsCard(ev, now, zone, locale, if (horizon.isDefault) null else HorizonLine(window)) }
     }
 }
 
@@ -249,8 +278,18 @@ private fun TextStyle.scaled(scale: Float) = if (scale >= 1f) this else copy(fon
  * Staat de maan op: culminatie (huidige doorgang), ondergang en VOLGENDE opkomst.
  * Staat ze onder: opkomst, culminatie en ondergang van de volgende doorgang.
  */
+/** Kleur per zicht: groen vrij, oranje gedeeltelijk, rood achter de horizon (ook in Live CQ). */
+internal fun Visibility.color(): Color = when (this) {
+    Visibility.CLEAR -> GREEN
+    Visibility.PARTIAL -> PARTIAL_ORANGE
+    Visibility.BLOCKED -> BLOCKED_RED
+}
+
+/** De regel "Vrij van je horizon" in de kaart met de tijden; [window] null = niet binnen 48 uur. */
+private class HorizonLine(val window: MoonWindow?)
+
 @Composable
-private fun EventsCard(ev: MoonEvents.Events, now: Long, zone: ZoneId, locale: Locale) {
+private fun EventsCard(ev: MoonEvents.Events, now: Long, zone: ZoneId, locale: Locale, horizon: HorizonLine?) {
     val tomorrow = stringResource(R.string.tomorrow)
     val yesterday = stringResource(R.string.yesterday)
     val fmt = { t: Long -> localTime(t, now, zone, tomorrow, yesterday, locale) }
@@ -271,6 +310,7 @@ private fun EventsCard(ev: MoonEvents.Events, now: Long, zone: ZoneId, locale: L
                 EventLine(stringResource(R.string.culmination), ev.culmination, now, fmt) { String.format(Locale.US, "EL %.1f°", it.elevationDeg) }
                 EventLine(stringResource(R.string.moonset), ev.nextSet, now, fmt) { String.format(Locale.US, "AZ %.0f°", it.azimuthDeg) }
             }
+            if (horizon != null) HorizonWindowLine(horizon.window, fmt)
         }
     }
 }
@@ -323,4 +363,25 @@ internal fun localTime(
         else -> t.dayOfWeek.getDisplayName(DateTextStyle.SHORT, locale) + " "
     }
     return prefix + HHMM.format(t)
+}
+
+/** "Vrij van je horizon   15:55 – morgen 02:20", groen (vrij) of oranje (deels met verlies). */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun HorizonWindowLine(window: MoonWindow?, format: (Long) -> String) {
+    // Eén geheel voor een schermlezer: "Vrij van je horizon 16:55 – morgen 03:20"
+    FlowRow(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}.testTag("horizon-window"), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(stringResource(R.string.horizon_window), modifier = Modifier.align(Alignment.CenterVertically).padding(end = 8.dp))
+        if (window == null) {
+            Text(stringResource(R.string.not_within_48h), style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.CenterVertically))
+        } else {
+            Text(
+                "${format(window.startMillis)} – ${format(window.endMillis)}",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = window.visibility.color(),
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
+        }
+    }
 }

@@ -115,4 +115,8 @@
     <string name="horizon_saved">Horizont gespeichert</string>
     <string name="horizon_moon_today">Mondbahn heute (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Mond frei von deinem Horizont</string>
+    <string name="horizon_moon_partial">Mond teilweise hinter deinem Horizont</string>
+    <string name="horizon_moon_blocked">Mond hinter deinem Horizont</string>
+    <string name="horizon_window">Frei von deinem Horizont</string>
 </resources>
