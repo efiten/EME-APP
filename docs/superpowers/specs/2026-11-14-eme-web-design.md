@@ -20,7 +20,7 @@ Feature parity with the Android app's latest release (1.1.0 on 14 November 2026)
 |---|---|
 | Moon | Moon AZ/EL for the user's locator (Meeus, topocentric), local and UTC date and time, moonrise / culmination / moonset, world map with the area where the moon is above the horizon, moon phase, Live CQ stations in their band colour. |
 | Deg | EME degradation as calculated by MMMonVHF (50 to 1296 MHz): value now, 30-day graph around a chosen date with moon distance and declination. |
-| HB9Q | HB9Q EME chat, read only, per band (12 bands, `ChatMessage.kt` `Hb9qBand`), sub-pages Messages, QRV, Chat CQ (last 60 minutes). "Log out" button. |
+| HB9Q | HB9Q EME chat, read only, per band (13 bands, `ChatMessage.kt` `Hb9qBand`), sub-pages Messages, QRV, Chat CQ (last 60 minutes). "Log out" button. |
 | N0UK | N0UK WSJT EME chat (144 MHz), read only, same 3 sub-pages; Chat CQ with frequency, period, mode, locator, moon elevation, greyed out after "stop". |
 | Live CQ | W3SZ and N6NU Live CQ spots (MAP65/Q65), merged, filtered per band, with "moon above the station's horizon". |
 | Settings | Callsign, locator, language (13: NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, RU, ZH, JA), HB9Q login, Live CQ bands, chat band, degradation band (`SettingsRepository.kt`). |
