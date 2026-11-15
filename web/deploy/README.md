@@ -1,6 +1,6 @@
 # Server install (eme.on8ar.eu)
 
-The server updates itself: `eme-web-update.timer` runs `/usr/local/sbin/eme-web-update` about every 15 minutes.
+The server updates itself: `eme-web-update.timer` runs `/usr/local/sbin/eme-web-update` about every 5 minutes.
 The script installs the latest GitHub release if it has an `eme-web-vX.Y.Z.zip`, checks `/api/version` on
 127.0.0.1:5200, and rolls back by itself when the check fails. A version that was rolled back is not
 retried by the timer until someone deploys that version by hand. Newer releases are still deployed.
@@ -87,7 +87,7 @@ systemctl list-timers eme-web-update.timer
 
 The job `web-deploy` in `.github/workflows/release.yml` does not deploy: SSH on the host is open only to the
 maintainer's IP. It polls `https://eme.on8ar.eu/api/version` every 30 s and turns green when the host runs the new
-version, which the timer installs within about 16 minutes. It turns red after 25 minutes; then check
+version, which the timer installs within about 6 minutes. It turns red after 10 minutes; then check
 `journalctl -u eme-web-update` (the update failed and rolled back, or the timer is stopped).
 
 ## Deploy a tag by hand

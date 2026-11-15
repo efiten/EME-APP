@@ -89,7 +89,7 @@ gh run watch <id>
 - Green: give the release link and the download link
   `https://github.com/on5gsdirk-cmd/EME-APP/releases/latest/download/EME-APP.apk`.
   The release also holds `eme-web-vX.Y.Z.zip`. eme.on8ar.eu updates itself from it within about
-  15 minutes (`eme-web-update.timer` on the server), so there is nothing to deploy. The job `web-deploy`
+  5 minutes (`eme-web-update.timer` on the server), so there is nothing to deploy. The job `web-deploy`
   waits for it and turns green when https://eme.on8ar.eu/api/version reports the new version. To deploy at
   once, the maintainer (ON8AR) runs `web/deploy/deploy-release.sh vX.Y.Z`. A failed deploy rolls
   back by itself and is not retried for that version until someone deploys that version by hand.
