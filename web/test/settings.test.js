@@ -6,6 +6,7 @@ const DEFAULTS = {
   callsign: '',
   cqBands: new Set(['B23CM']),
   degBand: 'B1296',
+  chatBand: 'B1296',
   language: '',
 };
 
@@ -95,6 +96,7 @@ describe('saveSettings', () => {
       callsign: 'ON8AR',
       cqBands: new Set(['B144', 'B432']),
       degBand: 'B432',
+      chatBand: 'B1296',
       language: 'fr',
     });
   });
@@ -119,5 +121,15 @@ describe('locatorLatLon', () => {
 
   test('valid locator gives lat/lon of the square centre', () => {
     expect(locatorLatLon({ locator: 'JO20' })).toEqual({ latDeg: 50.5, lonDeg: 5 });
+  });
+});
+
+describe('chatBand', () => {
+  test('defaults to B1296; unknown name falls back; a valid name is kept', () => {
+    expect(loadSettings().chatBand).toBe('B1296');
+    localStorage.setItem('eme.settings', JSON.stringify({ chatBand: 'nope' }));
+    expect(loadSettings().chatBand).toBe('B1296');
+    saveSettings({ chatBand: 'B432' });
+    expect(loadSettings().chatBand).toBe('B432');
   });
 });
