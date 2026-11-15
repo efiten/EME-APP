@@ -83,26 +83,12 @@ journalctl -u eme-web-update
 systemctl list-timers eme-web-update.timer
 ```
 
-## Deploy from GitHub on release (optional)
+## Release run on GitHub
 
-The job `web-deploy` in `.github/workflows/release.yml` starts the update right after a release, instead of
-waiting up to 15 minutes for the timer. It logs in as `eme-deploy` with its own key; that key can only run
-`systemctl start eme-web-update.service`, which installs the latest release. One-time setup:
-
-1. On the host, as root:
-   ```bash
-   adduser --system --group --shell /bin/sh --home /home/eme-deploy eme-deploy
-   install -d -m 700 -o eme-deploy -g eme-deploy /home/eme-deploy/.ssh
-   # one line: restrict,command="sudo -n /usr/bin/systemctl start eme-web-update.service" ssh-ed25519 AAAA... eme-web-deploy
-   install -m 600 -o eme-deploy -g eme-deploy /dev/null /home/eme-deploy/.ssh/authorized_keys
-   install -m 440 eme-deploy.sudoers /etc/sudoers.d/eme-deploy && visudo -cf /etc/sudoers.d/eme-deploy
-   ```
-2. In GitHub (repository owner or admin): Settings > Environments > `web-deploy`, deployment branch `main`,
-   secret `EME_DEPLOY_SSH_KEY` = the private key. Keep the private key nowhere else.
-
-Without the secret the job skips itself. To stop deploys from GitHub, delete the secret or the
-`authorized_keys` line. A failed update rolls back as described above and fails the job; the APK release is
-already published at that point.
+The job `web-deploy` in `.github/workflows/release.yml` does not deploy: SSH on the host is open only to the
+maintainer's IP. It polls `https://eme.on8ar.eu/api/version` every 30 s and turns green when the host runs the new
+version, which the timer installs within about 16 minutes. It turns red after 25 minutes; then check
+`journalctl -u eme-web-update` (the update failed and rolled back, or the timer is stopped).
 
 ## Deploy a tag by hand
 
