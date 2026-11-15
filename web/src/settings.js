@@ -1,4 +1,5 @@
 import { LANGUAGES } from './i18n.js';
+import { HB9Q_BANDS } from './lib/hb9q.js';
 import { BANDS } from './lib/livecq.js';
 import { EME_BANDS } from './lib/degradation.js';
 import { isValid, toLatLon } from './lib/maidenhead.js';
@@ -16,6 +17,7 @@ const defaults = () => ({
   callsign: '',
   cqBands: new Set(['B23CM']),
   degBand: 'B1296',
+  chatBand: 'B1296',
   language: '', // '' = automatic: follow the browser (effectiveLanguage)
 });
 
@@ -37,6 +39,7 @@ export function loadSettings() {
     callsign: typeof s.callsign === 'string' ? s.callsign : d.callsign,
     cqBands: Array.isArray(s.cqBands) ? new Set(s.cqBands.filter((id) => BANDS.some((b) => b.id === id))) : d.cqBands,
     degBand: EME_BANDS.some((b) => b.id === s.degBand) ? s.degBand : d.degBand,
+    chatBand: HB9Q_BANDS.some((b) => b.name === s.chatBand) ? s.chatBand : d.chatBand,
     language: LANGUAGES.includes(s.language) ? s.language : d.language,
   };
 }
