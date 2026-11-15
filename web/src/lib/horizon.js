@@ -17,6 +17,9 @@ export function parseAngle(text, max) {
   return v <= max ? v : null;
 }
 
+/** No own horizon set: no minimum and no obstacles (as a new installation). */
+export const isDefaultHorizon = (h) => h.minElDeg === 0 && h.obstacles.length === 0;
+
 /** Azimuth in [0, 360). */
 export function normalizeAz(deg) {
   return ((deg % 360) + 360) % 360;
@@ -166,4 +169,15 @@ export function chartSpans(o) {
   const from = normalizeAz(o.fromAzDeg);
   const to = normalizeAz(o.toAzDeg);
   return from <= to ? [[from, to]] : [[from, 360], [0, to]];
+}
+
+const HOUR_MS = 3_600_000;
+
+/**
+ * The window (clear or partial) the moon is in now, or else the next one; searched from 24 h back (so a
+ * running window gets its real start) to 48 h ahead, as moonrise and moonset. null when there is none.
+ */
+export function currentOrNextWindow(horizon, latDeg, lonDeg, nowMillis) {
+  const start = nowMillis - (nowMillis % STEP_MS);
+  return usableWindows(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS).find((w) => w.endMillis > nowMillis) ?? null;
 }

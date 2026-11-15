@@ -115,4 +115,8 @@
     <string name="horizon_saved">Горизонт сохранён</string>
     <string name="horizon_moon_today">Путь Луны сегодня (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Луна над вашим горизонтом</string>
+    <string name="horizon_moon_partial">Луна частично за вашим горизонтом</string>
+    <string name="horizon_moon_blocked">Луна за вашим горизонтом</string>
+    <string name="horizon_window">Над вашим горизонтом</string>
 </resources>

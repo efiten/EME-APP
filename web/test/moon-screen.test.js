@@ -2,6 +2,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createMoonScreen } from '../src/screens/moon.js';
 import { setLanguage, t } from '../src/i18n.js';
+import { decode } from '../src/lib/horizon.js';
+import { withTimeZone } from './tz.js';
 
 const NOW = Date.parse('2026-11-07T10:00:00Z');
 let host;
@@ -144,5 +146,32 @@ describe('moon screen', () => {
     expect(liveCq.listeners.size).toBe(0);
     liveCq.emit([]);
     expect(drawCalls).toBe(2);
+  });
+});
+
+describe('own horizon in the moon tab (same as HorizonUseTest.kt)', () => {
+  // 20 Nov 2026 12:00 UTC: the moon is still down. With ON5GS's horizon it is clear at the centre of JO21SC
+  // from 15:50 to 02:15 UTC, in Brussels 16:50 to tomorrow 03:15.
+  test('shows the state now and the window', () => {
+    const restore = withTimeZone('Europe/Brussels');
+    try {
+      vi.setSystemTime(Date.parse('2026-11-20T12:00:00Z'));
+      screen.mount(host, ctxOf(settings({ horizon: decode('1;5;B 60 110 25;P 180 200 20') })));
+      expect(q('horizon-now').textContent).toBe('Moon behind your horizon');
+      expect(q('horizon-now').classList.contains('blocked')).toBe(true);
+      const line = q('horizon-window');
+      expect(line.textContent).toContain('Clear of your horizon');
+      expect(line.textContent).toContain('16:50');
+      expect(line.textContent).toContain('tomorrow 03:15');
+      expect(line.querySelector('.time').classList.contains('clear')).toBe(true);
+    } finally {
+      restore();
+    }
+  });
+
+  test('without an own horizon nothing changes', () => {
+    screen.mount(host, ctxOf(settings()));
+    expect(q('horizon-now')).toBeNull();
+    expect(q('horizon-window')).toBeNull();
   });
 });

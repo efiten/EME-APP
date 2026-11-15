@@ -47,6 +47,18 @@ object MoonWindows {
         return out
     }
 
+    /**
+     * Het venster (vrij of gedeeltelijk) waarin de maan nu staat, of anders het volgende; gezocht van
+     * 24 uur terug (zodat een lopend venster zijn echte begin krijgt) tot 48 uur vooruit, zoals de
+     * opkomst en ondergang. Null als er binnen 48 uur geen is.
+     */
+    fun currentOrNext(horizon: Horizon, latDeg: Double, lonDeg: Double, nowMillis: Long): MoonWindow? {
+        val start = nowMillis - nowMillis % STEP_MS
+        return usable(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS).firstOrNull { it.endMillis > nowMillis }
+    }
+
+    private const val HOUR_MS = 3_600_000L
+
     /** Alle stukken tussen start en eind, elk met zijn zicht (vrij, gedeeltelijk, geblokkeerd). */
     fun windows(
         horizon: Horizon,

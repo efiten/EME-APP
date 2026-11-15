@@ -115,4 +115,8 @@
     <string name="horizon_saved">地平線を保存しました</string>
     <string name="horizon_moon_today">今日の月の軌道 (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">月はあなたの地平線より上</string>
+    <string name="horizon_moon_partial">月は一部あなたの地平線の陰</string>
+    <string name="horizon_moon_blocked">月はあなたの地平線の陰</string>
+    <string name="horizon_window">地平線より上</string>
 </resources>

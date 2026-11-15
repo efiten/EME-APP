@@ -115,4 +115,8 @@
     <string name="horizon_saved">Orizzonte salvato</string>
     <string name="horizon_moon_today">Percorso della luna oggi (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Luna libera dal tuo orizzonte</string>
+    <string name="horizon_moon_partial">Luna in parte dietro il tuo orizzonte</string>
+    <string name="horizon_moon_blocked">Luna dietro il tuo orizzonte</string>
+    <string name="horizon_window">Libera dal tuo orizzonte</string>
 </resources>

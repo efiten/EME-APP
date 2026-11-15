@@ -151,6 +151,14 @@ class LayoutTest(private val device: String, private val language: String, priva
     @Test
     fun moon() = checkApp(null)
 
+    /** Maan-tab met een eigen horizon: de regel "Maan achter je horizon" en "Vrij van je horizon" (stap 3 van #87). */
+    @Test
+    fun moonWithHorizon() {
+        SettingsRepository(ApplicationProvider.getApplicationContext()).horizon =
+            be.on5gs.eme.horizon.Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!
+        checkApp(null)
+    }
+
     @Test
     fun degradation() = checkApp(R.string.tab_degradation)
 

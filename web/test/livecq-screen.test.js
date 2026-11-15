@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { decode } from '../src/lib/horizon.js';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLiveCqScreen } from '../src/screens/livecq.js';
 import { createLiveCqStore } from '../src/data.js';
@@ -146,6 +147,18 @@ describe('Live CQ screen', () => {
     await mount(settings({ locator: '' }));
     expect(q('mymoon')).toBeNull();
     expect(host.textContent).not.toMatch(/NaN/);
+  });
+
+  test('the moon at your QTH is coloured by the own horizon', async () => {
+    vi.setSystemTime(Date.parse('2026-11-20T18:00:00Z')); // moon up at JO21SC
+    await mount();
+    expect(q('mymoon').classList.contains('up')).toBe(true); // no own horizon: green above 0 deg, as before
+    screen.unmount();
+    await mount(settings({ horizon: decode('1;0;P 0 360 90') }));
+    expect(q('mymoon').classList.contains('partial')).toBe(true);
+    screen.unmount();
+    await mount(settings({ horizon: decode('1;0;B 0 360 90') }));
+    expect(q('mymoon').classList.contains('down')).toBe(true);
   });
 
   test('unmount stops polling and a late response does not touch the DOM', async () => {

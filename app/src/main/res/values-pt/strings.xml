@@ -115,4 +115,8 @@
     <string name="horizon_saved">Horizonte guardado</string>
     <string name="horizon_moon_today">Trajetória da lua hoje (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Lua livre do seu horizonte</string>
+    <string name="horizon_moon_partial">Lua em parte atrás do seu horizonte</string>
+    <string name="horizon_moon_blocked">Lua atrás do seu horizonte</string>
+    <string name="horizon_window">Livre do seu horizonte</string>
 </resources>

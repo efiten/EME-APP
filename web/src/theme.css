@@ -365,3 +365,10 @@ body {
 .horizon .chip { font: inherit; font-size: 14px; min-height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--on-surface-variant); background: none; color: var(--on-surface); cursor: pointer; }
 .horizon .chip.selected { background: var(--secondary-container, #4a4458); border-color: transparent; }
 .horizon .icon-button { font-size: 20px; min-width: 48px; min-height: 48px; border: 0; background: none; color: var(--on-surface); cursor: pointer; }
+
+/* Own horizon in the Moon tab and Live CQ (step 3 of #87) */
+.moon .horizon-now { font-weight: 700; margin-top: 4px; }
+.moon .clear { color: var(--moon-up); }
+.moon .partial, .cq .partial { color: #ffa726; }
+.moon .blocked { color: var(--alert); }
+.moon .events .horizon-window .time { font-weight: 700; }

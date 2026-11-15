@@ -115,4 +115,8 @@
     <string name="horizon_saved">Horisont gemt</string>
     <string name="horizon_moon_today">Månens bane i dag (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Månen fri af din horisont</string>
+    <string name="horizon_moon_partial">Månen delvis bag din horisont</string>
+    <string name="horizon_moon_blocked">Månen bag din horisont</string>
+    <string name="horizon_window">Fri af din horisont</string>
 </resources>

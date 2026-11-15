@@ -121,4 +121,8 @@
     <string name="horizon_saved">Horizon saved</string>
     <string name="horizon_moon_today">Moon track today (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
+    <string name="horizon_moon_clear">Moon clear of your horizon</string>
+    <string name="horizon_moon_partial">Moon partly behind your horizon</string>
+    <string name="horizon_moon_blocked">Moon behind your horizon</string>
+    <string name="horizon_window">Clear of your horizon</string>
 </resources>
