@@ -69,6 +69,13 @@ The `location ^~ /api/hb9q/` block in the nginx site is also such a change. Inst
 first release with the HB9Q chat: copy the site file, then `nginx -t && systemctl reload nginx`. Without it
 a slow HB9Q login hits the 20 s timeout of `/api/` and the web app gets a 504.
 
+The same file holds a per-IP limit for the login: `limit_req_zone ... zone=eme_hb9q_login` at the top and
+`location = /api/hb9q/login` with `limit_req` (3 per minute, burst 3, status 429). Without it one client can use
+up the server-wide login budget of the Go server (10 per minute) and every user gets 429 `busy`. The zone is
+declared at the top level of the site file, which Debian includes in the http context. The `limit_req_zone`
+line needs the whole file to be installed, not only the location blocks. `nginx -t` must pass before the reload;
+it could not be run when this change was written, so run it on the host.
+
 ## Logs
 
 ```

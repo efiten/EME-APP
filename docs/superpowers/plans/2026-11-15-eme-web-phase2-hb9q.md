@@ -347,7 +347,7 @@ git commit -m "web: HB9Q tab"
 
 **Files:** none in the repository.
 
-- [ ] **Step 1:** After the first release whose zip contains HB9Q: install the nginx site of task 3 on nolcluster, `nginx -t`, reload. Server change: ask first.
+- [ ] **Step 1:** Before the first release whose zip contains HB9Q: install the nginx site of task 3 (including the per-IP login limit `eme_hb9q_login`) on nolcluster, `nginx -t`, reload. Server change: ask first.
 - [ ] **Step 2:** The update timer installs the release; check `journalctl -u eme-web-update` and `/api/version`.
 - [ ] **Step 3:** Check with `curl` that `/api/hb9q/messages?band=6` without a cookie gives 401 `no_session`, and that a login with a wrong password gives 401 and a second one 429.
 - [ ] **Step 4:** efite logs in with their own HB9Q login on the iPhone and checks the 3 sub-pages and "Log out".

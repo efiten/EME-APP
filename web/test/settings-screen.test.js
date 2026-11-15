@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { stubFetch } from './fetch-stub.js';
 import { createSettingsScreen } from '../src/screens/settings.js';
 import { loadCredentials, saveCredentials } from '../src/credentials.js';
 import { setLanguage, t } from '../src/i18n.js';
@@ -65,6 +66,16 @@ describe('HB9Q login section', () => {
     expect(q('hb9q-password-label').textContent).toContain(t('password'));
     expect(q('hb9q-password-label').textContent).not.toContain(t('password_saved'));
     expect(q('clear-login')).toBeNull();
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  test('clearAlsoEndsTheServerSession', () => {
+    const stub = stubFetch({ '/api/hb9q/logout': () => new Response('{}', { status: 200 }) });
+    saveCredentials('ON0AAA', 'pw-a');
+    mount();
+    q('clear-login').click();
+    expect(stub.mock.calls.map(([u, init]) => [u, init.method])).toEqual([['/api/hb9q/logout', 'POST']]);
   });
 
   test('clearRemovesTheLogin', () => {

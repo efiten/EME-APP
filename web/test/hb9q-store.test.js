@@ -73,20 +73,63 @@ describe('Hb9qStore', () => {
   test('sessionExpiredLogsInAgainOnce', async () => {
     const stub = stubFetch({
       [LOGIN]: loginOk,
-      [MSG6]: sequence(json(401, { error: 'session_expired' }), messages(raw(row(1, 'DL1ABC')))),
+      [MSG6]: sequence(messages(raw(row(1, 'DL1ABC'))), json(401, { error: 'session_expired' }), messages(raw(row(1, 'DL1ABC')))),
     });
     await store.refreshIfOlderThan(0, 'B1296', A);
+    t += HB9Q_REFRESH_MS;
+    await store.refreshIfOlderThan(0, 'B1296', A); // existing session, 401, one re-login
     expect(callsTo(stub, LOGIN)).toHaveLength(2);
     expect(store.getState().error).toBeNull();
     expect(store.getState().messages).toHaveLength(1);
   });
 
   test('a second 401 after the re-login is an error, not a loop', async () => {
+    const stub = stubFetch({
+      [LOGIN]: loginOk,
+      [MSG6]: sequence(messages(raw(row(1, 'DL1ABC'))), json(401, { error: 'no_session' })),
+    });
+    await store.refreshIfOlderThan(0, 'B1296', A);
+    t += HB9Q_REFRESH_MS;
+    await store.refreshIfOlderThan(0, 'B1296', A);
+    expect(callsTo(stub, LOGIN)).toHaveLength(2); // first fetch + one re-login
+    expect(callsTo(stub, MSG6)).toHaveLength(3);
+    expect(store.getState().error.key).toBe('hb9q_error');
+  });
+
+  test('a 401 right after a fresh login is no reason for a second login in that fetch', async () => {
     const stub = stubFetch({ [LOGIN]: loginOk, [MSG6]: json(401, { error: 'no_session' }) });
     await store.refreshIfOlderThan(0, 'B1296', A);
+    expect(callsTo(stub, LOGIN)).toHaveLength(1);
+    expect(callsTo(stub, MSG6)).toHaveLength(1);
+    expect(store.getState().error).toEqual({ key: 'hb9q_error', detail: 'HB9Q: session expired' });
+    t += HB9Q_REFRESH_MS;
+    await store.refreshIfOlderThan(0, 'B1296', A);
+    expect(callsTo(stub, LOGIN)).toHaveLength(2); // the next poll logs in again, once
+  });
+
+  test('an nginx 429 with an HTML body on the login is shown as a short error', async () => {
+    stubFetch({ [LOGIN]: () => new Response('<html>429 Too Many Requests</html>', { status: 429, headers: { 'Content-Type': 'text/html' } }) });
+    await store.refreshIfOlderThan(0, 'B1296', A);
+    expect(store.getState().error).toEqual({
+      key: 'hb9q_error',
+      detail: 'HB9Q: too many logins from this device, try again in a minute',
+    });
+  });
+
+  test('forgetServerSession posts a logout, keeps loggedOut false and makes the next fetch log in', async () => {
+    const stub = stubFetch({ [LOGIN]: loginOk, [MSG6]: messages(raw(row(1, 'DL1ABC'))), [LOGOUT]: json(200, {}) });
+    await store.refreshIfOlderThan(0, 'B1296', A);
+    await store.forgetServerSession();
+    expect(callsTo(stub, LOGOUT)).toHaveLength(1);
+    expect(store.getState().loggedOut).toBe(false);
+    t += HB9Q_REFRESH_MS;
+    await store.refreshIfOlderThan(0, 'B1296', A);
     expect(callsTo(stub, LOGIN)).toHaveLength(2);
-    expect(callsTo(stub, MSG6)).toHaveLength(2);
-    expect(store.getState().error.key).toBe('hb9q_error');
+  });
+
+  test('forgetServerSession ignores a failing logout', async () => {
+    stubFetch({ [LOGOUT]: () => Promise.reject(new TypeError('offline')) });
+    await expect(store.forgetServerSession()).resolves.toBeUndefined();
   });
 
   test('changingTheLoginWhileASessionIsActiveLogsInAgain', async () => {

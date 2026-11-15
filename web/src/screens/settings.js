@@ -1,4 +1,5 @@
 import { clearCredentials, loadCredentials, saveCredentials } from '../credentials.js';
+import { hb9qStore } from '../hb9q-store.js';
 import { LANGUAGES, t } from '../i18n.js';
 import { isValid, normalize, toLatLon } from '../lib/maidenhead.js';
 import { saveSettings } from '../settings.js';
@@ -132,6 +133,7 @@ export function createSettingsScreen() {
       });
       clear.addEventListener('click', () => {
         clearCredentials();
+        hb9qStore.forgetServerSession();
         hasSaved = false;
         login = '';
         password = '';
