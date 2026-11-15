@@ -3,10 +3,11 @@ import { effectiveLanguage, loadSettings, saveSettings } from './settings.js';
 import { createSettingsScreen } from './screens/settings.js';
 import { SCREENS } from './screens/index.js';
 
-// App tabs are Moon, Deg, Chat (HB9Q), N0UK, Live CQ; phase 1 of the web has no HB9Q.
+// Tabs as in the app: Moon, Deg, Chat (HB9Q), N0UK, Live CQ.
 const TABS = [
   { id: 'moon', label: 'tab_moon' },
   { id: 'deg', label: 'tab_degradation' },
+  { id: 'chat', label: 'tab_chat' },
   { id: 'n0uk', label: 'tab_n0uk' },
   { id: 'livecq', label: 'tab_livecq' },
 ];

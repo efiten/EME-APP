@@ -328,3 +328,23 @@ body {
 .text-button { font: inherit; font-weight: 500; background: transparent; color: var(--primary); border: 0; padding: 10px 12px; cursor: pointer; }
 .settings .message { color: var(--secondary); }
 .settings > .support { font-size: 12px; color: var(--on-surface-variant); }
+
+/* HB9Q tab (ChatScreen.kt colours) */
+:root {
+  --cq-color: #ffb74d;
+  --to-me-bg: #1e3326;
+}
+.hb9q .chips { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; }
+.hb9q .chip {
+  font: inherit; font-size: 14px; color: var(--on-surface-variant); background: transparent; cursor: pointer;
+  border: 1px solid var(--outline); border-radius: 8px; padding: 0 12px; min-height: 32px;
+}
+.hb9q .chip[aria-pressed="true"] { background: var(--surface-variant); border-color: transparent; color: var(--on-surface); }
+.hb9q .info-row .text-button { padding: 6px 8px; }
+.hb9q .message.to-me { background: var(--to-me-bg); }
+.hb9q .message .to-me-name, .hb9q .message .text.bold { font-weight: 700; }
+.hb9q .message .text.cq { color: var(--cq-color); }
+.hb9q .writer { grid-template-columns: 56px 100px minmax(0, 1fr); }
+.hb9q .logged-out { margin-top: 32px; text-align: center; }
+.hb9q .logged-out .button { margin-top: 12px; }
+.hb9q .cq-row .call { font-weight: 700; color: var(--cq-color); }
