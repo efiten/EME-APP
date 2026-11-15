@@ -8,6 +8,10 @@ name: Release
 # branch main, met de secrets RELEASE_KEYSTORE_BASE64, RELEASE_KEYSTORE_PASSWORD,
 # RELEASE_KEY_ALIAS en RELEASE_KEY_PASSWORD.
 #
+# Optioneel: een environment "web-deploy", beperkt tot branch main, met de secret EME_DEPLOY_SSH_KEY.
+# Dan installeert web-deploy de nieuwe web-app meteen op eme.on8ar.eu (zie web/deploy/README.md).
+# Zonder die secret slaat web-deploy zichzelf over en installeert de server de release binnen 15 minuten.
+#
 # Mislukt alleen web-build of web-upload (de APK staat dan al op de release)? Gebruik "Re-run failed
 # jobs" op deze run (gh run rerun <run-id> --failed), niet "gh workflow run": check ziet de release en slaat alles over.
 
@@ -202,3 +206,41 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "v$VERSION" "eme-web-v$VERSION.zip" --repo "$GITHUB_REPOSITORY"
+
+  # Starts the update on eme.on8ar.eu at once. The key can only run "systemctl start eme-web-update.service"
+  # as the user eme-deploy (forced command), which installs the latest release, the one just uploaded.
+  # Without the secret the step skips itself; the update timer on the server then installs it within 15 minutes.
+  web-deploy:
+    needs: [check, web-upload]
+    if: needs.check.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: web-deploy
+    permissions: {}
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+      DEPLOY_KEY: ${{ secrets.EME_DEPLOY_SSH_KEY }}
+      DEPLOY_HOST: 94.130.105.135
+      # Host key of nolcluster (/etc/ssh/ssh_host_ed25519_key.pub), so the job never trusts an unknown host.
+      DEPLOY_HOST_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE7oh34mgTo/C1MfYU1S6MX59Np2dB70g3sMb/XROS4h
+    steps:
+      - name: Start the update on eme.on8ar.eu
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then
+            echo "::notice::No EME_DEPLOY_SSH_KEY in the environment web-deploy: the server installs v$VERSION within 15 minutes."
+            exit 0
+          fi
+          umask 077
+          printf '%s\n' "$DEPLOY_KEY" > "$RUNNER_TEMP/deploy_key"
+          printf '%s %s\n' "$DEPLOY_HOST" "$DEPLOY_HOST_KEY" > "$RUNNER_TEMP/known_hosts"
+          ssh -i "$RUNNER_TEMP/deploy_key" -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=30 \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/known_hosts" \
+            "eme-deploy@$DEPLOY_HOST"
+          rm -f "$RUNNER_TEMP/deploy_key"
+
+      - name: Check the version on eme.on8ar.eu
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then exit 0; fi
+          body=$(curl -fsS --max-time 10 https://eme.on8ar.eu/api/version)
+          echo "$body"
+          [[ $body == *"\"version\":\"$VERSION\""* ]] || { echo "::error::eme.on8ar.eu does not run $VERSION"; exit 1; }
