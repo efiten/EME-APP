@@ -180,7 +180,8 @@ export function createHb9qScreen() {
       const stopPolling = visibleInterval(
         () => {
           poll();
-          render(); // the Chat CQ window moves with the clock, as in the app
+          // the Chat CQ window moves with the clock, as in the app; other panes stay untouched (text selection, focus)
+          if (subTab === 2) render();
         },
         POLL_CHECK_MS,
         () => {

@@ -223,6 +223,16 @@ describe('HB9Q screen', () => {
     expect(qa('cq')).toHaveLength(0);
   });
 
+  test('messagesPaneKeepsItsNodesAcrossA5sTickWithoutAFetch', async () => {
+    await mount();
+    const before = qa('message');
+    expect(before.length).toBeGreaterThan(0);
+    const fetches = callsTo(fetch, MSG6);
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(callsTo(fetch, MSG6)).toBe(fetches);
+    expect(qa('message').every((n, i) => n === before[i])).toBe(true);
+  });
+
   test('chatCqEmptyShowsEmptyText', async () => {
     await mount();
     subtab(2).click();
