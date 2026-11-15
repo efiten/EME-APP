@@ -51,6 +51,10 @@ android {
             isIncludeAndroidResources = true
             // Schermafdrukken alleen maken met: ./gradlew testDebugUnitTest -Pscreenshots
             all { it.systemProperty("screenshots", project.hasProperty("screenshots").toString()) }
+            // LayoutTest overslaan met: ./gradlew testDebugUnitTest -PwithoutLayout (CI draait hem als aparte job)
+            if (project.hasProperty("withoutLayout")) {
+                all { it.filter.excludeTestsMatching("be.on5gs.eme.screens.LayoutTest") }
+            }
         }
     }
 }
