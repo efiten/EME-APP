@@ -51,6 +51,10 @@ async function failure(res, what) {
   if (res.status === 429 && body.error === 'busy') {
     return new Hb9qError('hb9q_error', 'HB9Q: too many logins on this server, try again in a minute');
   }
+  if (res.status === 429 && what === 'login') {
+    // nginx limits the login per IP and answers with HTML, not with one of our JSON codes
+    return new Hb9qError('hb9q_error', 'HB9Q: too many logins from this device, try again in a minute');
+  }
   if (body.error === 'upstream' && body.detail) return new Hb9qError('hb9q_error', String(body.detail));
   return new Hb9qError('hb9q_error', `HB9Q ${what}: HTTP ${res.status}`);
 }
@@ -99,9 +103,15 @@ export function createHb9qStore({ now = () => Date.now() } = {}) {
   }
 
   async function fetchMessages(id, creds, signal) {
-    if (sessionLogin !== creds.login) await login(creds, signal);
+    let fresh = false; // this fetch made the session itself
+    if (sessionLogin !== creds.login) {
+      await login(creds, signal);
+      fresh = true;
+    }
     let r = await readMessages(id, signal);
     if (r === null) {
+      // a session that was just made and is refused again is an error, not a reason for a second login
+      if (fresh) throw new Hb9qError('hb9q_error', 'HB9Q: session expired');
       await login(creds, signal); // once; a second 401 is an error, not a loop
       r = await readMessages(id, signal);
       if (r === null) throw new Hb9qError('hb9q_error', 'HB9Q: session expired');
@@ -152,6 +162,16 @@ export function createHb9qStore({ now = () => Date.now() } = {}) {
       abort();
       sessionLogin = null;
       set(initialState({ loggedOut: true }));
+      try {
+        await fetch(URL_LOGOUT, { method: 'POST', credentials: 'same-origin' });
+      } catch {
+        // best effort: the server drops an idle session itself
+      }
+    },
+    /** Drop the server session without touching the chat state (Settings: Clear). */
+    async forgetServerSession() {
+      abort();
+      sessionLogin = null;
       try {
         await fetch(URL_LOGOUT, { method: 'POST', credentials: 'same-origin' });
       } catch {
