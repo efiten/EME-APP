@@ -50,7 +50,13 @@ class SettingsRepository(context: Context) {
         get() = prefs.getString(KEY_DISH, null)?.toDoubleOrNull()?.takeIf { it in 0.0..100.0 } ?: 0.0
         set(value) = prefs.edit().putString(KEY_DISH, value.toString()).apply()
 
+    /** Band waarop de schotel gebruikt wordt, voor de marge (los van de band in de Deg-tab). Standaard 1296. */
+    var dishBand: EmeBand
+        get() = EmeBand.entries.firstOrNull { it.name == prefs.getString(KEY_DISH_BAND, null) } ?: EmeBand.B1296
+        set(value) = prefs.edit().putString(KEY_DISH_BAND, value.name).apply()
+
     companion object {
+        private const val KEY_DISH_BAND = "dish_band"
         private const val KEY_DISH = "dish_diameter_m"
         private const val KEY_HORIZON = "horizon"
         private const val KEY_DEG_BAND = "deg_band"

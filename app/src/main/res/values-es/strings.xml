@@ -120,6 +120,7 @@
     <string name="horizon_moon_blocked">Luna detrás de tu horizonte</string>
     <string name="horizon_window">Despejada de tu horizonte</string>
     <string name="horizon_dish">Ø de la parábola (m)</string>
-    <string name="horizon_dish_info">Dejar vacío para ningún margen (p. ej. Yagis). Con una parábola, la mitad del ancho del haz en la banda de la pestaña Deg se suma a tu horizonte, para que también el borde del haz esté despejado.</string>
+    <string name="horizon_dish_info">Dejar vacío para ningún margen (p. ej. Yagis). Con una parábola y un horizonte propio, la mitad del ancho del haz en la banda elegida abajo se suma a tu horizonte, para que también el borde del haz esté despejado.</string>
+    <string name="horizon_dish_band">Banda en la que se usa la parábola</string>
     <string name="horizon_margin">Margen en %1$s MHz: %2$s°</string>
 </resources>

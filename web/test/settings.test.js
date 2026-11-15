@@ -10,6 +10,7 @@ const DEFAULTS = {
   language: '',
   horizon: { minElDeg: 0, obstacles: [] },
   dishDiameterM: 0,
+  dishBand: 'B1296',
 };
 
 function fakeStorage() {
@@ -102,6 +103,7 @@ describe('saveSettings', () => {
       language: 'fr',
       horizon: { minElDeg: 0, obstacles: [] },
       dishDiameterM: 0,
+      dishBand: 'B1296',
     });
   });
 
@@ -160,5 +162,13 @@ describe('dish diameter', () => {
       localStorage.setItem('eme.settings', JSON.stringify({ dishDiameterM: bad }));
       expect(loadSettings().dishDiameterM).toBe(0);
     }
+  });
+
+  test('band of the dish: 1296 by default, kept, unknown ids dropped', () => {
+    expect(loadSettings().dishBand).toBe('B1296');
+    saveSettings({ dishBand: 'B432' });
+    expect(loadSettings().dishBand).toBe('B432');
+    localStorage.setItem('eme.settings', JSON.stringify({ dishBand: 'B10G' }));
+    expect(loadSettings().dishBand).toBe('B1296');
   });
 });

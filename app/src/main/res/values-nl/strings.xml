@@ -120,6 +120,7 @@
     <string name="horizon_moon_blocked">Maan achter je horizon</string>
     <string name="horizon_window">Vrij van je horizon</string>
     <string name="horizon_dish">Diameter schotel (m)</string>
-    <string name="horizon_dish_info">Leeg laten voor geen marge (bv. yagi\'s). Met een schotel komt een halve bundelbreedte op de band van de Deg-tab bovenop je horizon, zodat ook de rand van de bundel vrij is.</string>
+    <string name="horizon_dish_info">Leeg laten voor geen marge (bv. yagi\'s). Met een schotel en een eigen horizon komt een halve bundelbreedte op de band hieronder bovenop je horizon, zodat ook de rand van de bundel vrij is.</string>
+    <string name="horizon_dish_band">Band waarop de schotel gebruikt wordt</string>
     <string name="horizon_margin">Marge op %1$s MHz: %2$s°</string>
 </resources>

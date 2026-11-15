@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import be.on5gs.eme.horizon.horizonMarginDeg
 import be.on5gs.eme.horizon.beamMarginDeg
 import be.on5gs.eme.moon.color
 import be.on5gs.eme.AppClock
@@ -102,7 +103,7 @@ fun CqScreen(settings: SettingsRepository, myLocator: String) {
     val me = Maidenhead.toLatLon(myLocator)
     val myMoon = me?.let { MoonCalculator.position(it.latDeg, it.lonDeg, now) }
     val horizon = remember { settings.horizon }
-    val margin = remember { beamMarginDeg(settings.dishDiameterM, settings.degBand.mhz) }
+    val margin = remember { horizonMarginDeg(horizon, settings.dishDiameterM, settings.dishBand.mhz) }
     val shown = LiveCqParser.select(allSpots, bands, now, MAX_AGE_MINUTES)
 
     Column(Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
