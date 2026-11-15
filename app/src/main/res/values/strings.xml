@@ -128,4 +128,10 @@
     <string name="horizon_dish">Dish diameter (m)</string>
     <string name="horizon_dish_info">Leave empty for no margin (e.g. Yagis). With a dish, half the beamwidth on the band of the Deg tab is added above your horizon, so the edge of the beam is clear too.</string>
     <string name="horizon_margin">Margin on %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Measure horizon</string>
+    <string name="horizon_load">Load horizon</string>
+    <string name="horizon_measure_info">Measure your horizon with your phone on horizon.dl6zg.de (by ON6ZG), tap Download JSON there, then load the file here. Loading replaces the obstacles below; nothing is saved until you tap Save.</string>
+    <string name="horizon_loaded">Loaded: %1$d points, %2$d obstacles. Check them, mark thin trees as partial, then save.</string>
+    <string name="horizon_load_error">This file is not a horizon survey from horizon.dl6zg.de (JSON or CSV).</string>
+    <string name="horizon_load_few">Too few points in this file (at least 2 are needed).</string>
 </resources>

@@ -122,4 +122,10 @@
     <string name="horizon_dish">パラボラ直径 (m)</string>
     <string name="horizon_dish_info">空欄で余裕なし（例：八木アンテナ）。パラボラでは、Degタブのバンドでのビーム幅の半分が地平線の上に加えられ、ビームの縁も遮られないようにします。</string>
     <string name="horizon_margin">%1$s MHz での余裕: %2$s°</string>
+    <string name="horizon_measure">地平線を測定</string>
+    <string name="horizon_load">地平線を読み込む</string>
+    <string name="horizon_measure_info">horizon.dl6zg.de（ON6ZG 作）でスマートフォンを使って地平線を測定し、Download JSON をタップしてから、ここでファイルを読み込みます。読み込むと下の障害物が置き換わります。保存をタップするまで何も保存されません。</string>
+    <string name="horizon_loaded">読み込み完了: %1$d 点、障害物 %2$d 個。確認し、まばらな木は一部遮蔽にして保存してください。</string>
+    <string name="horizon_load_error">このファイルは horizon.dl6zg.de の地平線測定（JSON または CSV）ではありません。</string>
+    <string name="horizon_load_few">このファイルの点が少なすぎます（2 点以上必要）。</string>
 </resources>

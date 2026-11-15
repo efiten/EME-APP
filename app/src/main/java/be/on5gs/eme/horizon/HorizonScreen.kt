@@ -1,5 +1,13 @@
 package be.on5gs.eme.horizon
 
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -109,6 +117,36 @@ fun HorizonScreen(
     // Leeg = geen schotel; anders een diameter tot 100 m
     val dish = if (dishText.isBlank()) 0.0 else parseAngle(dishText, 100.0)
     val valid = min != null && obstacles.all { it != null } && dish != null
+    // Horizon inladen van horizon.dl6zg.de: vervangt de hindernissen op het scherm (nog niet bewaard)
+    var importMessage by remember { mutableStateOf<String?>(null) }
+    var importFailed by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val loadedText = stringResource(R.string.horizon_loaded)
+    val errorText = stringResource(R.string.horizon_load_error)
+    val fewText = stringResource(R.string.horizon_load_few)
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+            val text = withContext(Dispatchers.IO) {
+                runCatching {
+                    context.contentResolver.openInputStream(uri)?.use { String(it.readAtMost(MAX_IMPORT_BYTES), Charsets.UTF_8) }
+                }.getOrNull()
+            }
+            when (val r = if (text == null) HorizonSurvey.Result.NotASurvey else HorizonSurvey.parse(text)) {
+                is HorizonSurvey.Result.Ok -> {
+                    rows.clear()
+                    r.obstacles.forEach { rows.add(ObstacleDraft(fmt(it.fromAzDeg), fmt(it.toAzDeg), fmt(it.maxElDeg), it.kind)) }
+                    importMessage = String.format(loadedText, r.points, r.obstacles.size)
+                    importFailed = false
+                }
+                HorizonSurvey.Result.NotASurvey -> { importMessage = errorText; importFailed = true }
+                HorizonSurvey.Result.TooFewPoints -> { importMessage = fewText; importFailed = true }
+            }
+        }
+    }
+    val uriHandler = LocalUriHandler.current
+
     // De grafiek toont wat al geldig getypt is, zodat je meteen ziet wat een wijziging doet
     val preview = Horizon(min ?: saved.minElDeg, obstacles.filterNotNull())
 
@@ -118,6 +156,21 @@ fun HorizonScreen(
     ) {
         Text(stringResource(R.string.horizon_title), style = MaterialTheme.typography.titleLarge)
         Text(stringResource(R.string.horizon_info), style = MaterialTheme.typography.bodySmall)
+
+        // Opmeten met horizon-survey van ON6ZG en het bestand hier inladen
+        Text(stringResource(R.string.horizon_measure_info), style = MaterialTheme.typography.bodySmall)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = { uriHandler.openUri(SURVEY_URL) }) { Text(stringResource(R.string.horizon_measure)) }
+            OutlinedButton(onClick = { picker.launch(arrayOf("*/*")) }) { Text(stringResource(R.string.horizon_load)) }
+        }
+        importMessage?.let {
+            Text(
+                it,
+                color = if (importFailed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.testTag("horizon-import-message"),
+            )
+        }
 
         HorizonChart(preview, locator)
 
@@ -254,6 +307,24 @@ fun HorizonChart(horizon: Horizon, locator: String) {
         }
         Text("— " + stringResource(R.string.horizon_moon_today), color = MOON_YELLOW, style = MaterialTheme.typography.bodySmall)
     }
+}
+
+/** De opmeettool van ON6ZG (on6zg/horizon-survey); de app opent alleen de pagina en stuurt er niets heen. */
+internal const val SURVEY_URL = "https://horizon.dl6zg.de/"
+
+/** Een horizonopmeting is een paar kB; meer lezen we niet (een verkeerd gekozen groot bestand). */
+private const val MAX_IMPORT_BYTES = 1_000_000
+
+/** Hoogstens [max] bytes lezen (InputStream.readNBytes bestaat pas vanaf Android 13). */
+private fun java.io.InputStream.readAtMost(max: Int): ByteArray {
+    val out = java.io.ByteArrayOutputStream()
+    val buf = ByteArray(8192)
+    while (out.size() < max) {
+        val n = read(buf, 0, minOf(buf.size, max - out.size()))
+        if (n < 0) break
+        out.write(buf, 0, n)
+    }
+    return out.toByteArray()
 }
 
 /**

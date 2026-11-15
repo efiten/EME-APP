@@ -122,4 +122,10 @@
     <string name="horizon_dish">Диаметр зеркала (м)</string>
     <string name="horizon_dish_info">Оставьте пустым без запаса (напр. для волновых каналов). С зеркалом к вашему горизонту добавляется половина ширины луча на диапазоне вкладки Deg, чтобы край луча тоже был открыт.</string>
     <string name="horizon_margin">Запас на %1$s МГц: %2$s°</string>
+    <string name="horizon_measure">Измерить горизонт</string>
+    <string name="horizon_load">Загрузить горизонт</string>
+    <string name="horizon_measure_info">Измерьте горизонт телефоном на horizon.dl6zg.de (от ON6ZG), нажмите там Download JSON и загрузите файл здесь. Загрузка заменяет препятствия ниже; ничего не сохраняется, пока вы не нажмёте «Сохранить».</string>
+    <string name="horizon_loaded">Загружено: точек %1$d, препятствий %2$d. Проверьте их, отметьте редкие деревья как частичные и сохраните.</string>
+    <string name="horizon_load_error">Этот файл не является измерением горизонта с horizon.dl6zg.de (JSON или CSV).</string>
+    <string name="horizon_load_few">Слишком мало точек в файле (нужно не меньше 2).</string>
 </resources>

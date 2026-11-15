@@ -122,4 +122,10 @@
     <string name="horizon_dish">Parabolens diameter (m)</string>
     <string name="horizon_dish_info">Lad stå tomt for ingen margin (f.eks. yagier). Med en parabol lægges den halve strålebredde på båndet i Deg-fanen oven på din horisont, så også strålens kant er fri.</string>
     <string name="horizon_margin">Margin på %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Mål horisont</string>
+    <string name="horizon_load">Indlæs horisont</string>
+    <string name="horizon_measure_info">Mål din horisont med telefonen på horizon.dl6zg.de (af ON6ZG), tryk på Download JSON der, og indlæs filen her. Indlæsning erstatter forhindringerne nedenfor; intet gemmes, før du trykker på Gem.</string>
+    <string name="horizon_loaded">Indlæst: %1$d punkter, %2$d forhindringer. Tjek dem, markér tynde træer som delvis, og gem.</string>
+    <string name="horizon_load_error">Denne fil er ikke en horisontmåling fra horizon.dl6zg.de (JSON eller CSV).</string>
+    <string name="horizon_load_few">For få punkter i filen (mindst 2).</string>
 </resources>

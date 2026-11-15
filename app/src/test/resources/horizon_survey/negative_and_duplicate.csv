@@ -1,0 +1,5 @@
+azimuth_deg,elevation_deg,timestamp,is_calibration,source
+10.00,-2.00,t,0,sensor
+40.00,8.00,t,0,sensor
+40.00,12.00,t,0,photo
+70.00,-1.00,t,0,sensor

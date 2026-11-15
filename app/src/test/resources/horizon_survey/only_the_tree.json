@@ -1,0 +1,9 @@
+{
+  "surveyed_at": "2026-11-15",
+  "note": "Synthetic: only the big tree measured, the rest of the circle not.",
+  "points": [
+    { "az": 60, "el": 24 },
+    { "az": 85, "el": 25 },
+    { "az": 110, "el": 23 }
+  ]
+}

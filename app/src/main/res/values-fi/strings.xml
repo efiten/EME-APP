@@ -122,4 +122,10 @@
     <string name="horizon_dish">Lautasen halkaisija (m)</string>
     <string name="horizon_dish_info">Jätä tyhjäksi, jos ei marginaalia (esim. yagit). Lautasella puolet keilan leveydestä Deg-välilehden taajuusalueella lisätään horisonttisi päälle, jotta myös keilan reuna on vapaa.</string>
     <string name="horizon_margin">Marginaali %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Mittaa horisontti</string>
+    <string name="horizon_load">Lataa horisontti</string>
+    <string name="horizon_measure_info">Mittaa horisonttisi puhelimella sivulla horizon.dl6zg.de (ON6ZG), napauta siellä Download JSON ja lataa tiedosto tähän. Lataus korvaa alla olevat esteet; mitään ei tallenneta ennen kuin napautat Tallenna.</string>
+    <string name="horizon_loaded">Ladattu: %1$d pistettä, %2$d estettä. Tarkista ne, merkitse harvat puut osittaisiksi ja tallenna.</string>
+    <string name="horizon_load_error">Tämä tiedosto ei ole horizon.dl6zg.de:n horisonttimittaus (JSON tai CSV).</string>
+    <string name="horizon_load_few">Liian vähän pisteitä tiedostossa (vähintään 2).</string>
 </resources>
