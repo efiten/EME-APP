@@ -327,3 +327,4 @@ body {
 .button.outlined { background: transparent; color: var(--primary); border: 1px solid var(--outline); }
 .text-button { font: inherit; font-weight: 500; background: transparent; color: var(--primary); border: 0; padding: 10px 12px; cursor: pointer; }
 .settings .message { color: var(--secondary); }
+.settings > .support { font-size: 12px; color: var(--on-surface-variant); }

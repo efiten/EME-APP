@@ -104,4 +104,20 @@ describe('HB9Q login section', () => {
     expect(q('hb9q-login').autocomplete).toBe('username');
     expect(q('hb9q-password').autocomplete).toBe('current-password');
   });
+
+  test('typing keeps the login and password inputs in place and focused', () => {
+    mount();
+    document.body.append(host);
+    for (const role of ['hb9q-login', 'hb9q-password']) {
+      const input = q(role);
+      input.focus();
+      for (const v of ['O', 'ON', 'ON0']) {
+        type(input, v);
+        expect(q(role)).toBe(input);
+        expect(input.isConnected).toBe(true);
+        expect(document.activeElement).toBe(input);
+      }
+    }
+    host.remove();
+  });
 });

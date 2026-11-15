@@ -90,18 +90,22 @@ export function createSettingsScreen() {
         el('input', { type: 'password', value: '', autocomplete: 'current-password', spellcheck: false }),
         'hb9q-password',
       );
-      const passwordLabel = roleOf(el('label', { className: 'field' }), 'hb9q-password-label');
+      const passwordLabelText = el('span');
+      const passwordLabel = roleOf(el('label', { className: 'field' }, passwordLabelText, passwordInput), 'hb9q-password-label');
       const toggle = roleOf(el('button', { type: 'button', className: 'text-button' }), 'toggle-password');
       const saveLogin = roleOf(el('button', { type: 'button', className: 'button', textContent: t('save_login') }), 'save-login');
       const clear = roleOf(el('button', { type: 'button', className: 'button outlined', textContent: t('clear') }), 'clear-login');
-      const buttonRow = el('div', { className: 'button-row' });
+      const buttonRow = el('div', { className: 'button-row' }, saveLogin);
       const message = roleOf(el('div', { className: 'message' }), 'login-message');
 
       const refreshLogin = () => {
-        passwordLabel.replaceChildren(hasSaved ? t('password_saved') : t('password'), passwordInput);
+        passwordLabelText.textContent = hasSaved ? t('password_saved') : t('password');
         toggle.textContent = passwordInput.type === 'password' ? t('show') : t('hide');
         saveLogin.disabled = !(login !== '' && (password !== '' || hasSaved));
-        buttonRow.replaceChildren(saveLogin, ...(hasSaved ? [clear] : []));
+        if (hasSaved !== (clear.parentNode !== null)) {
+          if (hasSaved) buttonRow.append(clear);
+          else clear.remove();
+        }
       };
       loginInput.addEventListener('input', () => {
         login = loginInput.value.toUpperCase().trim();
