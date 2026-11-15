@@ -57,6 +57,19 @@ func (f *fakeHb9q) sessionCount() int {
 	return f.nextSession - 1
 }
 
+// counts returns the login posts, logger_lst calls and logouts so far.
+func (f *fakeHb9q) counts() (loginPosts, loggerPosts, logouts int) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return f.loginPosts, f.loggerPosts, f.logouts
+}
+
+func (f *fakeHb9q) setLoggerStatus(code int) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.loggerStatus = code
+}
+
 func (f *fakeHb9q) handle(w http.ResponseWriter, r *http.Request) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
