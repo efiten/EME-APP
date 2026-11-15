@@ -26,7 +26,7 @@ a dark blue theme, and 13 languages (NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, RU,
 ## Web app (iPhone)
 
 iPhone users cannot install the APK. Open **https://eme.on8ar.eu** in Safari instead. It has the same
-screens as the app (Moon, Deg, N0UK, Live CQ and Settings), except the HB9Q chat.
+screens as the app (Moon, Deg, HB9Q, N0UK, Live CQ and Settings). The HB9Q tab needs your own HB9Q login, entered in Settings.
 
 To keep it on your home screen, tap the share button in Safari and choose "Add to Home Screen".
 

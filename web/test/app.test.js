@@ -47,9 +47,9 @@ describe('shell', () => {
     expect(root.querySelector('[data-role="version"]').textContent).toBe('v' + __APP_VERSION__);
   });
 
-  test('four tabs in order Moon, Deg, N0UK, Live CQ with texts from strings.json', () => {
+  test('five tabs in order Moon, Deg, HB9Q, N0UK, Live CQ with texts from strings.json', () => {
     mountApp(root);
-    expect(tabs().map((x) => x.textContent)).toEqual([t('tab_moon'), t('tab_degradation'), t('tab_n0uk'), t('tab_livecq')]);
+    expect(tabs().map((x) => x.textContent)).toEqual([t('tab_moon'), t('tab_degradation'), t('tab_chat'), t('tab_n0uk'), t('tab_livecq')]);
     expect(tabs()[0].getAttribute('aria-selected')).toBe('true');
   });
 
@@ -63,10 +63,10 @@ describe('shell', () => {
       },
       unmount: () => calls.push('unmount ' + name),
     });
-    mountApp(root, { moon: screen('moon'), deg: screen('deg'), n0uk: screen('n0uk'), livecq: screen('livecq') });
-    tabs()[2].click();
+    mountApp(root, { moon: screen('moon'), deg: screen('deg'), chat: screen('chat'), n0uk: screen('n0uk'), livecq: screen('livecq') });
+    tabs()[3].click();
     expect(calls).toEqual(['mount moon', 'unmount moon', 'mount n0uk']);
-    expect(tabs()[2].getAttribute('aria-selected')).toBe('true');
+    expect(tabs()[3].getAttribute('aria-selected')).toBe('true');
   });
 
   test('settings icon opens Settings, hides the tabs; back returns', () => {
@@ -75,7 +75,7 @@ describe('shell', () => {
     expect(tabs()).toHaveLength(0);
     expect(root.querySelector('header').textContent).toContain(t('settings'));
     root.querySelector('[data-action="back"]').click();
-    expect(tabs()).toHaveLength(4);
+    expect(tabs()).toHaveLength(5);
   });
 });
 
@@ -91,7 +91,7 @@ describe('settings', () => {
     save.click();
     expect(loadSettings().callsign).toBe('ON5GS');
     expect(loadSettings().locator).toBe('JO21sc');
-    expect(tabs()).toHaveLength(4);
+    expect(tabs()).toHaveLength(5);
   });
 
   test('refuses XX99 with locator_invalid and does not save', () => {
@@ -137,7 +137,7 @@ describe('settings', () => {
     expect(root.querySelectorAll('input')[0].value).toBe('ON5GS');
     expect(loadSettings().language).toBe('nl');
     root.querySelector('[data-action="back"]').click();
-    expect(tabs()[3].textContent).toBe(t('tab_livecq'));
+    expect(tabs()[4].textContent).toBe(t('tab_livecq'));
   });
 
   test('picker starts with the automatic entry (language_system, value "") followed by the 13 languages', () => {
