@@ -5,6 +5,7 @@ import { isValid, normalize, toLatLon } from '../lib/maidenhead.js';
 import { saveSettings } from '../settings.js';
 import { horizonEditor, horizonSection } from './horizon.js';
 import { defaultHorizon } from '../lib/horizon.js';
+import { EME_BANDS } from '../lib/degradation.js';
 
 /** Port of AppLanguage.options (native names, as in the language picker of the app). */
 const LANGUAGE_NAMES = {
@@ -45,9 +46,12 @@ export function createSettingsScreen() {
             saved: horizon,
             locator: ok ? draft.locator : settings.locator,
             nowMillis: (ctx.now ?? Date.now)(),
-            onSaved: (h) => {
-              saveSettings({ horizon: h });
+            savedDishM: settings.dishDiameterM ?? 0,
+            bandMhz: (EME_BANDS.find((b) => b.id === settings.degBand) ?? EME_BANDS.find((b) => b.id === 'B1296')).mhz,
+            onSaved: (h, dish) => {
+              saveSettings({ horizon: h, dishDiameterM: dish });
               settings.horizon = h;
+              settings.dishDiameterM = dish;
               horizonSaved = true;
               editingHorizon = false;
               screen.mount(host, ctx);

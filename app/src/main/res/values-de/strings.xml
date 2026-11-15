@@ -119,4 +119,7 @@
     <string name="horizon_moon_partial">Mond teilweise hinter deinem Horizont</string>
     <string name="horizon_moon_blocked">Mond hinter deinem Horizont</string>
     <string name="horizon_window">Frei von deinem Horizont</string>
+    <string name="horizon_dish">Spiegeldurchmesser (m)</string>
+    <string name="horizon_dish_info">Leer lassen für keine Marge (z. B. Yagis). Mit einem Spiegel wird die halbe Keulenbreite auf dem Band des Deg-Tabs über deinem Horizont addiert, damit auch der Rand der Keule frei ist.</string>
+    <string name="horizon_margin">Marge auf %1$s MHz: %2$s°</string>
 </resources>

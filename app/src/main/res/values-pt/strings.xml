@@ -119,4 +119,7 @@
     <string name="horizon_moon_partial">Lua em parte atrás do seu horizonte</string>
     <string name="horizon_moon_blocked">Lua atrás do seu horizonte</string>
     <string name="horizon_window">Livre do seu horizonte</string>
+    <string name="horizon_dish">Ø da parabólica (m)</string>
+    <string name="horizon_dish_info">Deixe vazio para nenhuma margem (p. ex. Yagis). Com uma parabólica, metade da largura do feixe na banda do separador Deg soma-se ao seu horizonte, para que também a borda do feixe esteja livre.</string>
+    <string name="horizon_margin">Margem em %1$s MHz: %2$s°</string>
 </resources>

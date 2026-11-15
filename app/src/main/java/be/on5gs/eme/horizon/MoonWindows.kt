@@ -52,9 +52,9 @@ object MoonWindows {
      * 24 uur terug (zodat een lopend venster zijn echte begin krijgt) tot 48 uur vooruit, zoals de
      * opkomst en ondergang. Null als er binnen 48 uur geen is.
      */
-    fun currentOrNext(horizon: Horizon, latDeg: Double, lonDeg: Double, nowMillis: Long): MoonWindow? {
+    fun currentOrNext(horizon: Horizon, latDeg: Double, lonDeg: Double, nowMillis: Long, marginDeg: Double = 0.0): MoonWindow? {
         val start = nowMillis - nowMillis % STEP_MS
-        return usable(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS).firstOrNull { it.endMillis > nowMillis }
+        return usable(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS, marginDeg).firstOrNull { it.endMillis > nowMillis }
     }
 
     private const val HOUR_MS = 3_600_000L

@@ -3,7 +3,8 @@
 
 import { liveCqStore } from '../data.js';
 import { effectiveLanguage, locatorLatLon } from '../settings.js';
-import { VISIBILITY, currentOrNextWindow, defaultHorizon, isDefaultHorizon, visibility } from '../lib/horizon.js';
+import { VISIBILITY, currentOrNextWindow, defaultHorizon, isDefaultHorizon, marginForSettings, visibility } from '../lib/horizon.js';
+import { EME_BANDS } from '../lib/degradation.js';
 import { BANDS, selectSpots, stationLatLon } from '../lib/livecq.js';
 import { computeEvents } from '../lib/moon-events.js';
 import { position } from '../lib/moon-calculator.js';
@@ -72,6 +73,7 @@ export function createMoonScreen() {
       // Own horizon (settings > My horizon); nothing changes without one, as in MoonScreen.kt
       const horizon = settings.horizon ?? defaultHorizon();
       const withHorizon = !isDefaultHorizon(horizon);
+      const margin = marginForSettings(settings, EME_BANDS); // dish margin, 0 without a dish
 
       const root = el('div', 'moon');
       const timeLines = el('div', 'timelines');
@@ -185,7 +187,7 @@ export function createMoonScreen() {
         elev.textContent = `${moon.elevationDeg.toFixed(1)}°`;
         distance.textContent = t('distance', moon.distanceKm.toLocaleString(lang, { maximumFractionDigits: 0 }));
         if (withHorizon) {
-          const v = visibility(horizon, moon.azimuthDeg, moon.elevationDeg);
+          const v = visibility(horizon, moon.azimuthDeg, moon.elevationDeg, margin);
           horizonNow.className = `horizon-now ${VIS_CLASS[v]}`;
           horizonNow.textContent = t(VIS_TEXT[v]);
         }
@@ -193,7 +195,7 @@ export function createMoonScreen() {
         if (minute !== lastMinute) {
           lastMinute = minute;
           eventData = computeEvents(pos.latDeg, pos.lonDeg, now);
-          if (withHorizon) windowData = currentOrNextWindow(horizon, pos.latDeg, pos.lonDeg, now);
+          if (withHorizon) windowData = currentOrNextWindow(horizon, pos.latDeg, pos.lonDeg, now, margin);
           const p = phaseAt(now);
           phase.textContent = t('moon_phase', phaseName(p.nameIndex), Math.round(p.illuminated * 100));
           redrawMap(now);

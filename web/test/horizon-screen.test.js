@@ -62,6 +62,24 @@ describe('"My horizon" (same as HorizonScreenTest.kt)', () => {
     expect(host.textContent).toContain('Horizon saved');
   });
 
+  test('dish diameter gives the margin and is saved; empty means no dish', () => {
+    q('horizon-edit').click();
+    expect(q('dish-support').textContent).toContain('Leave empty for no margin');
+    type(q('dish'), '150');
+    expect(q('dish-support').textContent).toBe('0 – 100');
+    expect(q('horizon-save').disabled).toBe(true);
+    type(q('dish'), '6');
+    expect(q('dish-support').textContent).toBe('Margin on 1296 MHz: 1.35°');
+    q('horizon-save').click();
+    expect(JSON.parse(localStorage.getItem('eme.settings')).dishDiameterM).toBe(6);
+
+    q('horizon-edit').click();
+    expect(q('dish').value).toBe('6');
+    type(q('dish'), '');
+    q('horizon-save').click();
+    expect(JSON.parse(localStorage.getItem('eme.settings')).dishDiameterM).toBe(0);
+  });
+
   test('wrong numbers block saving, delete removes an obstacle', () => {
     q('horizon-edit').click();
     type(q('min-el'), '95');

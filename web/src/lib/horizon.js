@@ -92,6 +92,11 @@ export function halfBeamwidthDeg(freqMhz, dishDiameterM) {
   return (35 * (299.792458 / freqMhz)) / dishDiameterM;
 }
 
+/** Margin above the own horizon for a dish: half the beamwidth; 0 without a dish (e.g. Yagis). */
+export function beamMarginDeg(dishDiameterM, freqMhz) {
+  return dishDiameterM > 0 ? halfBeamwidthDeg(freqMhz, dishDiameterM) : 0;
+}
+
 const STEP_MS = 60_000;
 
 /** Stretches of time with the same visibility, minute by minute; endMillis is not included. */
@@ -177,7 +182,13 @@ const HOUR_MS = 3_600_000;
  * The window (clear or partial) the moon is in now, or else the next one; searched from 24 h back (so a
  * running window gets its real start) to 48 h ahead, as moonrise and moonset. null when there is none.
  */
-export function currentOrNextWindow(horizon, latDeg, lonDeg, nowMillis) {
+export function currentOrNextWindow(horizon, latDeg, lonDeg, nowMillis, marginDeg = 0) {
   const start = nowMillis - (nowMillis % STEP_MS);
-  return usableWindows(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS).find((w) => w.endMillis > nowMillis) ?? null;
+  return usableWindows(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS, marginDeg).find((w) => w.endMillis > nowMillis) ?? null;
+}
+
+/** Margin for the settings: the dish on the band chosen in the Deg tab (bands: EME_BANDS), 0 without a dish. */
+export function marginForSettings(settings, bands) {
+  const band = bands.find((b) => b.id === settings.degBand) ?? bands.find((b) => b.id === 'B1296');
+  return beamMarginDeg(settings.dishDiameterM ?? 0, band.mhz);
 }

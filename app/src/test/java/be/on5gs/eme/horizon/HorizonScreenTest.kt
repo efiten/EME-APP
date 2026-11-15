@@ -42,6 +42,7 @@ class HorizonScreenTest {
     fun setUp() {
         settings = SettingsRepository(ApplicationProvider.getApplicationContext())
         settings.horizon = Horizon()
+        settings.dishDiameterM = 0.0
         compose.setContent {
             EmeTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -78,6 +79,25 @@ class HorizonScreenTest {
         assertEquals("1;5;B 60 110 25;P 180 200 20", settings.horizon.encode())
         compose.onNodeWithTag("horizon-summary").assertTextEquals("Minimum 5° · obstacles: 2")
         compose.onNodeWithText("Horizon saved").assertExists()
+    }
+
+    /** Schotel van 6 m op 1296 MHz (de band van de Deg-tab): marge 1,35°; leeg = geen schotel. */
+    @Test
+    fun dishDiameterGivesTheMarginAndIsSaved() {
+        compose.onNodeWithText("Edit").performScrollTo().performClick()
+        compose.onNodeWithText("Leave empty for no margin", substring = true).performScrollTo().assertExists()
+        field("Dish diameter (m)").performScrollTo().performTextReplacement("150")
+        compose.onNodeWithText("0 – 100").assertExists()
+        compose.onNodeWithText("Save").performScrollTo().assertIsNotEnabled()
+        field("Dish diameter (m)").performTextReplacement("6")
+        compose.onNodeWithText("Margin on 1296 MHz: 1.35°").performScrollTo().assertExists()
+        compose.onNodeWithText("Save").performScrollTo().performClick()
+        assertEquals(6.0, settings.dishDiameterM, 0.0)
+
+        compose.onNodeWithText("Edit").performScrollTo().performClick()
+        field("Dish diameter (m)").performScrollTo().performTextReplacement("")
+        compose.onNodeWithText("Save").performScrollTo().performClick()
+        assertEquals(0.0, settings.dishDiameterM, 0.0)
     }
 
     @Test

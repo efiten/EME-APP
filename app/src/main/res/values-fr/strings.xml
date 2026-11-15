@@ -119,4 +119,7 @@
     <string name="horizon_moon_partial">Lune en partie derrière votre horizon</string>
     <string name="horizon_moon_blocked">Lune derrière votre horizon</string>
     <string name="horizon_window">Dégagée de votre horizon</string>
+    <string name="horizon_dish">Ø de la parabole (m)</string>
+    <string name="horizon_dish_info">Laisser vide pour aucune marge (p. ex. Yagi). Avec une parabole, la moitié de l\'ouverture du faisceau sur la bande de l\'onglet Deg s\'ajoute à votre horizon, pour que le bord du faisceau soit aussi dégagé.</string>
+    <string name="horizon_margin">Marge sur %1$s MHz : %2$s°</string>
 </resources>

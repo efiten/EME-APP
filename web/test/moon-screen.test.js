@@ -169,6 +169,19 @@ describe('own horizon in the moon tab (same as HorizonUseTest.kt)', () => {
     }
   });
 
+  test('the dish margin shortens the window: 6 m on 1296 MHz ends at 02:06 UTC, 03:06 in Brussels', () => {
+    const restore = withTimeZone('Europe/Brussels');
+    try {
+      vi.setSystemTime(Date.parse('2026-11-20T12:00:00Z'));
+      screen.mount(host, ctxOf(settings({ horizon: decode('1;5;B 60 110 25;P 180 200 20'), dishDiameterM: 6, degBand: 'B1296' })));
+      const line = q('horizon-window');
+      expect(line.textContent).toContain('16:50');
+      expect(line.textContent).toContain('tomorrow 03:06');
+    } finally {
+      restore();
+    }
+  });
+
   test('without an own horizon nothing changes', () => {
     screen.mount(host, ctxOf(settings()));
     expect(q('horizon-now')).toBeNull();

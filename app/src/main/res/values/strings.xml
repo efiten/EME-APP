@@ -125,4 +125,7 @@
     <string name="horizon_moon_partial">Moon partly behind your horizon</string>
     <string name="horizon_moon_blocked">Moon behind your horizon</string>
     <string name="horizon_window">Clear of your horizon</string>
+    <string name="horizon_dish">Dish diameter (m)</string>
+    <string name="horizon_dish_info">Leave empty for no margin (e.g. Yagis). With a dish, half the beamwidth on the band of the Deg tab is added above your horizon, so the edge of the beam is clear too.</string>
+    <string name="horizon_margin">Margin on %1$s MHz: %2$s°</string>
 </resources>

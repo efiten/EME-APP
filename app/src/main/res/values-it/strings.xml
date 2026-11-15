@@ -119,4 +119,7 @@
     <string name="horizon_moon_partial">Luna in parte dietro il tuo orizzonte</string>
     <string name="horizon_moon_blocked">Luna dietro il tuo orizzonte</string>
     <string name="horizon_window">Libera dal tuo orizzonte</string>
+    <string name="horizon_dish">Ø della parabola (m)</string>
+    <string name="horizon_dish_info">Lascia vuoto per nessun margine (es. Yagi). Con una parabola, metà dell\'apertura del fascio sulla banda della scheda Deg si aggiunge al tuo orizzonte, così anche il bordo del fascio è libero.</string>
+    <string name="horizon_margin">Margine su %1$s MHz: %2$s°</string>
 </resources>

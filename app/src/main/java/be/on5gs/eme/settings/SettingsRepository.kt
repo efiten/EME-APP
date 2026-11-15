@@ -45,7 +45,13 @@ class SettingsRepository(context: Context) {
         get() = Horizon.decode(prefs.getString(KEY_HORIZON, null)) ?: Horizon()
         set(value) = prefs.edit().putString(KEY_HORIZON, value.encode()).apply()
 
+    /** Diameter van de schotel in meter voor de marge boven de eigen horizon; 0 = geen marge (bv. yagi's). */
+    var dishDiameterM: Double
+        get() = prefs.getString(KEY_DISH, null)?.toDoubleOrNull()?.takeIf { it in 0.0..100.0 } ?: 0.0
+        set(value) = prefs.edit().putString(KEY_DISH, value.toString()).apply()
+
     companion object {
+        private const val KEY_DISH = "dish_diameter_m"
         private const val KEY_HORIZON = "horizon"
         private const val KEY_DEG_BAND = "deg_band"
         private const val KEY_CHAT_BAND = "chat_band"

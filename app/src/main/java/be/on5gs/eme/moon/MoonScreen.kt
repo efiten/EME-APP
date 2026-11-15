@@ -1,5 +1,6 @@
 package be.on5gs.eme.moon
 
+import be.on5gs.eme.horizon.beamMarginDeg
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.testTag
 import be.on5gs.eme.horizon.PARTIAL_ORANGE
@@ -107,13 +108,16 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
     var events by remember { mutableStateOf<MoonEvents.Events?>(null) }
     // Eigen horizon (instellingen > Mijn horizon): het huidige of volgende vrije venster, ook elke minuut
     val horizon = remember { settings.horizon }
-    var window by remember { mutableStateOf<MoonWindow?>(null) }
+    // Marge van de schotel (halve bundelbreedte op de band van de Deg-tab); 0 zonder schotel
+    val margin = remember { beamMarginDeg(settings.dishDiameterM, settings.degBand.mhz) }
+    // null = nog niet berekend (dan geen regel); HorizonLine(null) = geen venster binnen 48 uur
+    var window by remember { mutableStateOf<HorizonLine?>(null) }
     val minute = now / 60_000
     LaunchedEffect(locator, minute) {
         if (pos != null) {
             events = withContext(Dispatchers.Default) { MoonEvents.compute(pos.latDeg, pos.lonDeg, now) }
             if (!horizon.isDefault) {
-                window = withContext(Dispatchers.Default) { MoonWindows.currentOrNext(horizon, pos.latDeg, pos.lonDeg, now) }
+                window = HorizonLine(withContext(Dispatchers.Default) { MoonWindows.currentOrNext(horizon, pos.latDeg, pos.lonDeg, now, margin) })
             }
         }
     }
@@ -169,7 +173,7 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
         )
         // Alleen met een eigen horizon: staat de maan nu vrij, gedeeltelijk of achter je horizon?
         if (!horizon.isDefault) {
-            val v = horizon.visibility(moon.azimuthDeg, moon.elevationDeg)
+            val v = horizon.visibility(moon.azimuthDeg, moon.elevationDeg, margin)
             Text(
                 stringResource(
                     when (v) {
@@ -185,7 +189,7 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
         }
         Spacer(Modifier.height(12.dp))
 
-        events?.let { ev -> EventsCard(ev, now, zone, locale, if (horizon.isDefault) null else HorizonLine(window)) }
+        events?.let { ev -> EventsCard(ev, now, zone, locale, if (horizon.isDefault) null else window) }
     }
 }
 

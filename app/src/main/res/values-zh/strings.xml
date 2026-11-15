@@ -119,4 +119,7 @@
     <string name="horizon_moon_partial">月亮部分被您的地平线遮挡</string>
     <string name="horizon_moon_blocked">月亮被您的地平线遮挡</string>
     <string name="horizon_window">高于您的地平线</string>
+    <string name="horizon_dish">抛物面直径 (米)</string>
+    <string name="horizon_dish_info">留空表示无余量（例如八木天线）。使用抛物面时，会在您的地平线之上加上 Deg 标签页所选波段的半波束宽度，使波束边缘也无遮挡。</string>
+    <string name="horizon_margin">%1$s MHz 的余量：%2$s°</string>
 </resources>
