@@ -1,1 +1,0 @@
-eme-deploy ALL=(root) NOPASSWD: /usr/bin/systemctl start eme-web-update.service
