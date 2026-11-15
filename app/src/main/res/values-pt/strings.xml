@@ -46,6 +46,7 @@
     <string name="save">Guardar</string>
     <string name="hb9q_chat">Chat HB9Q</string>
     <string name="login_encrypted">O seu login é guardado encriptado neste telefone.</string>
+    <string name="login_stored_browser">O seu login é guardado neste navegador, neste dispositivo.</string>
     <string name="hb9q_login">Login HB9Q (indicativo)</string>
     <string name="password">Palavra-passe</string>
     <string name="password_saved">Palavra-passe (guardada — deixe vazio para manter)</string>

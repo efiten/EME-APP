@@ -1,3 +1,4 @@
+import { clearCredentials, loadCredentials, saveCredentials } from '../credentials.js';
 import { LANGUAGES, t } from '../i18n.js';
 import { isValid, normalize, toLatLon } from '../lib/maidenhead.js';
 import { saveSettings } from '../settings.js';
@@ -20,7 +21,7 @@ const formatCentre = ({ latDeg, lonDeg }) =>
   `${Math.abs(latDeg).toFixed(4)}° ${latDeg >= 0 ? 'N' : 'S'}, ${Math.abs(lonDeg).toFixed(4)}° ${lonDeg >= 0 ? 'E' : 'W'}`;
 
 /**
- * Settings screen (SettingsScreen.kt without the HB9Q login).
+ * Settings screen (SettingsScreen.kt, with the HB9Q login).
  * ctx.draft ({ callsign, locator }) lives in the caller so typed values survive a re-render after a language switch.
  * The screen calls ctx.onLanguage(code) and ctx.onSaved().
  */
@@ -73,6 +74,69 @@ export function createSettingsScreen() {
         ctx.onSaved();
       });
 
+      const saved = loadCredentials();
+      let hasSaved = saved !== null;
+      let login = saved?.login ?? '';
+      let password = '';
+      const roleOf = (node, role) => {
+        node.dataset.role = role;
+        return node;
+      };
+      const loginInput = roleOf(
+        el('input', { type: 'text', value: login, autocomplete: 'username', autocapitalize: 'characters', spellcheck: false }),
+        'hb9q-login',
+      );
+      const passwordInput = roleOf(
+        el('input', { type: 'password', value: '', autocomplete: 'current-password', spellcheck: false }),
+        'hb9q-password',
+      );
+      const passwordLabel = roleOf(el('label', { className: 'field' }), 'hb9q-password-label');
+      const toggle = roleOf(el('button', { type: 'button', className: 'text-button' }), 'toggle-password');
+      const saveLogin = roleOf(el('button', { type: 'button', className: 'button', textContent: t('save_login') }), 'save-login');
+      const clear = roleOf(el('button', { type: 'button', className: 'button outlined', textContent: t('clear') }), 'clear-login');
+      const buttonRow = el('div', { className: 'button-row' });
+      const message = roleOf(el('div', { className: 'message' }), 'login-message');
+
+      const refreshLogin = () => {
+        passwordLabel.replaceChildren(hasSaved ? t('password_saved') : t('password'), passwordInput);
+        toggle.textContent = passwordInput.type === 'password' ? t('show') : t('hide');
+        saveLogin.disabled = !(login !== '' && (password !== '' || hasSaved));
+        buttonRow.replaceChildren(saveLogin, ...(hasSaved ? [clear] : []));
+      };
+      loginInput.addEventListener('input', () => {
+        login = loginInput.value.toUpperCase().trim();
+        loginInput.value = login;
+        refreshLogin();
+      });
+      passwordInput.addEventListener('input', () => {
+        password = passwordInput.value;
+        refreshLogin();
+      });
+      toggle.addEventListener('click', () => {
+        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+        refreshLogin();
+      });
+      saveLogin.addEventListener('click', () => {
+        if (saveLogin.disabled) return;
+        // an empty password field keeps the saved one (SavedPassword.kt)
+        saveCredentials(login, password !== '' ? password : (loadCredentials()?.password ?? ''));
+        hasSaved = true;
+        password = '';
+        passwordInput.value = '';
+        message.textContent = t('login_saved');
+        refreshLogin();
+      });
+      clear.addEventListener('click', () => {
+        clearCredentials();
+        hasSaved = false;
+        login = '';
+        password = '';
+        loginInput.value = '';
+        passwordInput.value = '';
+        message.textContent = t('login_cleared');
+        refreshLogin();
+      });
+
       const notes = el('a', {
         className: 'link',
         href: RELEASE_NOTES_URL,
@@ -88,9 +152,17 @@ export function createSettingsScreen() {
           el('h2', { textContent: t('station') }),
           el('label', { className: 'field' }, t('callsign'), callsign),
           locatorField, save,
+          el('hr'),
+          el('h2', { textContent: t('hb9q_chat') }),
+          el('div', { className: 'support', textContent: t('login_stored_browser') }),
+          el('label', { className: 'field' }, t('hb9q_login'), loginInput),
+          el('div', { className: 'password-row' }, passwordLabel, toggle),
+          buttonRow,
+          message,
           el('hr'), notes),
       );
       refresh();
+      refreshLogin();
     },
     unmount() {},
   };

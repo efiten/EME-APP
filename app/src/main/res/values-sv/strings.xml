@@ -46,6 +46,7 @@
     <string name="save">Spara</string>
     <string name="hb9q_chat">HB9Q-chatt</string>
     <string name="login_encrypted">Din inloggning lagras krypterat på den här telefonen.</string>
+    <string name="login_stored_browser">Din inloggning lagras i den här webbläsaren på den här enheten.</string>
     <string name="hb9q_login">HB9Q-inloggning (anropssignal)</string>
     <string name="password">Lösenord</string>
     <string name="password_saved">Lösenord (sparat — lämna tomt för att behålla)</string>

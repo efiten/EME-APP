@@ -46,6 +46,7 @@
     <string name="save">Salva</string>
     <string name="hb9q_chat">Chat HB9Q</string>
     <string name="login_encrypted">Il tuo login è salvato cifrato su questo telefono.</string>
+    <string name="login_stored_browser">Il tuo login è salvato in questo browser su questo dispositivo.</string>
     <string name="hb9q_login">Login HB9Q (nominativo)</string>
     <string name="password">Password</string>
     <string name="password_saved">Password (salvata — lascia vuoto per mantenerla)</string>

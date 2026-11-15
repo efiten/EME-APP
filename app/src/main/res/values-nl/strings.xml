@@ -46,6 +46,7 @@
     <string name="save">Bewaren</string>
     <string name="hb9q_chat">HB9Q-chat</string>
     <string name="login_encrypted">Je login wordt versleuteld op deze telefoon bewaard.</string>
+    <string name="login_stored_browser">Je login wordt in deze browser op dit apparaat bewaard.</string>
     <string name="hb9q_login">HB9Q login (callsign)</string>
     <string name="password">Wachtwoord</string>
     <string name="password_saved">Wachtwoord (opgeslagen — leeg laten om te behouden)</string>

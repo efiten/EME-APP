@@ -46,6 +46,7 @@
     <string name="save">Gem</string>
     <string name="hb9q_chat">HB9Q-chat</string>
     <string name="login_encrypted">Dit login gemmes krypteret på denne telefon.</string>
+    <string name="login_stored_browser">Dit login gemmes i denne browser på denne enhed.</string>
     <string name="hb9q_login">HB9Q-login (kaldesignal)</string>
     <string name="password">Adgangskode</string>
     <string name="password_saved">Adgangskode (gemt — lad stå tomt for at beholde)</string>

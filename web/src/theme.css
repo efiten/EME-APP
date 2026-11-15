@@ -321,3 +321,9 @@ body {
 .n0uk .cq-row .end.down { color: var(--alert); }
 .n0uk .cq-row.cq-head > span { color: var(--secondary); }
 .n0uk .empty { margin-top: 16px; }
+.settings .password-row { display: flex; align-items: flex-end; gap: 8px; }
+.settings .password-row .field { flex: 1; }
+.settings .button-row { display: flex; gap: 12px; }
+.button.outlined { background: transparent; color: var(--primary); border: 1px solid var(--outline); }
+.text-button { font: inherit; font-weight: 500; background: transparent; color: var(--primary); border: 0; padding: 10px 12px; cursor: pointer; }
+.settings .message { color: var(--secondary); }
