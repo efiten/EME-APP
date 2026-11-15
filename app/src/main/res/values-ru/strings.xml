@@ -100,4 +100,19 @@
     <string name="n0uk_cq_empty">Нет вызовов CQ в чате N0UK за последние 60 минут.</string>
     <string name="n0uk_error">Чат N0UK недоступен: %1$s</string>
     <string name="release_notes">Примечания к выпуску</string>
+    <string name="horizon_title">Мой горизонт</string>
+    <string name="horizon_info">Деревья, дома и земля, закрывающие Луну на вашей станции. Приложение использует их, чтобы показать, когда Луна действительно открыта.</string>
+    <string name="horizon_summary">Минимум %1$s° · препятствия: %2$d</string>
+    <string name="horizon_edit">Изменить</string>
+    <string name="horizon_min_el">Мин. элевация (°)</string>
+    <string name="horizon_from">От аз (°)</string>
+    <string name="horizon_to">До аз (°)</string>
+    <string name="horizon_up_to">До эл (°)</string>
+    <string name="horizon_blocked">Закрыто</string>
+    <string name="horizon_partial">Частично</string>
+    <string name="horizon_add">Добавить препятствие</string>
+    <string name="horizon_delete">Удалить препятствие</string>
+    <string name="horizon_saved">Горизонт сохранён</string>
+    <string name="horizon_moon_today">Путь Луны сегодня (UTC)</string>
+    <string name="horizon_invalid">0 – %1$d</string>
 </resources>

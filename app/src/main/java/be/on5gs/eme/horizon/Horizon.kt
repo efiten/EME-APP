@@ -101,6 +101,16 @@ data class Horizon(
     }
 }
 
+/**
+ * Een hoek uit een invulveld: een gewoon getal van 0 tot en met [max], met punt of komma als
+ * decimaalteken ("25,5"). Null als het veld leeg of fout is.
+ */
+fun parseAngle(text: String, max: Double): Double? {
+    val t = text.trim().replace(',', '.')
+    if (!Regex("""^\d+(\.\d+)?$""").matches(t)) return null
+    return t.toDouble().takeIf { it <= max }
+}
+
 /** Azimut in [0, 360). */
 fun normalizeAz(deg: Double): Double = ((deg % 360.0) + 360.0) % 360.0
 

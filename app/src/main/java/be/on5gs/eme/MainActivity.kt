@@ -121,7 +121,7 @@ fun EmeApp() {
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             if (showSettings) {
-                SettingsScreen(callsign, locator, credentialStore) { newCall, newLoc ->
+                SettingsScreen(callsign, locator, credentialStore, settings) { newCall, newLoc ->
                     settings.callsign = newCall
                     settings.locator = newLoc
                     callsign = newCall

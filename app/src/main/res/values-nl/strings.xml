@@ -100,4 +100,19 @@
     <string name="n0uk_cq_empty">Geen CQ-aanroepen in de N0UK-chat in de laatste 60 minuten.</string>
     <string name="n0uk_error">N0UK-chat niet bereikbaar: %1$s</string>
     <string name="release_notes">Release notes</string>
+    <string name="horizon_title">Mijn horizon</string>
+    <string name="horizon_info">Bomen, huizen en de grond die de maan bij jouw station tegenhouden. De app gebruikt ze om te tonen wanneer de maan echt vrij is.</string>
+    <string name="horizon_summary">Ondergrens %1$s° · hindernissen: %2$d</string>
+    <string name="horizon_edit">Bewerken</string>
+    <string name="horizon_min_el">Ondergrens elevatie (°)</string>
+    <string name="horizon_from">Van az (°)</string>
+    <string name="horizon_to">Tot az (°)</string>
+    <string name="horizon_up_to">Tot el (°)</string>
+    <string name="horizon_blocked">Geblokkeerd</string>
+    <string name="horizon_partial">Gedeeltelijk</string>
+    <string name="horizon_add">Hindernis toevoegen</string>
+    <string name="horizon_delete">Hindernis verwijderen</string>
+    <string name="horizon_saved">Horizon opgeslagen</string>
+    <string name="horizon_moon_today">Maanbaan vandaag (UTC)</string>
+    <string name="horizon_invalid">0 – %1$d</string>
 </resources>

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { readExpected } from './expected.js';
-import { decode, encode, halfBeamwidthDeg, moonWindows, usableWindows, defaultHorizon, VISIBILITY, visibility } from '../src/lib/horizon.js';
+import { chartSpans, chartTopDeg, decode, encode, halfBeamwidthDeg, moonTrack, moonWindows, parseAngle, trackSegments, usableWindows, defaultHorizon, VISIBILITY, visibility } from '../src/lib/horizon.js';
 import { position } from '../src/lib/moon-calculator.js';
 
 const DAY = 86_400_000;
@@ -77,5 +77,42 @@ describe('moon windows (same table as MoonWindowsTest.kt)', () => {
     const start = Date.parse('2026-11-20T00:00:00Z');
     expect(usableWindows({ minElDeg: 89, obstacles: [] }, 51.1, 4.3, start, start + DAY)).toEqual([]);
     expect(VISIBILITY.BLOCKED).toBe('BLOCKED');
+  });
+});
+
+describe('"My horizon" screen logic (same as HorizonChartTest.kt)', () => {
+  test('angles typed in a field', () => {
+    for (const r of readExpected('horizon_input')) {
+      const got = parseAngle(r.text, Number(r.max));
+      expect(got, `'${r.text}'`).toBe(r.expected === '' ? null : Number(r.expected));
+    }
+    expect(parseAngle('25,5', 90)).toBe(25.5);
+    expect(parseAngle('25,5,1', 90)).toBeNull();
+  });
+
+  test('chart top is 40 unless something is higher', () => {
+    expect(chartTopDeg(defaultHorizon())).toBe(40);
+    expect(chartTopDeg(decode('1;5;B 60 110 25;P 180 200 20'))).toBe(40);
+    expect(chartTopDeg(decode('1;0;B 60 110 38'))).toBe(50);
+    expect(chartTopDeg(decode('1;0;B 60 110 90'))).toBe(90);
+    expect(chartTopDeg(decode('1;5;B 60 110 25'), 55.3)).toBe(60);
+    expect(chartTopDeg(defaultHorizon(), 88)).toBe(90);
+  });
+
+  test('obstacle across north is drawn in two pieces', () => {
+    expect(chartSpans({ fromAzDeg: 60, toAzDeg: 110, maxElDeg: 25, kind: 'B' })).toEqual([[60, 110]]);
+    expect(chartSpans({ fromAzDeg: 350, toAzDeg: 10, maxElDeg: 15, kind: 'B' })).toEqual([[350, 360], [0, 10]]);
+    expect(chartSpans({ fromAzDeg: 0, toAzDeg: 360, maxElDeg: 5, kind: 'B' })).toEqual([[0, 360]]);
+  });
+
+  test('moon track in pieces', () => {
+    const start = Date.parse('2026-11-20T00:00:00Z');
+    const track = moonTrack(51.1, 4.3, start, start + DAY);
+    expect(track.length).toBe(145);
+    const segs = trackSegments(track);
+    expect(segs.length).toBe(2);
+    for (const p of segs.flat()) expect(p.elDeg).toBeGreaterThan(0);
+    const p = (az) => ({ millis: 0, azDeg: az, elDeg: 10 });
+    expect(trackSegments([p(350), p(355), p(2), p(8)]).length).toBe(2);
   });
 });

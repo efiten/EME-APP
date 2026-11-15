@@ -3,6 +3,8 @@ import { hb9qStore } from '../hb9q-store.js';
 import { LANGUAGES, t } from '../i18n.js';
 import { isValid, normalize, toLatLon } from '../lib/maidenhead.js';
 import { saveSettings } from '../settings.js';
+import { horizonEditor, horizonSection } from './horizon.js';
+import { defaultHorizon } from '../lib/horizon.js';
 
 /** Port of AppLanguage.options (native names, as in the language picker of the app). */
 const LANGUAGE_NAMES = {
@@ -27,10 +29,37 @@ const formatCentre = ({ latDeg, lonDeg }) =>
  * The screen calls ctx.onLanguage(code) and ctx.onSaved().
  */
 export function createSettingsScreen() {
-  return {
+  // "My horizon" is edited inside the settings (as SettingsScreen.kt); back returns to the settings.
+  let editingHorizon = false;
+  let horizonSaved = false;
+  const screen = {
     mount(host, ctx) {
       const { settings, draft } = ctx;
       host.replaceChildren();
+      const horizon = settings.horizon ?? defaultHorizon();
+
+      if (editingHorizon) {
+        const ok = isValid(draft.locator);
+        host.append(
+          horizonEditor({
+            saved: horizon,
+            locator: ok ? draft.locator : settings.locator,
+            nowMillis: (ctx.now ?? Date.now)(),
+            onSaved: (h) => {
+              saveSettings({ horizon: h });
+              settings.horizon = h;
+              horizonSaved = true;
+              editingHorizon = false;
+              screen.mount(host, ctx);
+            },
+            onBack: () => {
+              editingHorizon = false;
+              screen.mount(host, ctx);
+            },
+          }),
+        );
+        return;
+      }
 
       const locatorValid = () => isValid(draft.locator);
       const saveEnabled = () => locatorValid() && draft.callsign.trim() !== '';
@@ -159,6 +188,13 @@ export function createSettingsScreen() {
           el('label', { className: 'field' }, t('callsign'), callsign),
           locatorField, save,
           el('hr'),
+          ...horizonSection(horizon, () => {
+            horizonSaved = false;
+            editingHorizon = true;
+            screen.mount(host, ctx);
+          }),
+          ...(horizonSaved ? [el('div', { className: 'message', textContent: t('horizon_saved') })] : []),
+          el('hr'),
           el('h2', { textContent: t('hb9q_chat') }),
           el('div', { className: 'support', textContent: t('login_stored_browser') }),
           el('label', { className: 'field' }, t('hb9q_login'), loginInput),
@@ -172,4 +208,5 @@ export function createSettingsScreen() {
     },
     unmount() {},
   };
+  return screen;
 }

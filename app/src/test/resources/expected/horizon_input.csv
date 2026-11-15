@@ -1,0 +1,16 @@
+# Angle typed in a field of the "My horizon" screen (parseAngle in Horizon.kt and web/src/lib/horizon.js).
+# Point or comma as decimal separator, 0 up to and including max. Empty expected = rejected.
+text,max,expected
+25,90,25
+25.5,90,25.5
+ 7 ,90,7
+0,90,0
+90,90,90
+360,360,360
+90.5,90,
+361,360,
+-5,90,
+,90,
+abc,90,
+1e2,360,
+25..5,90,

@@ -5,6 +5,9 @@ import be.on5gs.eme.moon.MoonCalculator
 /** Een aaneengesloten stuk tijd met hetzelfde zicht op de maan; [endMillis] hoort er niet meer bij. */
 data class MoonWindow(val startMillis: Long, val endMillis: Long, val visibility: Visibility)
 
+/** Eén punt van de maanbaan. */
+data class TrackPoint(val millis: Long, val azDeg: Double, val elDeg: Double)
+
 /**
  * Wanneer is de maan vrij van de eigen horizon? Minuut per minuut (zoals de maanopkomst in de app)
  * van [startMillis] tot [endMillis].
@@ -12,6 +15,37 @@ data class MoonWindow(val startMillis: Long, val endMillis: Long, val visibility
 object MoonWindows {
 
     private const val STEP_MS = 60_000L
+
+    /** De maanbaan van [startMillis] tot en met [endMillis], om de [stepMs] (standaard 10 minuten). */
+    fun track(latDeg: Double, lonDeg: Double, startMillis: Long, endMillis: Long, stepMs: Long = 600_000L): List<TrackPoint> {
+        val out = mutableListOf<TrackPoint>()
+        var t = startMillis
+        while (t <= endMillis) {
+            val p = MoonCalculator.position(latDeg, lonDeg, t)
+            out += TrackPoint(t, p.azimuthDeg, p.elevationDeg)
+            t += stepMs
+        }
+        return out
+    }
+
+    /**
+     * De maanbaan in stukken om als lijnen te tekenen: alleen boven de horizon (elevatie > 0),
+     * en een nieuw stuk waar de maan door het noorden gaat (azimut springt meer dan 180°).
+     */
+    fun trackSegments(points: List<TrackPoint>): List<List<TrackPoint>> {
+        val out = mutableListOf<MutableList<TrackPoint>>()
+        var current: MutableList<TrackPoint>? = null
+        for (p in points) {
+            val prev = current?.lastOrNull()
+            if (p.elDeg <= 0.0) { current = null; continue }
+            if (current == null || (prev != null && kotlin.math.abs(p.azDeg - prev.azDeg) > 180.0)) {
+                current = mutableListOf()
+                out += current
+            }
+            current += p
+        }
+        return out
+    }
 
     /** Alle stukken tussen start en eind, elk met zijn zicht (vrij, gedeeltelijk, geblokkeerd). */
     fun windows(
