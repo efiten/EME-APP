@@ -132,3 +132,10 @@ fun halfBeamwidthDeg(freqMhz: Double, dishDiameterM: Double): Double {
  */
 fun beamMarginDeg(dishDiameterM: Double, freqMhz: Double): Double =
     if (dishDiameterM > 0.0) halfBeamwidthDeg(freqMhz, dishDiameterM) else 0.0
+
+/**
+ * De marge die de schermen gebruiken: alleen met een eigen horizon (zonder eigen horizon verandert er
+ * niets, ook niet met een schotel ingevuld), op de band van de schotel uit "Mijn horizon".
+ */
+fun horizonMarginDeg(horizon: Horizon, dishDiameterM: Double, dishFreqMhz: Double): Double =
+    if (horizon.isDefault) 0.0 else beamMarginDeg(dishDiameterM, dishFreqMhz)

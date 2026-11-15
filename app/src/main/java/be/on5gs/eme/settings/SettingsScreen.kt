@@ -61,9 +61,10 @@ fun SettingsScreen(
     // "Mijn horizon" bewerken: eigen scherm binnen de instellingen; terug brengt je naar de instellingen
     if (editingHorizon) {
         BackHandler { editingHorizon = false }
-        HorizonScreen(horizon, if (locatorValid) locator else currentLocator, settings.dishDiameterM, settings.degBand.mhz) { h, dish ->
+        HorizonScreen(horizon, if (locatorValid) locator else currentLocator, settings.dishDiameterM, settings.dishBand) { h, dish, band ->
             settings.horizon = h
             settings.dishDiameterM = dish
+            settings.dishBand = band
             horizon = h
             horizonSaved = true
             editingHorizon = false

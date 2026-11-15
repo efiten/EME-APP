@@ -120,7 +120,8 @@
     <string name="horizon_moon_blocked">Luna dietro il tuo orizzonte</string>
     <string name="horizon_window">Libera dal tuo orizzonte</string>
     <string name="horizon_dish">Ø della parabola (m)</string>
-    <string name="horizon_dish_info">Lascia vuoto per nessun margine (es. Yagi). Con una parabola, metà dell\'apertura del fascio sulla banda della scheda Deg si aggiunge al tuo orizzonte, così anche il bordo del fascio è libero.</string>
+    <string name="horizon_dish_info">Lascia vuoto per nessun margine (es. Yagi). Con una parabola e un orizzonte proprio, metà dell\'apertura del fascio sulla banda scelta sotto si aggiunge al tuo orizzonte, così anche il bordo del fascio è libero.</string>
+    <string name="horizon_dish_band">Banda su cui si usa la parabola</string>
     <string name="horizon_margin">Margine su %1$s MHz: %2$s°</string>
     <string name="horizon_measure">Misura orizzonte</string>
     <string name="horizon_load">Carica orizzonte</string>

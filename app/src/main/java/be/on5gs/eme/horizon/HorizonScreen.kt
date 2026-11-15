@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.rememberLauncherForActivityResult
+import be.on5gs.eme.degradation.EmeBand
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -92,9 +93,9 @@ private class ObstacleDraft(from: String, to: String, el: String, kind: Obstacle
 }
 
 /**
- * Scherm "Mijn horizon": ondergrens, hindernissen, diameter van de schotel en een grafiek met de
- * maanbaan van vandaag. [bandMhz] is de band van de Deg-tab, voor de marge van de schotel.
- * [onSaved] krijgt de nieuwe horizon en de diameter (0 = geen schotel); het bewaren doet de aanroeper.
+ * Scherm "Mijn horizon": ondergrens, hindernissen, diameter en band van de schotel en een grafiek met
+ * de maanbaan van vandaag. [onSaved] krijgt de nieuwe horizon, de diameter (0 = geen schotel) en de
+ * band van de schotel; het bewaren doet de aanroeper.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -102,9 +103,11 @@ fun HorizonScreen(
     saved: Horizon,
     locator: String,
     savedDishM: Double = 0.0,
-    bandMhz: Double = 1296.0,
-    onSaved: (Horizon, Double) -> Unit,
+    savedDishBand: EmeBand = EmeBand.B1296,
+    onSaved: (Horizon, Double, EmeBand) -> Unit,
 ) {
+    var dishBand by remember { mutableStateOf(savedDishBand) }
+    val bandMhz = dishBand.mhz
     var minText by remember { mutableStateOf(fmt(saved.minElDeg)) }
     var dishText by remember { mutableStateOf(if (savedDishM > 0.0) fmt(savedDishM) else "") }
     val rows = remember {
@@ -228,9 +231,16 @@ fun HorizonScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth().testTag("horizon-dish"),
         )
+        // Band waarop de schotel gebruikt wordt (los van de Deg-tab), voor de marge
+        Text(stringResource(R.string.horizon_dish_band), style = MaterialTheme.typography.bodyMedium)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            EmeBand.entries.forEach { b ->
+                FilterChip(selected = b == dishBand, onClick = { dishBand = b }, label = { Text(b.label) })
+            }
+        }
 
         Button(
-            onClick = { onSaved(Horizon(min!!, obstacles.map { it!! }), dish!!) },
+            onClick = { onSaved(Horizon(min!!, obstacles.map { it!! }), dish!!, dishBand) },
             enabled = valid,
         ) { Text(stringResource(R.string.save)) }
     }

@@ -74,8 +74,11 @@ describe('"My horizon" (same as HorizonScreenTest.kt)', () => {
     expect(q('horizon-save').disabled).toBe(true);
     type(q('dish'), '6');
     expect(q('dish-support').textContent).toBe('Margin on 1296 MHz: 1.35°');
+    q('dish-band-B432').click(); // band of the dish, not the Deg tab
+    expect(q('dish-support').textContent).toBe('Margin on 432 MHz: 4.05°');
     q('horizon-save').click();
     expect(JSON.parse(localStorage.getItem('eme.settings')).dishDiameterM).toBe(6);
+    expect(JSON.parse(localStorage.getItem('eme.settings')).dishBand).toBe('B432');
 
     q('horizon-edit').click();
     expect(q('dish').value).toBe('6');

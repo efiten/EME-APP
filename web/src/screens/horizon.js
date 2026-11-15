@@ -2,6 +2,7 @@
 import { t } from '../i18n.js';
 import { toLatLon } from '../lib/maidenhead.js';
 import { parseSurvey } from '../lib/horizon-survey.js';
+import { EME_BANDS } from '../lib/degradation.js';
 import { KINDS, beamMarginDeg, chartSpans, chartTopDeg, moonTrack, parseAngle, trackSegments } from '../lib/horizon.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -83,10 +84,12 @@ export function horizonChart(horizon, locator, nowMillis) {
 }
 
 /**
- * The editor. saved: the stored horizon; savedDishM: dish diameter (0 = none); bandMhz: band of the Deg tab
- * for the dish margin; onSaved(horizon, dishM) stores them; onBack() leaves without saving.
+ * The editor. saved: the stored horizon; savedDishM: dish diameter (0 = none); savedDishBand: band id the
+ * dish is used on, for the margin; onSaved(horizon, dishM, dishBand) stores them; onBack() leaves without saving.
  */
-export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, bandMhz = 1296, onSaved, onBack }) {
+export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, savedDishBand = 'B1296', onSaved, onBack }) {
+  let dishBand = EME_BANDS.some((b) => b.id === savedDishBand) ? savedDishBand : 'B1296';
+  const bandMhz = () => EME_BANDS.find((b) => b.id === dishBand).mhz;
   let minText = fmtAngle(saved.minElDeg);
   let dishText = savedDishM > 0 ? fmtAngle(savedDishM) : '';
   // Empty = no dish; otherwise a diameter up to 100 m
@@ -204,7 +207,7 @@ export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, bandM
   });
   save.addEventListener('click', () => {
     const c = current();
-    if (c.valid) onSaved({ minElDeg: c.minElDeg, obstacles: c.obstacles }, c.dish);
+    if (c.valid) onSaved({ minElDeg: c.minElDeg, obstacles: c.obstacles }, c.dish, dishBand);
   });
   back.addEventListener('click', onBack);
 
@@ -216,8 +219,24 @@ export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, bandM
     const d = dishValue();
     dishField.classList.toggle('invalid', d === null);
     dishSupport.textContent =
-      d === null ? t('horizon_invalid', 100) : d > 0 ? t('horizon_margin', fmtAngle(bandMhz), beamMarginDeg(d, bandMhz).toFixed(2)) : t('horizon_dish_info');
+      d === null ? t('horizon_invalid', 100) : d > 0 ? t('horizon_margin', fmtAngle(bandMhz()), beamMarginDeg(d, bandMhz()).toFixed(2)) : t('horizon_dish_info');
   };
+  // Band the dish is used on (not the Deg tab), for the margin
+  const bandChips = el('div', { className: 'chips' });
+  const renderBands = () =>
+    bandChips.replaceChildren(
+      ...EME_BANDS.map((b) => {
+        const chip = role(el('button', { type: 'button', className: `chip${b.id === dishBand ? ' selected' : ''}`, textContent: b.label }), `dish-band-${b.id}`);
+        chip.setAttribute('aria-pressed', String(b.id === dishBand));
+        chip.addEventListener('click', () => {
+          dishBand = b.id;
+          renderBands();
+          refreshDish();
+        });
+        return chip;
+      }),
+    );
+  renderBands();
   dishInput.addEventListener('input', () => {
     dishInput.value = dishInput.value.slice(0, 6);
     dishText = dishInput.value;
@@ -237,6 +256,8 @@ export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, bandM
     list,
     add,
     dishField,
+    el('div', { className: 'support', textContent: t('horizon_dish_band') }),
+    bandChips,
     el('div', { className: 'button-row' }, save, back),
   );
   renderRows();

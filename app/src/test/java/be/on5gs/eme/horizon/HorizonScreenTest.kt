@@ -43,6 +43,8 @@ class HorizonScreenTest {
         settings = SettingsRepository(ApplicationProvider.getApplicationContext())
         settings.horizon = Horizon()
         settings.dishDiameterM = 0.0
+        settings.dishBand = be.on5gs.eme.degradation.EmeBand.B1296
+        settings.degBand = be.on5gs.eme.degradation.EmeBand.B144     // de Deg-tab speelt geen rol meer
         compose.setContent {
             EmeTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -91,8 +93,12 @@ class HorizonScreenTest {
         compose.onNodeWithText("Save").performScrollTo().assertIsNotEnabled()
         field("Dish diameter (m)").performTextReplacement("6")
         compose.onNodeWithText("Margin on 1296 MHz: 1.35°").performScrollTo().assertExists()
+        // Eigen band van de schotel, los van de Deg-tab
+        compose.onNodeWithText("432").performScrollTo().performClick()
+        compose.onNodeWithText("Margin on 432 MHz: 4.05°").performScrollTo().assertExists()
         compose.onNodeWithText("Save").performScrollTo().performClick()
         assertEquals(6.0, settings.dishDiameterM, 0.0)
+        assertEquals(be.on5gs.eme.degradation.EmeBand.B432, settings.dishBand)
 
         compose.onNodeWithText("Edit").performScrollTo().performClick()
         field("Dish diameter (m)").performScrollTo().performTextReplacement("")
@@ -110,7 +116,7 @@ class HorizonScreenTest {
 
         compose.onNodeWithText("Add obstacle").performScrollTo().performClick()
         compose.onNodeWithText("Save").performScrollTo().assertIsNotEnabled()
-        compose.onNodeWithContentDescription("Delete obstacle").performClick()
+        compose.onNodeWithContentDescription("Delete obstacle").performScrollTo().performClick()
         compose.onNodeWithText("Save").performScrollTo().assertIsEnabled().performClick()
         assertEquals("1;3", settings.horizon.encode())
     }

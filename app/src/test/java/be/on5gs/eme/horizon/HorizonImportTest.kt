@@ -56,7 +56,7 @@ class HorizonImportTest {
             CompositionLocalProvider(LocalActivityResultRegistryOwner provides owner, LocalUriHandler provides uris) {
                 EmeTheme {
                     Surface(color = MaterialTheme.colorScheme.background) {
-                        HorizonScreen(Horizon.decode("1;5;P 180 200 20")!!, "JO21SC") { h, _ -> saved = h }
+                        HorizonScreen(Horizon.decode("1;5;P 180 200 20")!!, "JO21SC") { h, _, _ -> saved = h }
                     }
                 }
             }

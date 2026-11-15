@@ -187,8 +187,13 @@ export function currentOrNextWindow(horizon, latDeg, lonDeg, nowMillis, marginDe
   return usableWindows(horizon, latDeg, lonDeg, start - 24 * HOUR_MS, start + 48 * HOUR_MS, marginDeg).find((w) => w.endMillis > nowMillis) ?? null;
 }
 
-/** Margin for the settings: the dish on the band chosen in the Deg tab (bands: EME_BANDS), 0 without a dish. */
+/**
+ * Margin the screens use (horizonMarginDeg in Horizon.kt): only with an own horizon (without one nothing
+ * changes, also with a dish filled in), on the band of the dish from "My horizon" (bands: EME_BANDS).
+ */
 export function marginForSettings(settings, bands) {
-  const band = bands.find((b) => b.id === settings.degBand) ?? bands.find((b) => b.id === 'B1296');
+  const horizon = settings.horizon ?? defaultHorizon();
+  if (isDefaultHorizon(horizon)) return 0;
+  const band = bands.find((b) => b.id === settings.dishBand) ?? bands.find((b) => b.id === 'B1296');
   return beamMarginDeg(settings.dishDiameterM ?? 0, band.mhz);
 }

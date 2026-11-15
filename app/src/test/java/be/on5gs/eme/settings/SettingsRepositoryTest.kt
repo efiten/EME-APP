@@ -55,4 +55,12 @@ class SettingsRepositoryTest {
             .edit().putString("dish_diameter_m", "onzin").commit()
         assertEquals(0.0, SettingsRepository(context).dishDiameterM, 0.0)
     }
+
+    @Test
+    fun dishBandDefaultsTo1296AndIsKept() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        assertEquals(be.on5gs.eme.degradation.EmeBand.B1296, SettingsRepository(context).dishBand)
+        SettingsRepository(context).dishBand = be.on5gs.eme.degradation.EmeBand.B432
+        assertEquals(be.on5gs.eme.degradation.EmeBand.B432, SettingsRepository(context).dishBand)
+    }
 }

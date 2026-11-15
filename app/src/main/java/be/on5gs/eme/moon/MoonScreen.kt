@@ -1,5 +1,6 @@
 package be.on5gs.eme.moon
 
+import be.on5gs.eme.horizon.horizonMarginDeg
 import be.on5gs.eme.horizon.beamMarginDeg
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.testTag
@@ -108,8 +109,8 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
     var events by remember { mutableStateOf<MoonEvents.Events?>(null) }
     // Eigen horizon (instellingen > Mijn horizon): het huidige of volgende vrije venster, ook elke minuut
     val horizon = remember { settings.horizon }
-    // Marge van de schotel (halve bundelbreedte op de band van de Deg-tab); 0 zonder schotel
-    val margin = remember { beamMarginDeg(settings.dishDiameterM, settings.degBand.mhz) }
+    // Marge van de schotel (halve bundelbreedte op de band van de schotel); 0 zonder schotel of eigen horizon
+    val margin = remember { horizonMarginDeg(horizon, settings.dishDiameterM, settings.dishBand.mhz) }
     // null = nog niet berekend (dan geen regel); HorizonLine(null) = geen venster binnen 48 uur
     var window by remember { mutableStateOf<HorizonLine?>(null) }
     val minute = now / 60_000
