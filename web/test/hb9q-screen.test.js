@@ -207,6 +207,22 @@ describe('HB9Q screen', () => {
     expect([...qa('cq')[0].children].map((c) => c.textContent)[5]).toBe('echo');
   });
 
+  test('chatCqWindowIsRecheckedEvery5sWithoutAFetch', async () => {
+    stubFetch({
+      [LOGIN]: loginOk,
+      [MSG6]: respond(body(row(2, '09:10', 'DL1ABC', '***** CQ 1296.100 1st JT65C *****', { cq: true }))),
+    });
+    let clock = NOW;
+    await mount({ now: () => clock });
+    subtab(2).click();
+    expect(qa('cq')).toHaveLength(1);
+    const fetches = callsTo(fetch, MSG6);
+    clock = Date.parse('2026-11-08T10:11:00Z'); // 61 minutes after the CQ
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(callsTo(fetch, MSG6)).toBe(fetches);
+    expect(qa('cq')).toHaveLength(0);
+  });
+
   test('chatCqEmptyShowsEmptyText', async () => {
     await mount();
     subtab(2).click();

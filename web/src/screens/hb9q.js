@@ -178,7 +178,10 @@ export function createHb9qScreen() {
       render();
       const unsubscribe = store.subscribe(render);
       const stopPolling = visibleInterval(
-        poll,
+        () => {
+          poll();
+          render(); // the Chat CQ window moves with the clock, as in the app
+        },
         POLL_CHECK_MS,
         () => {
           store.abort();
