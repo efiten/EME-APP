@@ -65,6 +65,10 @@ an unknown flag, and the service then restarts in a loop (all `/api` answers 502
 After that, a rollback to a binary older than this change needs the old unit back (without `-state-dir`),
 otherwise that binary cannot start.
 
+The `location ^~ /api/hb9q/` block in the nginx site is also such a change. Install it by hand before the
+first release with the HB9Q chat: copy the site file, then `nginx -t && systemctl reload nginx`. Without it
+a slow HB9Q login hits the 20 s timeout of `/api/` and the web app gets a 504.
+
 ## Logs
 
 ```

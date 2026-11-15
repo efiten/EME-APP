@@ -34,8 +34,8 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 
 ## Never
 
-- Never make the app send anything to logger.hb9q.ch other than the login and the read
-  requests it does today. The HB9Q chat is read only, as agreed with HB9Q.
+- Never make the app or `web/server` send anything to logger.hb9q.ch other than the login, the
+  read requests and the logout they do today. The HB9Q chat is read only, as agreed with HB9Q.
 - Never make the app post anything to www.chris.org (N0UK chat). It is read only.
 - Never make the app send anything to livecq.n6nu.org other than the GET request for the spots.
   N6NU Live CQ is read only.

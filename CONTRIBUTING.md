@@ -78,6 +78,9 @@ discuss them in an issue first.
   sends nothing else to it.
 - **The web server polls for all web users together.** `web/server` fetches W3SZ, N6NU and
   N0UK itself and keeps the same limits as the app, however many people have the web app open.
+- **The web server logs in at HB9Q per web user.** `web/server` logs in with the user's own HB9Q
+  login, keeps one HB9Q session per web session, fetches the chat at most every 20 s per session
+  and band, and uses the same login backoff as the app. It never stores the password.
 - **Keep the honest User-Agent** (`EME-ON5GS-Android/<version>`), so the operators of HB9Q and
   W3SZ, N6NU and N0UK can see where the requests come from.
 

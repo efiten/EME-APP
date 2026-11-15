@@ -22,6 +22,7 @@ type config struct {
 	now     func() time.Time
 
 	w3szURL, n6nuURL, n0ukURL string
+	hb9qURL                   string
 
 	// stateDir, when set, keeps the last attempt time per source across restarts.
 	stateDir string
@@ -35,6 +36,7 @@ func defaultConfig(version string) config {
 		w3szURL: "https://w3sz.com/export_livecq3.php",
 		n6nuURL: "https://livecq.n6nu.org/api/spots?limit=200&offset=0&minutes=60&path=eme&lists=0",
 		n0ukURL: "https://www.chris.org/cgi-bin/jt65emeA",
+		hb9qURL: "https://logger.hb9q.ch",
 	}
 }
 
@@ -97,6 +99,7 @@ func newHandler(cfg config) http.Handler {
 		w.Header().Set("Cache-Control", "no-store")
 		w.Write(versionJSON)
 	}))
+	newHb9qService(cfg.hb9qURL, ua, cfg.timeout, cfg.now).register(mux)
 	return noSniff(mux)
 }
 
