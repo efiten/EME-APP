@@ -100,4 +100,19 @@
     <string name="n0uk_cq_empty">Aucun appel CQ dans le chat N0UK depuis 60 minutes.</string>
     <string name="n0uk_error">Chat N0UK inaccessible : %1$s</string>
     <string name="release_notes">Notes de version</string>
+    <string name="horizon_title">Mon horizon</string>
+    <string name="horizon_info">Arbres, maisons et sol qui masquent la lune à votre station. L\'application s\'en sert pour indiquer quand la lune est vraiment dégagée.</string>
+    <string name="horizon_summary">Minimum %1$s° · obstacles : %2$d</string>
+    <string name="horizon_edit">Modifier</string>
+    <string name="horizon_min_el">Élévation minimale (°)</string>
+    <string name="horizon_from">De az (°)</string>
+    <string name="horizon_to">À az (°)</string>
+    <string name="horizon_up_to">Jusqu\'à él (°)</string>
+    <string name="horizon_blocked">Bloqué</string>
+    <string name="horizon_partial">Partiel</string>
+    <string name="horizon_add">Ajouter un obstacle</string>
+    <string name="horizon_delete">Supprimer l\'obstacle</string>
+    <string name="horizon_saved">Horizon enregistré</string>
+    <string name="horizon_moon_today">Trajectoire de la lune aujourd\'hui (UTC)</string>
+    <string name="horizon_invalid">0 – %1$d</string>
 </resources>

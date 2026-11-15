@@ -348,3 +348,20 @@ body {
 .hb9q .logged-out { margin-top: 32px; text-align: center; }
 .hb9q .logged-out .button { margin-top: 12px; }
 .hb9q .cq-row .call { font-weight: 700; color: var(--cq-color); }
+
+/* My horizon (horizon/HorizonScreen.kt) */
+.horizon .chart { display: block; width: 100%; height: auto; max-width: 720px; }
+.horizon .chart .axis { font-size: 9px; fill: var(--on-surface-variant); }
+.horizon .chart .grid { stroke: rgba(255, 255, 255, 0.2); stroke-width: 1; }
+.horizon .chart .minimum { fill: #ef5350; fill-opacity: 0.45; }
+.horizon .chart .blocked { fill: #ef5350; fill-opacity: 0.6; }
+.horizon .chart .partial { fill: #ffa726; fill-opacity: 0.6; }
+.horizon .chart .moon { fill: none; stroke: #ffeb3b; stroke-width: 2; stroke-linejoin: round; }
+.horizon .legend.moon { color: #ffeb3b; font-size: 12px; }
+.horizon .obstacle { display: flex; flex-direction: column; gap: 6px; padding: 10px; margin: 8px 0; background: var(--surface-variant); border-radius: 12px; }
+.horizon .row2 { display: flex; gap: 8px; align-items: center; }
+.horizon .row2 .field { flex: 1; min-width: 0; }
+.horizon .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.horizon .chip { font: inherit; font-size: 14px; min-height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--on-surface-variant); background: none; color: var(--on-surface); cursor: pointer; }
+.horizon .chip.selected { background: var(--secondary-container, #4a4458); border-color: transparent; }
+.horizon .icon-button { font-size: 20px; min-width: 48px; min-height: 48px; border: 0; background: none; color: var(--on-surface); cursor: pointer; }

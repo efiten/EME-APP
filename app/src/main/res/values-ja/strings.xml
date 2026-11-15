@@ -100,4 +100,19 @@
     <string name="n0uk_cq_empty">直近 60 分、N0UK チャットに CQ 呼び出しはありません。</string>
     <string name="n0uk_error">N0UK チャットに接続できません：%1$s</string>
     <string name="release_notes">リリースノート</string>
+    <string name="horizon_title">自分の地平線</string>
+    <string name="horizon_info">あなたの局で月を遮る木、家、地面。アプリはこれを使って月が本当に見える時間を表示します。</string>
+    <string name="horizon_summary">最低 %1$s° · 障害物: %2$d</string>
+    <string name="horizon_edit">編集</string>
+    <string name="horizon_min_el">最低仰角 (°)</string>
+    <string name="horizon_from">開始方位 (°)</string>
+    <string name="horizon_to">終了方位 (°)</string>
+    <string name="horizon_up_to">仰角まで (°)</string>
+    <string name="horizon_blocked">遮蔽</string>
+    <string name="horizon_partial">一部遮蔽</string>
+    <string name="horizon_add">障害物を追加</string>
+    <string name="horizon_delete">障害物を削除</string>
+    <string name="horizon_saved">地平線を保存しました</string>
+    <string name="horizon_moon_today">今日の月の軌道 (UTC)</string>
+    <string name="horizon_invalid">0 – %1$d</string>
 </resources>

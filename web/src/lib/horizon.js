@@ -9,6 +9,14 @@ export const VISIBILITY = { CLEAR: 'CLEAR', PARTIAL: 'PARTIAL', BLOCKED: 'BLOCKE
 /** Default: no minimum and no obstacles, i.e. usable as soon as the moon is above the horizon. */
 export const defaultHorizon = () => ({ minElDeg: 0, obstacles: [] });
 
+/** An angle from an input field: a plain number from 0 to max, with point or comma ("25,5"); null if empty or wrong. */
+export function parseAngle(text, max) {
+  const t = String(text).trim().replace(',', '.');
+  if (!/^\d+(\.\d+)?$/.test(t)) return null;
+  const v = Number(t);
+  return v <= max ? v : null;
+}
+
 /** Azimuth in [0, 360). */
 export function normalizeAz(deg) {
   return ((deg % 360) + 360) % 360;
@@ -115,4 +123,47 @@ export function usableWindows(horizon, latDeg, lonDeg, startMillis, endMillis, m
     }
   }
   return out;
+}
+
+/** The moon track from startMillis to endMillis (inclusive), every stepMs (default 10 minutes). */
+export function moonTrack(latDeg, lonDeg, startMillis, endMillis, stepMs = 600_000) {
+  const out = [];
+  for (let t = startMillis; t <= endMillis; t += stepMs) {
+    const p = position(latDeg, lonDeg, t);
+    out.push({ millis: t, azDeg: p.azimuthDeg, elDeg: p.elevationDeg });
+  }
+  return out;
+}
+
+/** The track in pieces to draw as lines: only above the horizon, new piece where the azimuth jumps over 180 deg (north). */
+export function trackSegments(points) {
+  const out = [];
+  let current = null;
+  for (const p of points) {
+    if (p.elDeg <= 0) {
+      current = null;
+      continue;
+    }
+    const prev = current?.at(-1);
+    if (current === null || (prev && Math.abs(p.azDeg - prev.azDeg) > 180)) {
+      current = [];
+      out.push(current);
+    }
+    current.push(p);
+  }
+  return out;
+}
+
+/** Top of the chart: 40 deg, or higher (per 10, up to 90) when an obstacle, the minimum or the moon goes higher. */
+export function chartTopDeg(horizon, moonMaxElDeg = 0) {
+  const highest = Math.max(Math.max(horizon.minElDeg, ...horizon.obstacles.map((o) => o.maxElDeg)) + 5, moonMaxElDeg);
+  return Math.max(40, Math.min(90, Math.ceil(highest / 10) * 10));
+}
+
+/** Azimuth pieces of an obstacle to draw: one, or two when it crosses north. */
+export function chartSpans(o) {
+  if (o.toAzDeg - o.fromAzDeg >= 360) return [[0, 360]];
+  const from = normalizeAz(o.fromAzDeg);
+  const to = normalizeAz(o.toAzDeg);
+  return from <= to ? [[from, to]] : [[from, 360], [0, to]];
 }

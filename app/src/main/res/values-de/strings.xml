@@ -100,4 +100,19 @@
     <string name="n0uk_cq_empty">Keine CQ-Rufe im N0UK-Chat in den letzten 60 Minuten.</string>
     <string name="n0uk_error">N0UK-Chat nicht erreichbar: %1$s</string>
     <string name="release_notes">Versionshinweise</string>
+    <string name="horizon_title">Mein Horizont</string>
+    <string name="horizon_info">Bäume, Häuser und Boden, die den Mond an deiner Station verdecken. Die App zeigt damit, wann der Mond wirklich frei ist.</string>
+    <string name="horizon_summary">Minimum %1$s° · Hindernisse: %2$d</string>
+    <string name="horizon_edit">Bearbeiten</string>
+    <string name="horizon_min_el">Mindest-Elevation (°)</string>
+    <string name="horizon_from">Von Az (°)</string>
+    <string name="horizon_to">Bis Az (°)</string>
+    <string name="horizon_up_to">Bis El (°)</string>
+    <string name="horizon_blocked">Blockiert</string>
+    <string name="horizon_partial">Teilweise</string>
+    <string name="horizon_add">Hindernis hinzufügen</string>
+    <string name="horizon_delete">Hindernis löschen</string>
+    <string name="horizon_saved">Horizont gespeichert</string>
+    <string name="horizon_moon_today">Mondbahn heute (UTC)</string>
+    <string name="horizon_invalid">0 – %1$d</string>
 </resources>

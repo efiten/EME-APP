@@ -100,4 +100,19 @@
     <string name="n0uk_cq_empty">No hay llamadas CQ en el chat N0UK en los últimos 60 minutos.</string>
     <string name="n0uk_error">Chat N0UK no disponible: %1$s</string>
     <string name="release_notes">Notas de la versión</string>
+    <string name="horizon_title">Mi horizonte</string>
+    <string name="horizon_info">Árboles, casas y el suelo que tapan la luna en tu estación. La app los usa para mostrar cuándo la luna está realmente despejada.</string>
+    <string name="horizon_summary">Mínimo %1$s° · obstáculos: %2$d</string>
+    <string name="horizon_edit">Editar</string>
+    <string name="horizon_min_el">Elevación mínima (°)</string>
+    <string name="horizon_from">Desde az (°)</string>
+    <string name="horizon_to">Hasta az (°)</string>
+    <string name="horizon_up_to">Hasta el (°)</string>
+    <string name="horizon_blocked">Bloqueado</string>
+    <string name="horizon_partial">Parcial</string>
+    <string name="horizon_add">Añadir obstáculo</string>
+    <string name="horizon_delete">Borrar obstáculo</string>
+    <string name="horizon_saved">Horizonte guardado</string>
+    <string name="horizon_moon_today">Trayectoria de la luna hoy (UTC)</string>
+    <string name="horizon_invalid">0 – %1$d</string>
 </resources>

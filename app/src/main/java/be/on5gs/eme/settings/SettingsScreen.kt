@@ -1,5 +1,9 @@
 package be.on5gs.eme.settings
 
+import be.on5gs.eme.horizon.HorizonSection
+import be.on5gs.eme.horizon.HorizonScreen
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.activity.compose.BackHandler
 import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
@@ -43,12 +47,28 @@ fun SettingsScreen(
     currentCallsign: String,
     currentLocator: String,
     credentialStore: CredentialStore,
+    settings: SettingsRepository = SettingsRepository(LocalContext.current),
     onSave: (callsign: String, locator: String) -> Unit,
 ) {
     var callsign by remember { mutableStateOf(currentCallsign) }
     var locator by remember { mutableStateOf(currentLocator) }
     val locatorValid = Maidenhead.isValid(locator)
     val pos = Maidenhead.toLatLon(locator)
+    var horizon by remember { mutableStateOf(settings.horizon) }
+    var editingHorizon by rememberSaveable { mutableStateOf(false) }
+    var horizonSaved by remember { mutableStateOf(false) }
+
+    // "Mijn horizon" bewerken: eigen scherm binnen de instellingen; terug brengt je naar de instellingen
+    if (editingHorizon) {
+        BackHandler { editingHorizon = false }
+        HorizonScreen(horizon, if (locatorValid) locator else currentLocator) { h ->
+            settings.horizon = h
+            horizon = h
+            horizonSaved = true
+            editingHorizon = false
+        }
+        return
+    }
 
     Column(
         modifier = Modifier.padding(16.dp).fillMaxWidth().verticalScroll(rememberScrollState()),
@@ -100,6 +120,10 @@ fun SettingsScreen(
         ) {
             Text(stringResource(R.string.save))
         }
+
+        HorizontalDivider(Modifier.padding(vertical = 8.dp))
+        HorizonSection(horizon) { horizonSaved = false; editingHorizon = true }
+        if (horizonSaved) Text(stringResource(R.string.horizon_saved), color = MaterialTheme.colorScheme.secondary)
 
         HorizontalDivider(Modifier.padding(vertical = 8.dp))
         Hb9qLoginSection(credentialStore)

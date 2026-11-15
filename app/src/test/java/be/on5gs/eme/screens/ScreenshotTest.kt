@@ -171,6 +171,28 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = "+nl")
+    fun horizonScreen() {
+        // "Mijn horizon" met de situatie van ON5GS, op 20 november 2026 (maan komt op achter de boom)
+        be.on5gs.eme.AppClock.nowMillis = { java.time.Instant.parse("2026-11-20T12:00:00Z").toEpochMilli() }
+        try {
+            compose.setContent {
+                EmeTheme {
+                    Surface(color = MaterialTheme.colorScheme.background) {
+                        be.on5gs.eme.horizon.HorizonScreen(
+                            be.on5gs.eme.horizon.Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!, "JO21SC",
+                        ) {}
+                    }
+                }
+            }
+            compose.waitForIdle()
+            save("horizon")
+        } finally {
+            be.on5gs.eme.AppClock.nowMillis = System::currentTimeMillis
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "+nl")
     fun degradationScreen() {
         SettingsRepository(ApplicationProvider.getApplicationContext()).degBand = be.on5gs.eme.degradation.EmeBand.B144
         compose.setContent { EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { Box(Modifier.fillMaxSize()) { EmeApp() } } } }

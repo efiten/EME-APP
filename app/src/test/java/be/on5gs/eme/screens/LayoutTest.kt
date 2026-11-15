@@ -171,6 +171,18 @@ class LayoutTest(private val device: String, private val language: String, priva
         checkLayout()
     }
 
+    /** "Mijn horizon" (vanuit de instellingen) met de horizon van ON5GS: boom en boompjes, grafiek met maanbaan. */
+    @Test
+    fun horizon() {
+        SettingsRepository(ApplicationProvider.getApplicationContext()).horizon =
+            be.on5gs.eme.horizon.Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!
+        compose.setContent { EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { EmeApp() } } }
+        compose.onAllNodes(hasContentDescription(string(R.string.settings)) and hasClickAction()).onFirst().performClick()
+        compose.onAllNodes(hasText(string(R.string.horizon_edit)) and hasClickAction()).onFirst().performScrollTo().performClick()
+        compose.waitForIdle()
+        checkLayout()
+    }
+
     /** Chat CQ (subpagina van HB9Q) met de echte HB9Q-sample van 8 november. */
     @Test
     fun chatCq() {
