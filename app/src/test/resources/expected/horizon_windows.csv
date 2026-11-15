@@ -1,0 +1,13 @@
+# Moon windows against the own horizon (horizon/MoonWindows.kt, web/src/lib/horizon.js), JO21 (51.1N 4.3E),
+# 24 h from 00:00 UTC on date, minute by minute. windows = start-end/visibility (C clear, P partial, B blocked),
+# times in hh:mm from the start of the day; empty = no window. Checked to within 1 minute.
+# kind usable = only clear/partial stretches, adjacent ones merged (partial if any part is); all = every stretch.
+# "1;0" is the default horizon: the windows are moonset and moonrise.
+kind,horizon,date,lat,lon,margin,windows
+usable,1;0,2026-11-20,51.1,4.3,0,00:00-01:36/C 13:39-24:00/C
+usable,1;5;B 60 110 25;P 180 200 20,2026-11-20,51.1,4.3,0,00:00-01:02/C 15:55-24:00/C
+usable,1;5;B 60 110 25;P 180 200 20,2026-11-20,51.1,4.3,1.35,00:00-00:53/C 15:55-24:00/C
+usable,1;5;B 60 110 25;P 180 200 20,2026-12-03,51.1,4.3,0,02:31-12:07/C
+usable,1;5;B 60 110 25;P 180 200 20,2027-01-04,51.1,4.3,0,06:23-11:34/P
+all,1;5;B 60 110 25;P 180 200 20,2027-01-04,51.1,4.3,0,00:00-06:23/B 06:23-09:01/C 09:01-10:32/P 10:32-11:34/C 11:34-24:00/B
+usable,1;0;B 0 360 90,2026-11-20,51.1,4.3,0,

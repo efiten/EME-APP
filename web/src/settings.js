@@ -3,6 +3,7 @@ import { HB9Q_BANDS } from './lib/hb9q.js';
 import { BANDS } from './lib/livecq.js';
 import { EME_BANDS } from './lib/degradation.js';
 import { isValid, toLatLon } from './lib/maidenhead.js';
+import { decode as decodeHorizon, defaultHorizon, encode as encodeHorizon } from './lib/horizon.js';
 
 // One JSON object under one key; defaults as in SettingsRepository.kt (locator and callsign empty since #55).
 const KEY = 'eme.settings';
@@ -19,6 +20,7 @@ const defaults = () => ({
   degBand: 'B1296',
   chatBand: 'B1296',
   language: '', // '' = automatic: follow the browser (effectiveLanguage)
+  horizon: defaultHorizon(), // own horizon, stored as text like the app (lib/horizon.js)
 });
 
 /** Stored JSON object, or {} when localStorage is missing, throws or holds rubbish. */
@@ -41,6 +43,7 @@ export function loadSettings() {
     degBand: EME_BANDS.some((b) => b.id === s.degBand) ? s.degBand : d.degBand,
     chatBand: HB9Q_BANDS.some((b) => b.name === s.chatBand) ? s.chatBand : d.chatBand,
     language: LANGUAGES.includes(s.language) ? s.language : d.language,
+    horizon: decodeHorizon(s.horizon) ?? d.horizon,
   };
 }
 
@@ -52,6 +55,7 @@ export function effectiveLanguage(settings) {
 export function saveSettings(partial) {
   const next = { ...readStored(), ...partial };
   if (next.cqBands instanceof Set) next.cqBands = [...next.cqBands];
+  if (next.horizon && typeof next.horizon === 'object') next.horizon = encodeHorizon(next.horizon);
   try {
     localStorage.setItem(KEY, JSON.stringify(next));
   } catch {

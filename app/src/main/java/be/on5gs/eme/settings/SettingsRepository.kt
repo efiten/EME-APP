@@ -4,6 +4,7 @@ import android.content.Context
 import be.on5gs.eme.chat.Hb9qBand
 import be.on5gs.eme.cq.Band
 import be.on5gs.eme.degradation.EmeBand
+import be.on5gs.eme.horizon.Horizon
 
 /** Bewaart gewone (niet-geheime) instellingen op het toestel. */
 class SettingsRepository(context: Context) {
@@ -36,7 +37,16 @@ class SettingsRepository(context: Context) {
         get() = EmeBand.entries.firstOrNull { it.name == prefs.getString(KEY_DEG_BAND, null) } ?: EmeBand.B1296
         set(value) = prefs.edit().putString(KEY_DEG_BAND, value.name).apply()
 
+    /**
+     * Eigen horizon (ondergrens en hindernissen), zie horizon/Horizon.kt. Standaard of bij een
+     * onleesbare waarde: geen hindernissen, dus de maan is bruikbaar zodra ze opgekomen is.
+     */
+    var horizon: Horizon
+        get() = Horizon.decode(prefs.getString(KEY_HORIZON, null)) ?: Horizon()
+        set(value) = prefs.edit().putString(KEY_HORIZON, value.encode()).apply()
+
     companion object {
+        private const val KEY_HORIZON = "horizon"
         private const val KEY_DEG_BAND = "deg_band"
         private const val KEY_CHAT_BAND = "chat_band"
         private const val KEY_LOCATOR = "locator"

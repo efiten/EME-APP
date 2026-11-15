@@ -8,6 +8,7 @@ const DEFAULTS = {
   degBand: 'B1296',
   chatBand: 'B1296',
   language: '',
+  horizon: { minElDeg: 0, obstacles: [] },
 };
 
 function fakeStorage() {
@@ -98,6 +99,7 @@ describe('saveSettings', () => {
       degBand: 'B432',
       chatBand: 'B1296',
       language: 'fr',
+      horizon: { minElDeg: 0, obstacles: [] },
     });
   });
 
@@ -131,5 +133,19 @@ describe('chatBand', () => {
     expect(loadSettings().chatBand).toBe('B1296');
     saveSettings({ chatBand: 'B432' });
     expect(loadSettings().chatBand).toBe('B432');
+  });
+});
+
+describe('own horizon', () => {
+  test('is stored as text like the app and read back', () => {
+    const mine = { minElDeg: 5, obstacles: [{ fromAzDeg: 60, toAzDeg: 110, maxElDeg: 25, kind: 'B' }] };
+    saveSettings({ horizon: mine });
+    expect(JSON.parse(localStorage.getItem('eme.settings')).horizon).toBe('1;5;B 60 110 25');
+    expect(loadSettings().horizon).toEqual(mine);
+  });
+
+  test('rubbish falls back to no horizon', () => {
+    localStorage.setItem('eme.settings', JSON.stringify({ horizon: '9;nonsense' }));
+    expect(loadSettings().horizon).toEqual({ minElDeg: 0, obstacles: [] });
   });
 });
