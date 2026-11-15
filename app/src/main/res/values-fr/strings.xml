@@ -46,6 +46,7 @@
     <string name="save">Enregistrer</string>
     <string name="hb9q_chat">Chat HB9Q</string>
     <string name="login_encrypted">Votre identifiant est stocké chiffré sur ce téléphone.</string>
+    <string name="login_stored_browser">Votre identifiant est stocké dans ce navigateur sur cet appareil.</string>
     <string name="hb9q_login">Identifiant HB9Q (indicatif)</string>
     <string name="password">Mot de passe</string>
     <string name="password_saved">Mot de passe (enregistré — laisser vide pour le garder)</string>

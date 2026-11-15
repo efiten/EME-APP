@@ -46,6 +46,7 @@
     <string name="save">Tallenna</string>
     <string name="hb9q_chat">HB9Q-chat</string>
     <string name="login_encrypted">Tunnuksesi tallennetaan salattuna tähän puhelimeen.</string>
+    <string name="login_stored_browser">Tunnuksesi tallennetaan tähän selaimeen tällä laitteella.</string>
     <string name="hb9q_login">HB9Q-tunnus (kutsu)</string>
     <string name="password">Salasana</string>
     <string name="password_saved">Salasana (tallennettu — jätä tyhjäksi säilyttääksesi)</string>

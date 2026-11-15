@@ -46,6 +46,7 @@
     <string name="save">Сохранить</string>
     <string name="hb9q_chat">Чат HB9Q</string>
     <string name="login_encrypted">Ваш логин хранится на этом телефоне в зашифрованном виде.</string>
+    <string name="login_stored_browser">Ваш логин хранится в этом браузере на этом устройстве.</string>
     <string name="hb9q_login">Логин HB9Q (позывной)</string>
     <string name="password">Пароль</string>
     <string name="password_saved">Пароль (сохранён — оставьте пустым, чтобы не менять)</string>

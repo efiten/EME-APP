@@ -46,6 +46,7 @@
     <string name="save">保存</string>
     <string name="hb9q_chat">HB9Q 聊天</string>
     <string name="login_encrypted">你的登录信息加密保存在这部手机上。</string>
+    <string name="login_stored_browser">你的登录信息保存在此设备的这个浏览器中。</string>
     <string name="hb9q_login">HB9Q 用户名（呼号）</string>
     <string name="password">密码</string>
     <string name="password_saved">密码（已保存 — 留空则保留）</string>
