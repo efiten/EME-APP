@@ -75,6 +75,8 @@ func (s *hb9qService) register(mux *http.ServeMux) {
 }
 
 // hb9qMethod sets Cache-Control on every answer, refuses other methods and bounds the handler time.
+// The context is detached from the client: a browser that cancels does not abort an HB9Q request,
+// so its real result is cached and a cancelled login does not count as a failure.
 func hb9qMethod(method string, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store")
@@ -83,7 +85,7 @@ func hb9qMethod(method string, next http.HandlerFunc) http.HandlerFunc {
 			writeJSON(w, http.StatusMethodNotAllowed, map[string]any{"error": "method_not_allowed"})
 			return
 		}
-		ctx, cancel := context.WithTimeout(r.Context(), hb9qHandlerDeadline)
+		ctx, cancel := context.WithTimeout(context.WithoutCancel(r.Context()), hb9qHandlerDeadline)
 		defer cancel()
 		next(w, r.WithContext(ctx))
 	}

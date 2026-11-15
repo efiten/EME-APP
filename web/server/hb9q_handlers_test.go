@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"log"
@@ -317,6 +318,44 @@ func TestParallelRequestsMakeOneUpstreamCall(t *testing.T) {
 	}
 	if _, logger, _ := e.f.counts(); logger != 1 {
 		t.Fatalf("loggerPosts = %d, want 1", logger)
+	}
+}
+
+func cancelledRequest(method, path, ctype, body string, cookie *http.Cookie) *http.Request {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	req := httptest.NewRequest(method, path, strings.NewReader(body)).WithContext(ctx)
+	if ctype != "" {
+		req.Header.Set("Content-Type", ctype)
+	}
+	if cookie != nil {
+		req.AddCookie(cookie)
+	}
+	return req
+}
+
+func TestCancelledFetchStillCachesTheResult(t *testing.T) {
+	e := newHb9qEnv(t)
+	c := e.loggedIn(t)
+	e.h.ServeHTTP(httptest.NewRecorder(), cancelledRequest("GET", "/api/hb9q/messages?band=6", "", "", c))
+	rec := e.messages("6", c)
+	if rec.Code != 200 || rec.Body.String() != `{"status":"success","logger":""}` {
+		t.Fatalf("after a cancelled request: %d %q", rec.Code, rec.Body.String())
+	}
+	if _, logger, _ := e.f.counts(); logger != 1 {
+		t.Fatalf("loggerPosts = %d, want 1", logger)
+	}
+}
+
+func TestCancelledLoginIsNoFailure(t *testing.T) {
+	e := newHb9qEnv(t)
+	e.h.ServeHTTP(httptest.NewRecorder(), cancelledRequest("POST", "/api/hb9q/login", "application/json",
+		`{"login":"ON0AAA","password":"pw-a"}`, nil))
+	if rec := e.login("ON0AAA", "pw-a", nil); rec.Code != 200 {
+		t.Fatalf("login after a cancelled login: %d %s", rec.Code, rec.Body.String())
+	}
+	if posts, _, _ := e.f.counts(); posts != 2 {
+		t.Fatalf("loginPosts = %d, want 2", posts)
 	}
 }
 
