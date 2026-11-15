@@ -9,7 +9,7 @@ name: Release
 # RELEASE_KEY_ALIAS en RELEASE_KEY_PASSWORD.
 #
 # web-deploy wacht tot eme.on8ar.eu de nieuwe versie draait (de server installeert ze zelf binnen ongeveer
-# 15 minuten) en wordt pas dan groen.
+# 5 minuten) en wordt pas dan groen.
 #
 # Mislukt alleen web-build of web-upload (de APK staat dan al op de release)? Gebruik "Re-run failed
 # jobs" op deze run (gh run rerun <run-id> --failed), niet "gh workflow run": check ziet de release en slaat alles over.
@@ -207,20 +207,20 @@ jobs:
         run: gh release upload "v$VERSION" "eme-web-v$VERSION.zip" --repo "$GITHUB_REPOSITORY"
 
   # Waits until eme.on8ar.eu runs the new version. The server installs it by itself (eme-web-update.timer, every
-  # 15 minutes plus up to 60 s); GitHub cannot reach the server over SSH. Red after 25 minutes: then the update failed
+  # 5 minutes plus up to 60 s); GitHub cannot reach the server over SSH. Red after 10 minutes: then the update failed
   # or rolled back, see journalctl -u eme-web-update on the server. The APK release is already published.
   web-deploy:
     needs: [check, web-upload]
     if: needs.check.outputs.publish == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     permissions: {}
     env:
       VERSION: ${{ needs.check.outputs.version }}
     steps:
       - name: Wait for the new version on eme.on8ar.eu
         run: |
-          deadline=$((SECONDS + 25 * 60))
+          deadline=$((SECONDS + 10 * 60))
           while :; do
             body=$(curl -fsS --max-time 10 https://eme.on8ar.eu/api/version || true)
             if [[ $body == *"\"version\":\"$VERSION\""* ]]; then
@@ -228,7 +228,7 @@ jobs:
               exit 0
             fi
             if [ "$SECONDS" -ge "$deadline" ]; then
-              echo "::error::eme.on8ar.eu still answers '$body' after 25 minutes, not $VERSION"
+              echo "::error::eme.on8ar.eu still answers '$body' after 10 minutes, not $VERSION"
               exit 1
             fi
             echo "eme.on8ar.eu answers '$body', waiting for $VERSION"
