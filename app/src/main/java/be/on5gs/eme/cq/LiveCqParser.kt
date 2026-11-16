@@ -1,5 +1,6 @@
 package be.on5gs.eme.cq
 
+import be.on5gs.eme.moon.MoonCalculator
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -86,6 +87,7 @@ object LiveCqParser {
      * en per callsign + band alleen de nieuwste melding. Nieuwste bovenaan.
      * Die melding krijgt alle bronnen van de groep, en een locator uit een oudere
      * melding als de nieuwste er geen heeft (N6NU geeft vaak "--").
+     * Stations waar de maan nu onder de horizon staat, vallen weg (zie [moonMayBeUp]).
      */
     fun select(
         spots: List<LiveCqSpot>,
@@ -104,7 +106,18 @@ object LiveCqParser {
                     sources = group.flatMapTo(mutableSetOf()) { it.sources },
                 )
             }
+            .filter { moonMayBeUp(it, nowMillis) }
             .sortedByDescending { it.utcMillis }
+    }
+
+    /**
+     * Staat de maan nu op bij dit station? Zo niet, dan kan het niet via EME gewerkt worden en wordt
+     * de melding niet getoond, in de lijst en op de kaart (#105). Zonder bruikbare locator valt dat
+     * niet te berekenen: dan blijft de melding staan. "Op" = boven 0° (hun eigen horizon kennen we niet).
+     */
+    internal fun moonMayBeUp(spot: LiveCqSpot, nowMillis: Long): Boolean {
+        val pos = stationLatLon(spot.grid) ?: return true
+        return MoonCalculator.position(pos.latDeg, pos.lonDeg, nowMillis).isAboveHorizon
     }
 
     private fun parseTime(text: String): Long? = runCatching {

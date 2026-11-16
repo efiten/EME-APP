@@ -1,0 +1,14 @@
+# Live CQ shows no spot of a station where the moon is below the horizon now (#105), in the list and on the map
+# (LiveCqParser.select, selectSpots in web/src/lib/livecq.js). Moon elevation at the centre of the locator at now_utc,
+# above 0 deg = shown. No usable locator (N6NU often gives "--") = shown, the moon cannot be calculated.
+# 2026-11-20 18:00 UTC: moon up in Europe, down in North America, Japan and Australia.
+now_utc,callsign,grid,shown
+2026-11-20T18:00:00Z,ON4AA,JO21SC,true
+2026-11-20T18:00:00Z,OK1AA,JO62QM,true
+2026-11-20T18:00:00Z,UA3AA,KO85,true
+2026-11-20T18:00:00Z,W2AA,FN20,false
+2026-11-20T18:00:00Z,K6AA,CM87,false
+2026-11-20T18:00:00Z,JA1AA,PM95,false
+2026-11-20T18:00:00Z,VK3AA,QF22,false
+2026-11-20T18:00:00Z,DL1AA,,true
+2026-11-20T18:00:00Z,F1AA,ZZ99,true
