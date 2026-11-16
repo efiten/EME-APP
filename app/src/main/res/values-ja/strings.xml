@@ -119,4 +119,8 @@
     <string name="horizon_moon_partial">月は一部あなたの地平線の陰</string>
     <string name="horizon_moon_blocked">月はあなたの地平線の陰</string>
     <string name="horizon_window">地平線より上</string>
+    <string name="horizon_dish">パラボラ直径 (m)</string>
+    <string name="horizon_dish_info">空欄で余裕なし（例：八木アンテナ）。パラボラと自分の地平線がある場合、下で選んだバンドでのビーム幅の半分が地平線の上に加えられ、ビームの縁も遮られないようにします。</string>
+    <string name="horizon_dish_band">パラボラを使うバンド</string>
+    <string name="horizon_margin">%1$s MHz での余裕: %2$s°</string>
 </resources>

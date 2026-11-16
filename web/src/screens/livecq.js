@@ -6,7 +6,8 @@ import { BANDS, selectSpots, sourceLabel, stationLatLon } from '../lib/livecq.js
 import { position } from '../lib/moon-calculator.js';
 import { visibleInterval } from '../lib/visible-interval.js';
 import { locatorLatLon, saveSettings } from '../settings.js';
-import { VISIBILITY, defaultHorizon, visibility } from '../lib/horizon.js';
+import { VISIBILITY, defaultHorizon, marginForSettings, visibility } from '../lib/horizon.js';
+import { EME_BANDS } from '../lib/degradation.js';
 
 /** Only CQs of the last hour. */
 const MAX_AGE_MINUTES = 60;
@@ -131,7 +132,7 @@ export function createLiveCqScreen() {
         if (me) {
           const m = position(me.latDeg, me.lonDeg, now);
           // Coloured by the own horizon (without one: green above 0 deg, red below, as before)
-          const v = visibility(settings.horizon ?? defaultHorizon(), m.azimuthDeg, m.elevationDeg);
+          const v = visibility(settings.horizon ?? defaultHorizon(), m.azimuthDeg, m.elevationDeg, marginForSettings(settings, EME_BANDS));
           const cls = v === VISIBILITY.CLEAR ? 'up' : v === VISIBILITY.PARTIAL ? 'partial' : 'down';
           info.append(tagged(el('div', `small ${cls}`, t('moon_at_you', m.elevationDeg.toFixed(1))), 'mymoon'));
         }

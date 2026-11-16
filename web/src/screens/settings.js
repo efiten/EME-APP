@@ -45,9 +45,13 @@ export function createSettingsScreen() {
             saved: horizon,
             locator: ok ? draft.locator : settings.locator,
             nowMillis: (ctx.now ?? Date.now)(),
-            onSaved: (h) => {
-              saveSettings({ horizon: h });
+            savedDishM: settings.dishDiameterM ?? 0,
+            savedDishBand: settings.dishBand ?? 'B1296',
+            onSaved: (h, dish, band) => {
+              saveSettings({ horizon: h, dishDiameterM: dish, dishBand: band });
               settings.horizon = h;
+              settings.dishDiameterM = dish;
+              settings.dishBand = band;
               horizonSaved = true;
               editingHorizon = false;
               screen.mount(host, ctx);

@@ -9,6 +9,8 @@ const DEFAULTS = {
   chatBand: 'B1296',
   language: '',
   horizon: { minElDeg: 0, obstacles: [] },
+  dishDiameterM: 0,
+  dishBand: 'B1296',
 };
 
 function fakeStorage() {
@@ -100,6 +102,8 @@ describe('saveSettings', () => {
       chatBand: 'B1296',
       language: 'fr',
       horizon: { minElDeg: 0, obstacles: [] },
+      dishDiameterM: 0,
+      dishBand: 'B1296',
     });
   });
 
@@ -147,5 +151,24 @@ describe('own horizon', () => {
   test('rubbish falls back to no horizon', () => {
     localStorage.setItem('eme.settings', JSON.stringify({ horizon: '9;nonsense' }));
     expect(loadSettings().horizon).toEqual({ minElDeg: 0, obstacles: [] });
+  });
+});
+
+describe('dish diameter', () => {
+  test('is stored and read back; rubbish means no dish', () => {
+    saveSettings({ dishDiameterM: 6 });
+    expect(loadSettings().dishDiameterM).toBe(6);
+    for (const bad of ['6', -1, 150, null]) {
+      localStorage.setItem('eme.settings', JSON.stringify({ dishDiameterM: bad }));
+      expect(loadSettings().dishDiameterM).toBe(0);
+    }
+  });
+
+  test('band of the dish: 1296 by default, kept, unknown ids dropped', () => {
+    expect(loadSettings().dishBand).toBe('B1296');
+    saveSettings({ dishBand: 'B432' });
+    expect(loadSettings().dishBand).toBe('B432');
+    localStorage.setItem('eme.settings', JSON.stringify({ dishBand: 'B10G' }));
+    expect(loadSettings().dishBand).toBe('B1296');
   });
 });

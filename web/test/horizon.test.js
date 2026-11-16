@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { readExpected } from './expected.js';
-import { chartSpans, chartTopDeg, currentOrNextWindow, decode, isDefaultHorizon, encode, halfBeamwidthDeg, moonTrack, moonWindows, parseAngle, trackSegments, usableWindows, defaultHorizon, VISIBILITY, visibility } from '../src/lib/horizon.js';
+import { marginForSettings, beamMarginDeg, chartSpans, chartTopDeg, currentOrNextWindow, decode, isDefaultHorizon, encode, halfBeamwidthDeg, moonTrack, moonWindows, parseAngle, trackSegments, usableWindows, defaultHorizon, VISIBILITY, visibility } from '../src/lib/horizon.js';
 import { position } from '../src/lib/moon-calculator.js';
 
 const DAY = 86_400_000;
@@ -120,7 +120,7 @@ describe('"My horizon" screen logic (same as HorizonChartTest.kt)', () => {
 describe('current or next window (same table as MoonWindowsTest.kt)', () => {
   test('as in the shared table', () => {
     for (const r of readExpected('horizon_next')) {
-      const w = currentOrNextWindow(decode(r.horizon), 51.1, 4.3, Date.parse(r.now_utc));
+      const w = currentOrNextWindow(decode(r.horizon), 51.1, 4.3, Date.parse(r.now_utc), Number(r.margin));
       if (r.start_utc === '') expect(w, JSON.stringify(r)).toBeNull();
       else {
         expect(Math.abs(w.startMillis - Date.parse(r.start_utc)), JSON.stringify(r)).toBeLessThanOrEqual(61_000);
@@ -128,6 +128,18 @@ describe('current or next window (same table as MoonWindowsTest.kt)', () => {
         expect(w.visibility).toBe(r.visibility);
       }
     }
+  });
+
+  test('margin of a dish', () => {
+    expect(beamMarginDeg(6, 1296)).toBeCloseTo(1.349, 3);
+    expect(beamMarginDeg(0, 1296)).toBe(0); // no dish: no margin
+  });
+
+  test('margin only with an own horizon, on the band of the dish (not the Deg tab)', () => {
+    const bands = [{ id: 'B432', mhz: 432 }, { id: 'B1296', mhz: 1296 }];
+    expect(marginForSettings({ horizon: defaultHorizon(), dishDiameterM: 6, dishBand: 'B1296' }, bands)).toBe(0);
+    expect(marginForSettings({ horizon: { minElDeg: 5, obstacles: [] }, dishDiameterM: 6, dishBand: 'B1296', degBand: 'B432' }, bands)).toBeCloseTo(1.349, 3);
+    expect(marginForSettings({ horizon: { minElDeg: 5, obstacles: [] }, dishDiameterM: 6, dishBand: 'B432' }, bands)).toBeCloseTo(4.048, 3);
   });
 
   test('default horizon is recognised', () => {

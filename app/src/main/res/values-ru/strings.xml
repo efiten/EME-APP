@@ -119,4 +119,8 @@
     <string name="horizon_moon_partial">Луна частично за вашим горизонтом</string>
     <string name="horizon_moon_blocked">Луна за вашим горизонтом</string>
     <string name="horizon_window">Над вашим горизонтом</string>
+    <string name="horizon_dish">Диаметр зеркала (м)</string>
+    <string name="horizon_dish_info">Оставьте пустым без запаса (напр. для волновых каналов). С зеркалом и своим горизонтом к горизонту добавляется половина ширины луча на выбранном ниже диапазоне, чтобы край луча тоже был открыт.</string>
+    <string name="horizon_dish_band">Диапазон, на котором работает зеркало</string>
+    <string name="horizon_margin">Запас на %1$s МГц: %2$s°</string>
 </resources>

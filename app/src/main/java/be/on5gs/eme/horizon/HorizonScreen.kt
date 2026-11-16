@@ -1,5 +1,6 @@
 package be.on5gs.eme.horizon
 
+import be.on5gs.eme.degradation.EmeBand
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -84,13 +85,23 @@ private class ObstacleDraft(from: String, to: String, el: String, kind: Obstacle
 }
 
 /**
- * Scherm "Mijn horizon": ondergrens, hindernissen en een grafiek met de maanbaan van vandaag.
- * [onSaved] krijgt de nieuwe horizon; het bewaren zelf doet de aanroeper.
+ * Scherm "Mijn horizon": ondergrens, hindernissen, diameter en band van de schotel en een grafiek met
+ * de maanbaan van vandaag. [onSaved] krijgt de nieuwe horizon, de diameter (0 = geen schotel) en de
+ * band van de schotel; het bewaren doet de aanroeper.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HorizonScreen(saved: Horizon, locator: String, onSaved: (Horizon) -> Unit) {
+fun HorizonScreen(
+    saved: Horizon,
+    locator: String,
+    savedDishM: Double = 0.0,
+    savedDishBand: EmeBand = EmeBand.B1296,
+    onSaved: (Horizon, Double, EmeBand) -> Unit,
+) {
+    var dishBand by remember { mutableStateOf(savedDishBand) }
+    val bandMhz = dishBand.mhz
     var minText by remember { mutableStateOf(fmt(saved.minElDeg)) }
+    var dishText by remember { mutableStateOf(if (savedDishM > 0.0) fmt(savedDishM) else "") }
     val rows = remember {
         mutableStateListOf<ObstacleDraft>().apply {
             saved.obstacles.forEach { add(ObstacleDraft(fmt(it.fromAzDeg), fmt(it.toAzDeg), fmt(it.maxElDeg), it.kind)) }
@@ -98,7 +109,9 @@ fun HorizonScreen(saved: Horizon, locator: String, onSaved: (Horizon) -> Unit) {
     }
     val min = parseAngle(minText, 90.0)
     val obstacles = rows.map { it.toObstacle() }
-    val valid = min != null && obstacles.all { it != null }
+    // Leeg = geen schotel; anders een diameter tot 100 m
+    val dish = if (dishText.isBlank()) 0.0 else parseAngle(dishText, 100.0)
+    val valid = min != null && obstacles.all { it != null } && dish != null
     // De grafiek toont wat al geldig getypt is, zodat je meteen ziet wat een wijziging doet
     val preview = Horizon(min ?: saved.minElDeg, obstacles.filterNotNull())
 
@@ -145,8 +158,36 @@ fun HorizonScreen(saved: Horizon, locator: String, onSaved: (Horizon) -> Unit) {
         OutlinedButton(onClick = { rows.add(ObstacleDraft("", "", "", ObstacleKind.BLOCKED)) }) {
             Text(stringResource(R.string.horizon_add))
         }
+
+        // Diameter van de schotel: marge van een halve bundelbreedte boven de horizon
+        OutlinedTextField(
+            value = dishText,
+            onValueChange = { dishText = it.take(6) },
+            label = { Text(stringResource(R.string.horizon_dish), maxLines = 1) },
+            isError = dish == null,
+            supportingText = {
+                Text(
+                    when {
+                        dish == null -> stringResource(R.string.horizon_invalid, 100)
+                        dish > 0.0 -> stringResource(R.string.horizon_margin, fmt(bandMhz), String.format(Locale.US, "%.2f", beamMarginDeg(dish, bandMhz)))
+                        else -> stringResource(R.string.horizon_dish_info)
+                    },
+                )
+            },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            modifier = Modifier.fillMaxWidth().testTag("horizon-dish"),
+        )
+        // Band waarop de schotel gebruikt wordt (los van de Deg-tab), voor de marge
+        Text(stringResource(R.string.horizon_dish_band), style = MaterialTheme.typography.bodyMedium)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            EmeBand.entries.forEach { b ->
+                FilterChip(selected = b == dishBand, onClick = { dishBand = b }, label = { Text(b.label) })
+            }
+        }
+
         Button(
-            onClick = { onSaved(Horizon(min!!, obstacles.map { it!! })) },
+            onClick = { onSaved(Horizon(min!!, obstacles.map { it!! }), dish!!, dishBand) },
             enabled = valid,
         ) { Text(stringResource(R.string.save)) }
     }

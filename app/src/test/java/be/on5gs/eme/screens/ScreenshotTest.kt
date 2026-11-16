@@ -179,8 +179,8 @@ class ScreenshotTest {
                 EmeTheme {
                     Surface(color = MaterialTheme.colorScheme.background) {
                         be.on5gs.eme.horizon.HorizonScreen(
-                            be.on5gs.eme.horizon.Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!, "JO21SC",
-                        ) {}
+                            be.on5gs.eme.horizon.Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!, "JO21SC", 6.0, be.on5gs.eme.degradation.EmeBand.B1296,
+                        ) { _, _, _ -> }
                     }
                 }
             }

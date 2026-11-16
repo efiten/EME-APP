@@ -43,4 +43,24 @@ class SettingsRepositoryTest {
             .edit().putString("horizon", "9;onzin").commit()
         assertEquals(Horizon(), SettingsRepository(context).horizon)
     }
+
+    @Test
+    fun dishDiameterIsKeptAndRubbishMeansNoDish() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val settings = SettingsRepository(context)
+        assertEquals(0.0, settings.dishDiameterM, 0.0)                     // nieuwe installatie: geen schotel
+        settings.dishDiameterM = 6.0
+        assertEquals(6.0, SettingsRepository(context).dishDiameterM, 0.0)
+        context.getSharedPreferences("eme_settings", android.content.Context.MODE_PRIVATE)
+            .edit().putString("dish_diameter_m", "onzin").commit()
+        assertEquals(0.0, SettingsRepository(context).dishDiameterM, 0.0)
+    }
+
+    @Test
+    fun dishBandDefaultsTo1296AndIsKept() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        assertEquals(be.on5gs.eme.degradation.EmeBand.B1296, SettingsRepository(context).dishBand)
+        SettingsRepository(context).dishBand = be.on5gs.eme.degradation.EmeBand.B432
+        assertEquals(be.on5gs.eme.degradation.EmeBand.B432, SettingsRepository(context).dishBand)
+    }
 }

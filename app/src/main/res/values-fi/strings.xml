@@ -119,4 +119,8 @@
     <string name="horizon_moon_partial">Kuu osittain horisonttisi takana</string>
     <string name="horizon_moon_blocked">Kuu horisonttisi takana</string>
     <string name="horizon_window">Näkyy horisonttisi yllä</string>
+    <string name="horizon_dish">Lautasen halkaisija (m)</string>
+    <string name="horizon_dish_info">Jätä tyhjäksi, jos ei marginaalia (esim. yagit). Lautasella ja omalla horisontilla puolet keilan leveydestä alla valitulla taajuusalueella lisätään horisonttisi päälle, jotta myös keilan reuna on vapaa.</string>
+    <string name="horizon_dish_band">Taajuusalue, jolla lautasta käytetään</string>
+    <string name="horizon_margin">Marginaali %1$s MHz: %2$s°</string>
 </resources>

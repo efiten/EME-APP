@@ -119,4 +119,8 @@
     <string name="horizon_moon_partial">Månen delvis bag din horisont</string>
     <string name="horizon_moon_blocked">Månen bag din horisont</string>
     <string name="horizon_window">Fri af din horisont</string>
+    <string name="horizon_dish">Parabolens diameter (m)</string>
+    <string name="horizon_dish_info">Lad stå tomt for ingen margin (f.eks. yagier). Med en parabol og en egen horisont lægges den halve strålebredde på båndet nedenfor oven på din horisont, så også strålens kant er fri.</string>
+    <string name="horizon_dish_band">Bånd, som parabolen bruges på</string>
+    <string name="horizon_margin">Margin på %1$s MHz: %2$s°</string>
 </resources>

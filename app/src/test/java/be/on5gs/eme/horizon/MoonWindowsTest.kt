@@ -75,7 +75,7 @@ class MoonWindowsTest {
     fun currentOrNextAsInTheSharedTable() {
         ExpectedCsv.read("horizon_next").forEach { r ->
             val h = Horizon.decode(r.getValue("horizon"))!!
-            val w = MoonWindows.currentOrNext(h, 51.1, 4.3, Instant.parse(r.getValue("now_utc")).toEpochMilli())
+            val w = MoonWindows.currentOrNext(h, 51.1, 4.3, Instant.parse(r.getValue("now_utc")).toEpochMilli(), r.getValue("margin").toDouble())
             if (r.getValue("start_utc").isEmpty()) {
                 assertEquals("$r", null, w)
             } else {
@@ -84,6 +84,20 @@ class MoonWindowsTest {
                 assertEquals("$r", Visibility.valueOf(r.getValue("visibility")), w.visibility)
             }
         }
+    }
+
+    @Test
+    fun marginOfADish() {
+        assertEquals(1.349, beamMarginDeg(6.0, 1296.0), 0.001)
+        assertEquals(0.0, beamMarginDeg(0.0, 1296.0), 0.0)        // geen schotel: geen marge
+    }
+
+    /** Zonder eigen horizon geen marge, ook met een schotel ingevuld (review efiten op #101). */
+    @Test
+    fun marginOnlyWithAnOwnHorizon() {
+        assertEquals(0.0, horizonMarginDeg(Horizon(), 6.0, 1296.0), 0.0)
+        assertEquals(1.349, horizonMarginDeg(Horizon(minElDeg = 5.0), 6.0, 1296.0), 0.001)
+        assertEquals(4.048, horizonMarginDeg(Horizon(minElDeg = 5.0), 6.0, 432.0), 0.001)
     }
 
     @Test
