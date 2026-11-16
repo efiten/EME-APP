@@ -89,7 +89,9 @@ class HorizonImportTest {
     fun unmeasuredGapsAreNamedInTheMessage() {
         show("only_the_tree.json")
         compose.onNodeWithText("Load horizon").performClick()
-        compose.waitUntil(5_000) { compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size == 1 }
+        // Wachten op de melding: 1 rij staat er al voor het inladen (#110)
+        compose.waitUntil(5_000) { compose.onAllNodesWithText("Loaded:", substring = true).fetchSemanticsNodes().isNotEmpty() }
+        assertEquals(1, compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size)
         compose.onNodeWithTag("horizon-import-message").assertTextEquals(
             "Loaded: 3 points, 1 obstacles. Check them, mark thin trees as partial, then save. Not measured, left open: 110–60°.",
         )
