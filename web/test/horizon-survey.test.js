@@ -11,13 +11,14 @@ const file = (name) => readFileSync(DIR + name, 'utf8');
 describe('horizon-survey import (same table as HorizonSurveyTest.kt)', () => {
   test('surveys as in the shared table', () => {
     const rows = readExpected('horizon_import');
-    expect(rows.length).toBe(8);
+    expect(rows.length).toBe(9);
     for (const r of rows) {
       const got = parseSurvey(file(r.file));
       if (r.error === '') {
         expect(got.status, r.file).toBe('OK');
         expect(got.points, r.file).toBe(Number(r.points));
         expect(encode({ minElDeg: 0, obstacles: got.obstacles }), r.file).toBe(r.horizon);
+        expect(got.gaps.map(([a, b]) => `${a}-${b}`).join(' '), `${r.file} gaps`).toBe(r.gaps);
       } else {
         expect(got.status, r.file).toBe(r.error);
       }

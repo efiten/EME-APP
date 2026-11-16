@@ -129,4 +129,5 @@
     <string name="horizon_loaded">読み込み完了: %1$d 点、障害物 %2$d 個。確認し、まばらな木は一部遮蔽にして保存してください。</string>
     <string name="horizon_load_error">このファイルは horizon.dl6zg.de の地平線測定（JSON または CSV）ではありません。</string>
     <string name="horizon_load_few">このファイルの点が少なすぎます（2 点以上必要）。</string>
+    <string name="horizon_load_gaps">未測定のため開放のまま: %1$s。</string>
 </resources>

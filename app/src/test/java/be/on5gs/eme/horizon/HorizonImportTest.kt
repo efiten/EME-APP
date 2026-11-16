@@ -42,8 +42,7 @@ class HorizonImportTest {
     private var saved: Horizon? = null
 
     /** Toont het scherm; de bestandskiezer geeft [fileName] uit horizon_survey/ terug, zoals een gebruiker die het kiest. */
-    private fun show(fileName: String) {
-        val text = javaClass.classLoader!!.getResource("horizon_survey/$fileName")!!.readText()
+    private fun show(fileName: String, text: String = javaClass.classLoader!!.getResource("horizon_survey/$fileName")!!.readText()) {
         val file = File(compose.activity.cacheDir, fileName).apply { writeText(text) }
         val registry = object : ActivityResultRegistry() {
             override fun <I, O> onLaunch(requestCode: Int, contract: ActivityResultContract<I, O>, input: I, options: ActivityOptionsCompat?) {
@@ -83,6 +82,31 @@ class HorizonImportTest {
         compose.onNodeWithText("Save").performScrollTo().performClick()
         val want = ExpectedCsv.read("horizon_import").first { it["file"] == "horizon_survey_example.json" }.getValue("horizon")
         assertEquals(want.replaceFirst("1;0", "1;5"), saved!!.encode())   // ondergrens 5 blijft staan
+    }
+
+    /** Niet-gemeten stukken (meer dan 60° tussen twee punten) blijven open, en de melding zegt dat (review efiten). */
+    @Test
+    fun unmeasuredGapsAreNamedInTheMessage() {
+        show("only_the_tree.json")
+        compose.onNodeWithText("Load horizon").performClick()
+        compose.waitUntil(5_000) { compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size == 1 }
+        compose.onNodeWithTag("horizon-import-message").assertTextEquals(
+            "Loaded: 3 points, 1 obstacles. Check them, mark thin trees as partial, then save. Not measured, left open: 110–60°.",
+        )
+    }
+
+    /** Groter dan 1 MB: geen opmeting, ook als het begin er een is (zoals de webversie; review efiten). */
+    @Test
+    fun aFileOverOneMegabyteIsRefused() {
+        val big = buildString {
+            append("azimuth_deg,elevation_deg,timestamp,is_calibration,source\n")
+            var az = 0
+            while (length <= 1_000_000) { append("${az % 360}.00,5.00,2026-11-15T10:00:00.000Z,0,sensor\n"); az += 10 }
+        }
+        show("big.csv", big)
+        compose.onNodeWithText("Load horizon").performClick()
+        compose.waitUntil(5_000) { compose.onAllNodesWithText("This file is not", substring = true).fetchSemanticsNodes().isNotEmpty() }
+        assertEquals(1, compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size)
     }
 
     @Test

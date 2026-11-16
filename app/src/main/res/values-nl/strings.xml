@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Ingeladen: %1$d punten, %2$d hindernissen. Kijk ze na, duid dunne bomen aan als gedeeltelijk en sla op.</string>
     <string name="horizon_load_error">Dit bestand is geen horizonopmeting van horizon.dl6zg.de (JSON of CSV).</string>
     <string name="horizon_load_few">Te weinig punten in dit bestand (minstens 2 nodig).</string>
+    <string name="horizon_load_gaps">Niet gemeten, open gelaten: %1$s.</string>
 </resources>

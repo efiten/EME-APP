@@ -18,7 +18,7 @@ class HorizonSurveyTest {
     @Test
     fun surveysAsInTheSharedTable() {
         val rows = ExpectedCsv.read("horizon_import")
-        assertEquals(8, rows.size)
+        assertEquals(9, rows.size)
         rows.forEach { r ->
             val got = HorizonSurvey.parse(file(r.getValue("file")))
             when (val err = r.getValue("error")) {
@@ -26,6 +26,8 @@ class HorizonSurveyTest {
                     got as HorizonSurvey.Result.Ok
                     assertEquals("${r["file"]}", r.getValue("points").toInt(), got.points)
                     assertEquals("${r["file"]}", r.getValue("horizon"), Horizon(0.0, got.obstacles).encode())
+                    val gaps = got.gaps.joinToString(" ") { (a, b) -> "${a.toInt()}-${b.toInt()}" }
+                    assertEquals("${r["file"]} gaps", r.getValue("gaps"), gaps)
                 }
                 "TOO_FEW_POINTS" -> assertEquals("${r["file"]}", HorizonSurvey.Result.TooFewPoints, got)
                 else -> assertEquals("${r["file"]}", HorizonSurvey.Result.NotASurvey, got)

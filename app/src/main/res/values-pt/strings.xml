@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Carregado: %1$d pontos, %2$d obstáculos. Verifique-os, marque árvores pouco densas como parciais e guarde.</string>
     <string name="horizon_load_error">Este ficheiro não é uma medição de horizonte de horizon.dl6zg.de (JSON ou CSV).</string>
     <string name="horizon_load_few">Poucos pontos neste ficheiro (são precisos pelo menos 2).</string>
+    <string name="horizon_load_gaps">Não medido, deixado aberto: %1$s.</string>
 </resources>

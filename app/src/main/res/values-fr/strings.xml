@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Chargé : %1$d points, %2$d obstacles. Vérifiez-les, marquez les arbres clairsemés comme partiels, puis enregistrez.</string>
     <string name="horizon_load_error">Ce fichier n\'est pas un relevé d\'horizon de horizon.dl6zg.de (JSON ou CSV).</string>
     <string name="horizon_load_few">Trop peu de points dans ce fichier (au moins 2).</string>
+    <string name="horizon_load_gaps">Non mesuré, laissé ouvert : %1$s.</string>
 </resources>

@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Indlæst: %1$d punkter, %2$d forhindringer. Tjek dem, markér tynde træer som delvis, og gem.</string>
     <string name="horizon_load_error">Denne fil er ikke en horisontmåling fra horizon.dl6zg.de (JSON eller CSV).</string>
     <string name="horizon_load_few">For få punkter i filen (mindst 2).</string>
+    <string name="horizon_load_gaps">Ikke målt, efterladt åbent: %1$s.</string>
 </resources>

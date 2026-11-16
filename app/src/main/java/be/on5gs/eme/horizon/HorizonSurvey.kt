@@ -14,8 +14,11 @@ object HorizonSurvey {
     const val MAX_GAP_DEG = 60.0
 
     sealed interface Result {
-        /** [points] gemeten punten (zonder ijkpunten), omgezet in [obstacles]. */
-        data class Ok(val points: Int, val obstacles: List<Obstacle>) : Result
+        /**
+         * [points] gemeten punten (zonder ijkpunten), omgezet in [obstacles]. [gaps] zijn de stukken
+         * (van, tot) groter dan [MAX_GAP_DEG] waar niets gemeten is: die blijven open (vrij).
+         */
+        data class Ok(val points: Int, val obstacles: List<Obstacle>, val gaps: List<Pair<Double, Double>> = emptyList()) : Result
         /** Geen opmeting van horizon-survey (ander bestand, of een formaat dat de app niet kent). */
         data object NotASurvey : Result
         /** Minder dan 2 bruikbare punten. */
@@ -25,8 +28,17 @@ object HorizonSurvey {
     fun parse(text: String): Result {
         val points = readPoints(text) ?: return Result.NotASurvey
         if (points.size < 2) return Result.TooFewPoints
-        return Result.Ok(points.size, toObstacles(points))
+        return Result.Ok(points.size, toObstacles(points), gaps(points))
     }
+
+    /** De niet-gemeten stukken: tussen twee opeenvolgende punten (ook over het noorden) meer dan [MAX_GAP_DEG]. */
+    internal fun gaps(points: List<Pair<Double, Double>>): List<Pair<Double, Double>> =
+        points.indices.mapNotNull { i ->
+            val a = points[i].first
+            val b = points[(i + 1) % points.size].first
+            val gap = ((b - a) % 360.0 + 360.0) % 360.0
+            if (gap > MAX_GAP_DEG) a to b else null
+        }
 
     /** De gemeten punten (azimut, elevatie), of null als dit geen opmeting is. */
     internal fun readPoints(text: String): List<Pair<Double, Double>>? {
@@ -48,8 +60,9 @@ object HorizonSurvey {
         val arr = obj.optJSONArray("points") ?: return null
         return (0 until arr.length()).mapNotNull { i ->
             val p = arr.optJSONObject(i) ?: return@mapNotNull null
-            val az = p.optDouble("az", Double.NaN)
-            val el = p.optDouble("el", Double.NaN)
+            // Alleen echte getallen, zoals horizon-survey ze schrijft ("10" als tekst telt niet; zoals de webversie)
+            val az = (p.opt("az") as? Number)?.toDouble() ?: return@mapNotNull null
+            val el = (p.opt("el") as? Number)?.toDouble() ?: return@mapNotNull null
             if (az.isFinite() && el.isFinite()) az to el else null
         }
     }

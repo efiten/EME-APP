@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Ladattu: %1$d pistettä, %2$d estettä. Tarkista ne, merkitse harvat puut osittaisiksi ja tallenna.</string>
     <string name="horizon_load_error">Tämä tiedosto ei ole horizon.dl6zg.de:n horisonttimittaus (JSON tai CSV).</string>
     <string name="horizon_load_few">Liian vähän pisteitä tiedostossa (vähintään 2).</string>
+    <string name="horizon_load_gaps">Ei mitattu, jätetty avoimeksi: %1$s.</string>
 </resources>

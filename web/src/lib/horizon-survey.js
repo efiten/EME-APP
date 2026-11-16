@@ -7,12 +7,24 @@ import { KINDS, normalizeAz } from './horizon.js';
 /** A gap between two measured points that is larger is not filled (nothing was measured there). */
 export const MAX_GAP_DEG = 60;
 
-/** { status: 'OK', points, obstacles } | { status: 'NOT_A_SURVEY' } | { status: 'TOO_FEW_POINTS' } */
+/**
+ * { status: 'OK', points, obstacles, gaps } | { status: 'NOT_A_SURVEY' } | { status: 'TOO_FEW_POINTS' };
+ * gaps: [from, to] stretches over MAX_GAP_DEG where nothing was measured, left open (clear).
+ */
 export function parseSurvey(text) {
   const points = readPoints(text);
   if (points === null) return { status: 'NOT_A_SURVEY' };
   if (points.length < 2) return { status: 'TOO_FEW_POINTS' };
-  return { status: 'OK', points: points.length, obstacles: toObstacles(points) };
+  return { status: 'OK', points: points.length, obstacles: toObstacles(points), gaps: gaps(points) };
+}
+
+/** The unmeasured stretches: between two consecutive points (also across north) more than MAX_GAP_DEG. */
+export function gaps(points) {
+  return points.flatMap(([a], i) => {
+    const b = points[(i + 1) % points.length][0];
+    const gap = (((b - a) % 360) + 360) % 360;
+    return gap > MAX_GAP_DEG ? [[a, b]] : [];
+  });
 }
 
 const finite = (v) => typeof v === 'number' && Number.isFinite(v);

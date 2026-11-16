@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Загружено: точек %1$d, препятствий %2$d. Проверьте их, отметьте редкие деревья как частичные и сохраните.</string>
     <string name="horizon_load_error">Этот файл не является измерением горизонта с horizon.dl6zg.de (JSON или CSV).</string>
     <string name="horizon_load_few">Слишком мало точек в файле (нужно не меньше 2).</string>
+    <string name="horizon_load_gaps">Не измерено, оставлено открытым: %1$s.</string>
 </resources>

@@ -128,19 +128,23 @@ fun HorizonScreen(
     val loadedText = stringResource(R.string.horizon_loaded)
     val errorText = stringResource(R.string.horizon_load_error)
     val fewText = stringResource(R.string.horizon_load_few)
+    val gapsText = stringResource(R.string.horizon_load_gaps)
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
             val text = withContext(Dispatchers.IO) {
                 runCatching {
-                    context.contentResolver.openInputStream(uri)?.use { String(it.readAtMost(MAX_IMPORT_BYTES), Charsets.UTF_8) }
+                    // Eén byte meer lezen dan de grens: is het bestand groter, dan is het geen opmeting (zoals de webversie)
+                    context.contentResolver.openInputStream(uri)?.use { it.readAtMost(MAX_IMPORT_BYTES + 1) }
+                        ?.takeIf { it.size <= MAX_IMPORT_BYTES }?.let { String(it, Charsets.UTF_8) }
                 }.getOrNull()
             }
             when (val r = if (text == null) HorizonSurvey.Result.NotASurvey else HorizonSurvey.parse(text)) {
                 is HorizonSurvey.Result.Ok -> {
                     rows.clear()
                     r.obstacles.forEach { rows.add(ObstacleDraft(fmt(it.fromAzDeg), fmt(it.toAzDeg), fmt(it.maxElDeg), it.kind)) }
-                    importMessage = String.format(loadedText, r.points, r.obstacles.size)
+                    importMessage = String.format(loadedText, r.points, r.obstacles.size) +
+                        if (r.gaps.isEmpty()) "" else " " + String.format(gapsText, r.gaps.joinToString(", ") { (a, b) -> "${fmt(a)}–${fmt(b)}°" })
                     importFailed = false
                 }
                 HorizonSurvey.Result.NotASurvey -> { importMessage = errorText; importFailed = true }

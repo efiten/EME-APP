@@ -129,4 +129,5 @@
     <string name="horizon_loaded">已载入：%1$d 个点，%2$d 个障碍物。请检查，将稀疏的树木标为部分遮挡，然后保存。</string>
     <string name="horizon_load_error">此文件不是 horizon.dl6zg.de 的地平线测量（JSON 或 CSV）。</string>
     <string name="horizon_load_few">此文件中的点太少（至少需要 2 个）。</string>
+    <string name="horizon_load_gaps">未测量，保持开放：%1$s。</string>
 </resources>

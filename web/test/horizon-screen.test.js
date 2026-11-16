@@ -170,6 +170,22 @@ describe('"Measure horizon" and "Load horizon" (same as HorizonImportTest.kt)', 
     expect(all('from').length).toBe(1);
   });
 
+  test('unmeasured gaps are named in the message', async () => {
+    await pick('only_the_tree.json');
+    expect(q('horizon-import-message').textContent).toBe(
+      'Loaded: 3 points, 1 obstacles. Check them, mark thin trees as partial, then save. Not measured, left open: 110–60°.',
+    );
+  });
+
+  test('a file over 1 MB is refused', async () => {
+    const input = q('horizon-file');
+    const big = 'azimuth_deg,elevation_deg,timestamp,is_calibration,source\n' + '10.00,5.00,t,0,sensor\n'.repeat(60_000);
+    Object.defineProperty(input, 'files', { value: [new File([big], 'big.csv')], configurable: true });
+    input.dispatchEvent(new Event('change'));
+    for (let i = 0; i < 5; i++) await flush();
+    expect(q('horizon-import-message').textContent).toBe('This file is not a horizon survey from horizon.dl6zg.de (JSON or CSV).');
+  });
+
   test('too few points', async () => {
     await pick('one_point.json');
     expect(q('horizon-import-message').textContent).toBe('Too few points in this file (at least 2 are needed).');

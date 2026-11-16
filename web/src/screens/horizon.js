@@ -189,7 +189,8 @@ export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, saved
     const r = text === null ? { status: 'NOT_A_SURVEY' } : parseSurvey(text);
     if (r.status === 'OK') {
       rows.splice(0, rows.length, ...r.obstacles.map((o) => ({ from: fmtAngle(o.fromAzDeg), to: fmtAngle(o.toAzDeg), el: fmtAngle(o.maxElDeg), kind: o.kind })));
-      importMessage.textContent = t('horizon_loaded', r.points, r.obstacles.length);
+      const open = r.gaps.map(([a, b]) => `${fmtAngle(a)}–${fmtAngle(b)}°`).join(', ');
+      importMessage.textContent = t('horizon_loaded', r.points, r.obstacles.length) + (open ? ` ${t('horizon_load_gaps', open)}` : '');
       importMessage.classList.remove('error');
       renderRows();
       refresh();

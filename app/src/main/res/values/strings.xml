@@ -135,4 +135,5 @@
     <string name="horizon_loaded">Loaded: %1$d points, %2$d obstacles. Check them, mark thin trees as partial, then save.</string>
     <string name="horizon_load_error">This file is not a horizon survey from horizon.dl6zg.de (JSON or CSV).</string>
     <string name="horizon_load_few">Too few points in this file (at least 2 are needed).</string>
+    <string name="horizon_load_gaps">Not measured, left open: %1$s.</string>
 </resources>

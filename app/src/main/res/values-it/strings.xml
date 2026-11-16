@@ -129,4 +129,5 @@
     <string name="horizon_loaded">Caricato: %1$d punti, %2$d ostacoli. Controllali, segna gli alberi radi come parziali e salva.</string>
     <string name="horizon_load_error">Questo file non è un rilievo dell\'orizzonte di horizon.dl6zg.de (JSON o CSV).</string>
     <string name="horizon_load_few">Troppo pochi punti in questo file (ne servono almeno 2).</string>
+    <string name="horizon_load_gaps">Non misurato, lasciato aperto: %1$s.</string>
 </resources>
