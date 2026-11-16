@@ -34,6 +34,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       publish: ${{ steps.version.outputs.publish }}
+      web: ${{ steps.version.outputs.web }}
     steps:
       - uses: actions/checkout@v7
       - id: version
@@ -58,6 +59,14 @@ jobs:
             exit 1
           fi
           echo "publish=true" >> "$GITHUB_OUTPUT"
+          # A test release (suffix, for example 1.3.0-test1) is a pre-release: the server only installs the
+          # latest real release (releases/latest), so it gets no web zip and no wait for eme.on8ar.eu.
+          if [[ "$version" == *-* ]]; then
+            echo "::notice::Test release $version: no web jobs, eme.on8ar.eu stays on the last real release."
+            echo "web=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "web=true" >> "$GITHUB_OUTPUT"
+          fi
 
   release:
     needs: check
@@ -138,7 +147,7 @@ jobs:
   # The server updates itself from the zip (eme-web-update.timer); web/deploy/deploy-release.sh deploys at once by hand.
   web-build:
     needs: [check, release]
-    if: needs.check.outputs.publish == 'true'
+    if: needs.check.outputs.publish == 'true' && needs.check.outputs.web == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -189,7 +198,7 @@ jobs:
 
   web-upload:
     needs: [check, web-build]
-    if: needs.check.outputs.publish == 'true'
+    if: needs.check.outputs.publish == 'true' && needs.check.outputs.web == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -211,7 +220,7 @@ jobs:
   # or rolled back, see journalctl -u eme-web-update on the server. The APK release is already published.
   web-deploy:
     needs: [check, web-upload]
-    if: needs.check.outputs.publish == 'true'
+    if: needs.check.outputs.publish == 'true' && needs.check.outputs.web == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions: {}
