@@ -1,0 +1,54 @@
+{
+  "surveyed_at": "2026-11-15",
+  "note": "Synthetic example for EME APP tests, made with toHorizonProfile of on6zg/horizon-survey. Not a real site.",
+  "points": [
+    {
+      "az": 0,
+      "el": 6
+    },
+    {
+      "az": 30,
+      "el": 5.5
+    },
+    {
+      "az": 60,
+      "el": 24
+    },
+    {
+      "az": 85,
+      "el": 25
+    },
+    {
+      "az": 110,
+      "el": 23
+    },
+    {
+      "az": 130,
+      "el": 6
+    },
+    {
+      "az": 180,
+      "el": 17
+    },
+    {
+      "az": 200,
+      "el": 19
+    },
+    {
+      "az": 230,
+      "el": 7
+    },
+    {
+      "az": 270,
+      "el": 5
+    },
+    {
+      "az": 300,
+      "el": 6
+    },
+    {
+      "az": 330,
+      "el": 5.8
+    }
+  ]
+}

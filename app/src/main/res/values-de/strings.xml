@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">Leer lassen für keine Marge (z. B. Yagis). Mit einem Spiegel und eigenem Horizont wird die halbe Keulenbreite auf dem unten gewählten Band über deinem Horizont addiert, damit auch der Rand der Keule frei ist.</string>
     <string name="horizon_dish_band">Band, auf dem der Spiegel genutzt wird</string>
     <string name="horizon_margin">Marge auf %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Horizont vermessen</string>
+    <string name="horizon_load">Horizont laden</string>
+    <string name="horizon_measure_info">Vermiss deinen Horizont mit dem Handy auf horizon.dl6zg.de (von ON6ZG), tippe dort auf Download JSON und lade die Datei hier. Laden ersetzt die Hindernisse unten; gespeichert wird erst mit Speichern.</string>
+    <string name="horizon_loaded">Geladen: %1$d Punkte, %2$d Hindernisse. Prüfe sie, markiere lichte Bäume als teilweise und speichere.</string>
+    <string name="horizon_load_error">Diese Datei ist keine Horizontvermessung von horizon.dl6zg.de (JSON oder CSV).</string>
+    <string name="horizon_load_few">Zu wenige Punkte in dieser Datei (mindestens 2).</string>
+    <string name="horizon_load_gaps">Nicht vermessen, offen gelassen: %1$s.</string>
 </resources>

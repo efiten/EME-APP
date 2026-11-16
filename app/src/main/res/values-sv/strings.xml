@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">Lämna tomt för ingen marginal (t.ex. yagi). Med en parabol och en egen horisont läggs halva lobbredden på bandet nedan till ovanför din horisont, så att även lobens kant är fri.</string>
     <string name="horizon_dish_band">Band som parabolen används på</string>
     <string name="horizon_margin">Marginal på %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Mät horisont</string>
+    <string name="horizon_load">Läs in horisont</string>
+    <string name="horizon_measure_info">Mät din horisont med telefonen på horizon.dl6zg.de (av ON6ZG), tryck på Download JSON där och läs in filen här. Inläsning ersätter hindren nedan; inget sparas förrän du trycker på Spara.</string>
+    <string name="horizon_loaded">Inläst: %1$d punkter, %2$d hinder. Kontrollera dem, markera glesa träd som delvis och spara.</string>
+    <string name="horizon_load_error">Den här filen är ingen horisontmätning från horizon.dl6zg.de (JSON eller CSV).</string>
+    <string name="horizon_load_few">För få punkter i filen (minst 2 behövs).</string>
+    <string name="horizon_load_gaps">Inte uppmätt, lämnat öppet: %1$s.</string>
 </resources>

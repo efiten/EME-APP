@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">Deixe vazio para nenhuma margem (p. ex. Yagis). Com uma parabólica e um horizonte próprio, metade da largura do feixe na banda escolhida abaixo soma-se ao seu horizonte, para que também a borda do feixe esteja livre.</string>
     <string name="horizon_dish_band">Banda em que a parabólica é usada</string>
     <string name="horizon_margin">Margem em %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Medir horizonte</string>
+    <string name="horizon_load">Carregar horizonte</string>
+    <string name="horizon_measure_info">Meça o seu horizonte com o telemóvel em horizon.dl6zg.de (de ON6ZG), toque em Download JSON e carregue aqui o ficheiro. Carregar substitui os obstáculos abaixo; nada é guardado até tocar em Guardar.</string>
+    <string name="horizon_loaded">Carregado: %1$d pontos, %2$d obstáculos. Verifique-os, marque árvores pouco densas como parciais e guarde.</string>
+    <string name="horizon_load_error">Este ficheiro não é uma medição de horizonte de horizon.dl6zg.de (JSON ou CSV).</string>
+    <string name="horizon_load_few">Poucos pontos neste ficheiro (são precisos pelo menos 2).</string>
+    <string name="horizon_load_gaps">Não medido, deixado aberto: %1$s.</string>
 </resources>

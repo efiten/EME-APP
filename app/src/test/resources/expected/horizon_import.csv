@@ -1,0 +1,16 @@
+# Horizon surveys of horizon-survey (horizon.dl6zg.de) read by HorizonSurvey.kt and web/src/lib/horizon-survey.js.
+# Files in horizon_survey/; the example JSON and CSV were made with toHorizonProfile and the CSV export of
+# on6zg/horizon-survey from synthetic points (no real site). horizon = the obstacles in the stored text format
+# (minimum 0), error = why the file is refused. Between two points: up to the higher elevation; gaps over 60 deg
+# stay open (listed in gaps as from-to, space separated); calibration points (CSV is_calibration = 1) are skipped;
+# negative elevations count as 0; numbers written as text ("10") are not numbers (horizon-survey writes numbers).
+file,points,horizon,gaps,error
+horizon_survey_example.json,12,1;0;B 30 60 24;B 60 110 25;B 110 130 23;B 130 180 17;B 180 230 19;B 230 270 7;B 270 30 6,,
+horizon_survey_example.csv,12,1;0;B 30 60 24;B 60 110 25;B 110 130 23;B 130 180 17;B 180 230 19;B 230 270 7;B 270 30 6,,
+only_the_tree.json,3,1;0;B 60 110 25,110-60,
+all_round.csv,12,1;0;B 0 360 6,,
+negative_and_duplicate.csv,3,1;0;B 10 70 12,70-10,
+one_point.json,,,,TOO_FEW_POINTS
+not_a_survey.json,,,,NOT_A_SURVEY
+not_a_survey.txt,,,,NOT_A_SURVEY
+numbers_as_text.json,,,,TOO_FEW_POINTS

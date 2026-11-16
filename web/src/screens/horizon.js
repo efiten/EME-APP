@@ -1,10 +1,15 @@
 // "My horizon" (horizon/HorizonScreen.kt): summary in the settings and the editor with the chart.
 import { t } from '../i18n.js';
 import { toLatLon } from '../lib/maidenhead.js';
+import { parseSurvey } from '../lib/horizon-survey.js';
 import { EME_BANDS } from '../lib/degradation.js';
 import { KINDS, beamMarginDeg, chartSpans, chartTopDeg, moonTrack, parseAngle, trackSegments } from '../lib/horizon.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+/** The survey tool of ON6ZG (on6zg/horizon-survey); the app only opens the page and sends nothing to it. */
+export const SURVEY_URL = 'https://horizon.dl6zg.de/';
+/** A survey is a few kB; a larger file is not a survey (as MAX_IMPORT_BYTES in HorizonScreen.kt). */
+const MAX_IMPORT_BYTES = 1_000_000;
 const DAY_MS = 86_400_000;
 
 function el(tag, props = {}, ...children) {
@@ -167,6 +172,34 @@ export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, saved
     chartHost.replaceChildren(horizonChart({ minElDeg: c.minElDeg ?? saved.minElDeg, obstacles: c.obstacles.filter((o) => o !== null) }, locator, nowMillis));
   }
 
+  // Measure with horizon-survey of ON6ZG and load the file here: replaces the obstacles on the screen (not saved yet)
+  const measure = role(
+    el('a', { className: 'button outlined', href: SURVEY_URL, target: '_blank', rel: 'noopener noreferrer', textContent: t('horizon_measure') }),
+    'horizon-measure',
+  );
+  const fileInput = role(el('input', { type: 'file', accept: '.json,.csv,application/json,text/csv', hidden: true }), 'horizon-file');
+  const load = role(el('button', { type: 'button', className: 'button outlined', textContent: t('horizon_load') }), 'horizon-load');
+  const importMessage = role(el('div', { className: 'message' }), 'horizon-import-message');
+  load.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files?.[0];
+    fileInput.value = '';
+    if (!file) return;
+    const text = file.size > MAX_IMPORT_BYTES ? null : await file.text().catch(() => null);
+    const r = text === null ? { status: 'NOT_A_SURVEY' } : parseSurvey(text);
+    if (r.status === 'OK') {
+      rows.splice(0, rows.length, ...r.obstacles.map((o) => ({ from: fmtAngle(o.fromAzDeg), to: fmtAngle(o.toAzDeg), el: fmtAngle(o.maxElDeg), kind: o.kind })));
+      const open = r.gaps.map(([a, b]) => `${fmtAngle(a)}–${fmtAngle(b)}°`).join(', ');
+      importMessage.textContent = t('horizon_loaded', r.points, r.obstacles.length) + (open ? ` ${t('horizon_load_gaps', open)}` : '');
+      importMessage.classList.remove('error');
+      renderRows();
+      refresh();
+    } else {
+      importMessage.textContent = t(r.status === 'TOO_FEW_POINTS' ? 'horizon_load_few' : 'horizon_load_error');
+      importMessage.classList.add('error');
+    }
+  });
+
   const add = role(el('button', { type: 'button', className: 'button outlined', textContent: t('horizon_add') }), 'horizon-add');
   add.addEventListener('click', () => {
     rows.push({ from: '', to: '', el: '', kind: KINDS.BLOCKED });
@@ -215,6 +248,9 @@ export function horizonEditor({ saved, locator, nowMillis, savedDishM = 0, saved
   root.append(
     el('h2', { textContent: t('horizon_title') }),
     el('div', { className: 'support', textContent: t('horizon_info') }),
+    el('div', { className: 'support', textContent: t('horizon_measure_info') }),
+    el('div', { className: 'button-row wrap' }, measure, load, fileInput),
+    importMessage,
     chartHost,
     el('div', { className: 'legend moon', textContent: `— ${t('horizon_moon_today')}` }),
     angleField(t('horizon_min_el'), minText, 90, (v) => (minText = v), 'min-el'),

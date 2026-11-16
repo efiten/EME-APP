@@ -372,3 +372,8 @@ body {
 .moon .partial, .cq .partial { color: #ffa726; }
 .moon .blocked { color: var(--alert); }
 .moon .events .horizon-window .time { font-weight: 700; }
+
+/* "Measure horizon" / "Load horizon" (step 4 of #87) */
+.horizon .button-row.wrap { flex-wrap: wrap; }
+.horizon a.button { display: inline-flex; align-items: center; text-decoration: none; }
+.horizon .message.error { color: var(--error); }

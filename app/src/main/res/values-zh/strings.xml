@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">留空表示无余量（例如八木天线）。有抛物面和自己的地平线时，会在您的地平线之上加上下方所选波段的半波束宽度，使波束边缘也无遮挡。</string>
     <string name="horizon_dish_band">抛物面使用的波段</string>
     <string name="horizon_margin">%1$s MHz 的余量：%2$s°</string>
+    <string name="horizon_measure">测量地平线</string>
+    <string name="horizon_load">载入地平线</string>
+    <string name="horizon_measure_info">在 horizon.dl6zg.de（ON6ZG 制作）用手机测量您的地平线，点击 Download JSON，然后在此载入文件。载入会替换下方的障碍物；点击“保存”前不会保存任何内容。</string>
+    <string name="horizon_loaded">已载入：%1$d 个点，%2$d 个障碍物。请检查，将稀疏的树木标为部分遮挡，然后保存。</string>
+    <string name="horizon_load_error">此文件不是 horizon.dl6zg.de 的地平线测量（JSON 或 CSV）。</string>
+    <string name="horizon_load_few">此文件中的点太少（至少需要 2 个）。</string>
+    <string name="horizon_load_gaps">未测量，保持开放：%1$s。</string>
 </resources>

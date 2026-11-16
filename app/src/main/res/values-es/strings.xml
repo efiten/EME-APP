@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">Dejar vacío para ningún margen (p. ej. Yagis). Con una parábola y un horizonte propio, la mitad del ancho del haz en la banda elegida abajo se suma a tu horizonte, para que también el borde del haz esté despejado.</string>
     <string name="horizon_dish_band">Banda en la que se usa la parábola</string>
     <string name="horizon_margin">Margen en %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Medir horizonte</string>
+    <string name="horizon_load">Cargar horizonte</string>
+    <string name="horizon_measure_info">Mide tu horizonte con el teléfono en horizon.dl6zg.de (de ON6ZG), pulsa allí Download JSON y carga el archivo aquí. Cargar sustituye los obstáculos de abajo; no se guarda nada hasta pulsar Guardar.</string>
+    <string name="horizon_loaded">Cargado: %1$d puntos, %2$d obstáculos. Revísalos, marca los árboles poco densos como parciales y guarda.</string>
+    <string name="horizon_load_error">Este archivo no es una medición de horizonte de horizon.dl6zg.de (JSON o CSV).</string>
+    <string name="horizon_load_few">Muy pocos puntos en este archivo (se necesitan al menos 2).</string>
+    <string name="horizon_load_gaps">Sin medir, dejado abierto: %1$s.</string>
 </resources>

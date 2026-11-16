@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">Laisser vide pour aucune marge (p. ex. Yagi). Avec une parabole et un horizon propre, la moitié de l\'ouverture du faisceau sur la bande choisie ci-dessous s\'ajoute à votre horizon, pour que le bord du faisceau soit aussi dégagé.</string>
     <string name="horizon_dish_band">Bande utilisée avec la parabole</string>
     <string name="horizon_margin">Marge sur %1$s MHz : %2$s°</string>
+    <string name="horizon_measure">Mesurer l\'horizon</string>
+    <string name="horizon_load">Charger l\'horizon</string>
+    <string name="horizon_measure_info">Mesurez votre horizon avec votre téléphone sur horizon.dl6zg.de (de ON6ZG), touchez Download JSON, puis chargez le fichier ici. Le chargement remplace les obstacles ci-dessous ; rien n\'est enregistré avant de toucher Enregistrer.</string>
+    <string name="horizon_loaded">Chargé : %1$d points, %2$d obstacles. Vérifiez-les, marquez les arbres clairsemés comme partiels, puis enregistrez.</string>
+    <string name="horizon_load_error">Ce fichier n\'est pas un relevé d\'horizon de horizon.dl6zg.de (JSON ou CSV).</string>
+    <string name="horizon_load_few">Trop peu de points dans ce fichier (au moins 2).</string>
+    <string name="horizon_load_gaps">Non mesuré, laissé ouvert : %1$s.</string>
 </resources>

@@ -123,4 +123,11 @@
     <string name="horizon_dish_info">Leeg laten voor geen marge (bv. yagi\'s). Met een schotel en een eigen horizon komt een halve bundelbreedte op de band hieronder bovenop je horizon, zodat ook de rand van de bundel vrij is.</string>
     <string name="horizon_dish_band">Band waarop de schotel gebruikt wordt</string>
     <string name="horizon_margin">Marge op %1$s MHz: %2$s°</string>
+    <string name="horizon_measure">Horizon opmeten</string>
+    <string name="horizon_load">Horizon inladen</string>
+    <string name="horizon_measure_info">Meet je horizon op met je telefoon op horizon.dl6zg.de (van ON6ZG), tik daar op Download JSON en laad het bestand hier in. Inladen vervangt de hindernissen hieronder; er wordt pas iets bewaard als je op Opslaan tikt.</string>
+    <string name="horizon_loaded">Ingeladen: %1$d punten, %2$d hindernissen. Kijk ze na, duid dunne bomen aan als gedeeltelijk en sla op.</string>
+    <string name="horizon_load_error">Dit bestand is geen horizonopmeting van horizon.dl6zg.de (JSON of CSV).</string>
+    <string name="horizon_load_few">Te weinig punten in dit bestand (minstens 2 nodig).</string>
+    <string name="horizon_load_gaps">Niet gemeten, open gelaten: %1$s.</string>
 </resources>
