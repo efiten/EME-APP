@@ -63,7 +63,7 @@ describe('"My horizon" (same as HorizonScreenTest.kt)', () => {
 
     expect(stored()).toBe('1;5;B 60 110 25;P 180 200 20');
     expect(q('horizon-summary').textContent).toBe('Minimum 5° · obstacles: 2');
-    expect(host.textContent).toContain('Horizon saved');
+    expect(host.textContent).toContain('Obstacles saved');
   });
 
   test('dish diameter gives the margin and is saved; empty means no dish', () => {
@@ -120,7 +120,7 @@ describe('"My horizon" (same as HorizonScreenTest.kt)', () => {
   });
 });
 
-describe('"Measure horizon" and "Load horizon" (same as HorizonImportTest.kt)', () => {
+describe('"Measure obstacles" and "Load obstacles" (same as HorizonImportTest.kt)', () => {
   let host;
   // jsdom: no file: URL for import.meta.url, so relative to the web folder (where npm test runs)
   const DIR = join(process.cwd(), '../app/src/test/resources/horizon_survey/');
@@ -165,7 +165,7 @@ describe('"Measure horizon" and "Load horizon" (same as HorizonImportTest.kt)', 
 
   test('a wrong file shows an error and keeps the obstacles', async () => {
     await pick('not_a_survey.txt');
-    expect(q('horizon-import-message').textContent).toBe('This file is not a horizon survey from horizon.dl6zg.de (JSON or CSV).');
+    expect(q('horizon-import-message').textContent).toBe('This file is not a survey from horizon.dl6zg.de (JSON or CSV).');
     expect(q('horizon-import-message').classList.contains('error')).toBe(true);
     expect(all('from').length).toBe(1);
   });
@@ -183,7 +183,7 @@ describe('"Measure horizon" and "Load horizon" (same as HorizonImportTest.kt)', 
     Object.defineProperty(input, 'files', { value: [new File([big], 'big.csv')], configurable: true });
     input.dispatchEvent(new Event('change'));
     for (let i = 0; i < 5; i++) await flush();
-    expect(q('horizon-import-message').textContent).toBe('This file is not a horizon survey from horizon.dl6zg.de (JSON or CSV).');
+    expect(q('horizon-import-message').textContent).toBe('This file is not a survey from horizon.dl6zg.de (JSON or CSV).');
   });
 
   test('too few points', async () => {

@@ -64,10 +64,10 @@ class HorizonUseTest {
     fun withOwnHorizonTheMoonTabShowsTheStateAndTheWindow() {
         settings.horizon = Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!
         show()
-        compose.onNodeWithTag("horizon-now").performScrollTo().assertTextEquals("Moon behind your horizon")
+        compose.onNodeWithTag("horizon-now").performScrollTo().assertTextEquals("Moon behind your obstacles")
         compose.waitUntil(5_000) { compose.onAllNodesWithTagCount("horizon-window") > 0 }
         compose.onNodeWithTag("horizon-window").performScrollTo()
-            .assertTextContains("Clear of your horizon")
+            .assertTextContains("Clear of your obstacles")
             .assertTextContains("16:50", substring = true)
             .assertTextContains("tomorrow 03:15", substring = true)
     }
