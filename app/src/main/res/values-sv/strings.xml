@@ -100,6 +100,11 @@
     <string name="n0uk_cq_empty">Inga CQ-anrop i N0UK-chatten de senaste 60 minuterna.</string>
     <string name="n0uk_error">N0UK-chatten ej nåbar: %1$s</string>
     <string name="release_notes">Versionsinformation</string>
+    <string name="update_available">Version %1$s finns</string>
+    <string name="update_download">Ladda ner</string>
+    <string name="update_dismiss">Stäng</string>
+    <string name="update_check">Sök efter nya versioner</string>
+    <string name="update_check_hint">Frågar GitHub en gång om dagen. GitHub ser då telefonens IP-adress.</string>
     <string name="horizon_title">Mina hinder</string>
     <string name="horizon_info">Träd, hus och marken som skymmer månen vid din station. Appen använder dem för att visa när månen verkligen är fri.</string>
     <string name="horizon_summary">Minimum %1$s° · hinder: %2$d</string>

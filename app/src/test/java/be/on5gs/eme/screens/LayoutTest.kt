@@ -38,6 +38,7 @@ import be.on5gs.eme.cq.LiveCqStore
 import be.on5gs.eme.n0uk.N0ukStore
 import be.on5gs.eme.settings.SettingsRepository
 import be.on5gs.eme.ui.theme.EmeTheme
+import be.on5gs.eme.update.UpdateCheck
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -111,6 +112,7 @@ class LayoutTest(private val device: String, private val language: String, priva
     private val fetchN6nu = LiveCqStore.fetchN6nu
     private val fetchN0uk = N0ukStore.fetchPage
     private val fetchHb9q = ChatStore.fetchMessages
+    private val fetchUpdate = UpdateCheck.fetchLatest
 
     @Before
     fun setUp() {
@@ -120,6 +122,7 @@ class LayoutTest(private val device: String, private val language: String, priva
         LiveCqStore.fetchW3sz = { error("no network in LayoutTest") }
         LiveCqStore.fetchN6nu = { error("no network in LayoutTest") }
         ChatStore.fetchMessages = { _, _ -> error("no network in LayoutTest") }
+        UpdateCheck.fetchLatest = { error("no network in LayoutTest") }
         val n0ukPage = resource("n0uk_jt65emeA.html")
         N0ukStore.fetchPage = { n0ukPage }
         N0ukStore.resetForTest()
@@ -144,6 +147,7 @@ class LayoutTest(private val device: String, private val language: String, priva
         LiveCqStore.fetchN6nu = fetchN6nu
         N0ukStore.fetchPage = fetchN0uk
         ChatStore.fetchMessages = fetchHb9q
+        UpdateCheck.fetchLatest = fetchUpdate
         LiveCqStore.resetForTest()
         N0ukStore.resetForTest()
     }
@@ -156,6 +160,16 @@ class LayoutTest(private val device: String, private val language: String, priva
     fun moonWithHorizon() {
         SettingsRepository(ApplicationProvider.getApplicationContext()).horizon =
             be.on5gs.eme.horizon.Horizon.decode("1;5;B 60 110 25;P 180 200 20")!!
+        checkApp(null)
+    }
+
+    /** De balk "Versie ... is beschikbaar" boven de tabbladen (#126). */
+    @Test
+    fun moonWithUpdateBar() {
+        SettingsRepository(ApplicationProvider.getApplicationContext()).apply {
+            latestVersion = "99.10.0"
+            lastUpdateCheck = NOW
+        }
         checkApp(null)
     }
 
