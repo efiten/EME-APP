@@ -119,9 +119,9 @@
     <string name="horizon_moon_partial">Місяць частково за перешкодами</string>
     <string name="horizon_moon_blocked">Місяць за вашими перешкодами</string>
     <string name="horizon_window">Поза вашими перешкодами</string>
-    <string name="horizon_dish">Діаметр антени (м)</string>
+    <string name="horizon_dish">Діаметр параболи (м)</string>
     <string name="horizon_dish_info">Залиште порожнім, щоб не було запасу (напр. Yagi). З параболою і власними перешкодами над перешкодами додається половина ширини променя на діапазоні, вибраному нижче, щоб край променя теж був відкритий.</string>
-    <string name="horizon_dish_band">Діапазон, на якому працює антена</string>
+    <string name="horizon_dish_band">Діапазон, на якому працює парабола</string>
     <string name="horizon_margin">Запас на %1$s МГц: %2$s°</string>
     <string name="horizon_measure">Виміряти перешкоди</string>
     <string name="horizon_load">Завантажити перешкоди</string>
@@ -130,4 +130,12 @@
     <string name="horizon_load_error">Цей файл не є вимірюванням з horizon.dl6zg.de (JSON або CSV).</string>
     <string name="horizon_load_few">У цьому файлі замало точок (потрібно щонайменше 2).</string>
     <string name="horizon_load_gaps">Не виміряно, залишено відкритим: %1$s.</string>
+    <string name="moon_ahead">Вперед: %1$s</string>
+    <string name="moon_ahead_hint">Посуньте, щоб дивитися до 48 год уперед</string>
+    <string name="moon_now">Зараз</string>
+    <string name="update_available">Доступна версія %1$s</string>
+    <string name="update_download">Завантажити</string>
+    <string name="update_dismiss">Закрити</string>
+    <string name="update_check">Перевіряти нові версії</string>
+    <string name="update_check_hint">Раз на день звертається до GitHub. GitHub при цьому бачить IP-адресу вашого телефону.</string>
 </resources>

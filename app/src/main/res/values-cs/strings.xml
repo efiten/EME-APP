@@ -49,7 +49,7 @@
     <string name="login_stored_browser">Váš login je uložen v tomto prohlížeči na tomto zařízení.</string>
     <string name="hb9q_login">HB9Q login (značka)</string>
     <string name="password">Heslo</string>
-    <string name="password_saved">Heslo (uloženo — nechte prázdné pro zachování)</string>
+    <string name="password_saved">Heslo (uloženo — nechte prázdné, chcete-li ho ponechat)</string>
     <string name="hide">Skrýt</string>
     <string name="show">Zobrazit</string>
     <string name="save_login">Uložit login</string>
@@ -120,7 +120,7 @@
     <string name="horizon_moon_blocked">Měsíc za vašimi překážkami</string>
     <string name="horizon_window">Mimo vaše překážky</string>
     <string name="horizon_dish">Průměr paraboly (m)</string>
-    <string name="horizon_dish_info">Nechte prázdné pro žádnou rezervu (např. Yagi). S parabolou a vlastními překážkami se nad překážky přidá polovina šířky svazku na pásmu zvoleném níže, aby byl volný i okraj svazku.</string>
+    <string name="horizon_dish_info">Nechte prázdné, pokud nechcete rezervu (např. Yagi). S parabolou a vlastními překážkami se nad překážky přidá polovina šířky svazku na pásmu zvoleném níže, aby byl volný i okraj svazku.</string>
     <string name="horizon_dish_band">Pásmo, na kterém se parabola používá</string>
     <string name="horizon_margin">Rezerva na %1$s MHz: %2$s°</string>
     <string name="horizon_measure">Změřit překážky</string>
@@ -130,4 +130,12 @@
     <string name="horizon_load_error">Tento soubor není měření z horizon.dl6zg.de (JSON nebo CSV).</string>
     <string name="horizon_load_few">V tomto souboru je příliš málo bodů (jsou potřeba alespoň 2).</string>
     <string name="horizon_load_gaps">Neměřeno, ponecháno volné: %1$s.</string>
+    <string name="moon_ahead">Dopředu: %1$s</string>
+    <string name="moon_ahead_hint">Posuňte a podívejte se až 48 h dopředu</string>
+    <string name="moon_now">Teď</string>
+    <string name="update_available">Je k dispozici verze %1$s</string>
+    <string name="update_download">Stáhnout</string>
+    <string name="update_dismiss">Zavřít</string>
+    <string name="update_check">Kontrolovat nové verze</string>
+    <string name="update_check_hint">Jednou denně se zeptá GitHubu. GitHub přitom uvidí IP adresu vašeho telefonu.</string>
 </resources>

@@ -100,6 +100,11 @@
     <string name="n0uk_cq_empty">Geen CQ-aanroepen in de N0UK-chat in de laatste 60 minuten.</string>
     <string name="n0uk_error">N0UK-chat niet bereikbaar: %1$s</string>
     <string name="release_notes">Release notes</string>
+    <string name="update_available">Versie %1$s is beschikbaar</string>
+    <string name="update_download">Downloaden</string>
+    <string name="update_dismiss">Sluiten</string>
+    <string name="update_check">Controleren op nieuwe versies</string>
+    <string name="update_check_hint">Vraagt het één keer per dag aan GitHub. GitHub ziet dan het IP-adres van je telefoon.</string>
     <string name="horizon_title">Mijn obstakels</string>
     <string name="horizon_info">Bomen, huizen en de grond die de maan bij jouw station tegenhouden. De app gebruikt ze om te tonen wanneer de maan echt vrij is.</string>
     <string name="horizon_summary">Ondergrens %1$s° · obstakels: %2$d</string>
@@ -130,4 +135,7 @@
     <string name="horizon_load_error">Dit bestand is geen opmeting van horizon.dl6zg.de (JSON of CSV).</string>
     <string name="horizon_load_few">Te weinig punten in dit bestand (minstens 2 nodig).</string>
     <string name="horizon_load_gaps">Niet gemeten, open gelaten: %1$s.</string>
+    <string name="moon_ahead">Vooruit: %1$s</string>
+    <string name="moon_ahead_hint">Schuif om tot 48 u vooruit te kijken</string>
+    <string name="moon_now">Nu</string>
 </resources>

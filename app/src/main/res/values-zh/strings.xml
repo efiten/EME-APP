@@ -100,6 +100,11 @@
     <string name="n0uk_cq_empty">最近 60 分钟 N0UK 聊天中没有 CQ 呼叫。</string>
     <string name="n0uk_error">无法连接 N0UK 聊天：%1$s</string>
     <string name="release_notes">版本说明</string>
+    <string name="update_available">版本 %1$s 已发布</string>
+    <string name="update_download">下载</string>
+    <string name="update_dismiss">关闭</string>
+    <string name="update_check">检查新版本</string>
+    <string name="update_check_hint">每天向 GitHub 查询一次。查询时 GitHub 会看到手机的 IP 地址。</string>
     <string name="horizon_title">我的障碍物</string>
     <string name="horizon_info">在您的电台遮挡月亮的树木、房屋和地面。应用用它们来显示月亮何时真正无遮挡。</string>
     <string name="horizon_summary">最低 %1$s° · 障碍物：%2$d</string>
@@ -130,4 +135,7 @@
     <string name="horizon_load_error">此文件不是 horizon.dl6zg.de 的测量（JSON 或 CSV）。</string>
     <string name="horizon_load_few">此文件中的点太少（至少需要 2 个）。</string>
     <string name="horizon_load_gaps">未测量，保持开放：%1$s。</string>
+    <string name="moon_ahead">向后：%1$s</string>
+    <string name="moon_ahead_hint">滑动可查看未来 48 小时</string>
+    <string name="moon_now">现在</string>
 </resources>
