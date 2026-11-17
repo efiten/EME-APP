@@ -36,8 +36,16 @@ object ChatCqParser {
     private val OTHER_MODE = Regex("""(?i)\b(JT65[A-C]?|JT4[A-G]?|JT9|QRA64[A-E]?|FT8|FT4|FST4|MSK144|JTTY|ISCAT-?[AB]?|CW|SSB)\b""")
     private val CFOM = Regex("""(?i)CFOM""")
     private val OWN_ECHO = Regex("""(?i)own\s*echo""")
-    /** Een getal van 3-4 cijfers dat geen vermogen (W), afstand (m), duur (min) of dB is. */
-    private val HZ = Regex("""(?i)(?<![\d.])(\d{3,4})(?![\d.])(?!\s*(?:w\b|m\b|min|db|watt))""")
+    /**
+     * Hz (#12): een getal van 3-4 cijfers direct na de mode of CFOM ("Q65-60C 1500", "CFOM @1500") dat geen
+     * vermogen (W), afstand (m), duur (min) of dB is; of direct voor "hz" ("1500Hz"). Een los getal (de frequentie
+     * zonder punt, een klokuur) is geen Hz: liever "?" dan een fout getal.
+     */
+    private val HZ_AFTER = Regex(
+        "(?i)(?:" + Q65.pattern.removePrefix("(?i)") + "|" + OTHER_MODE.pattern.removePrefix("(?i)") + "|CFOM)" +
+            """[\s,;:@/-]*(\d{3,4})(?![\d.])(?!\s*(?:w\b|m\b|min|db|watt))""",
+    )
+    private val HZ_BEFORE = Regex("""(?i)(?<![\d.])(\d{3,4})\s*hz\b""")
 
     /** Cyrillische letters die er hetzelfde uitzien als Latijnse (bv. "Q65-60С" met Cyrillische С). */
     private val LOOKALIKES = mapOf(
@@ -70,9 +78,12 @@ object ChatCqParser {
             OWN_ECHO.containsMatchIn(rest) -> "own echo"
             else -> "?"
         }
-        // Hz: eerste getal tussen 200 en 3000, buiten de frequentie en de mode (bv. "60" in Q65-60C)
-        val withoutMode = Q65.replace(rest, " ")
-        val hz = HZ.findAll(withoutMode).map { it.groupValues[1].toInt() }.firstOrNull { it in 200..3000 }?.toString() ?: "?"
+        // Hz: het eerste getal tussen 200 en 3000 op een plek waar Hz staat (na de mode of CFOM, of voor "hz")
+        val hz = (HZ_AFTER.findAll(rest) + HZ_BEFORE.findAll(rest))
+            .map { it.groups.last()!! }
+            .sortedBy { it.range.first }
+            .map { it.value.toInt() }
+            .firstOrNull { it in 200..3000 }?.toString() ?: "?"
 
         return ChatCq(
             messageId = msg.id,

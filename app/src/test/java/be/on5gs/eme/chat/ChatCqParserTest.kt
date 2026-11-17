@@ -52,6 +52,16 @@ class ChatCqParserTest {
         assertEquals("1296.065 2nd Q65-300A CFOM ?", fields("***** CQ 1296.065 2nd Q65-300A CFOM *****"))
     }
 
+    /** Hz alleen direct na de mode of CFOM, of voor "hz" (#12, optie 2): liever "?" dan een fout getal. */
+    @Test
+    fun hzOnlyAfterTheModeOrCfomOrBeforeHz() {
+        assertEquals("? 1st Q65-60B ? 1000", fields("***** CQ 432 1st Q65-60B 1000 *****"))   // frequency without a dot is not Hz; the number after the mode is
+        assertEquals("? 1st Q65-60C ? 1500", fields("***** CQ 1296,065 1st Q65-60C 1500 *****"))   // frequency with a comma is not Hz
+        assertEquals("1296.065 1st Q65-60C CFOM ?", fields("***** CQ 1296.065 1st Q65-60C CFOM until 0930 *****"))   // a clock time is not Hz
+        assertEquals("1296.065 1st Q65-60C ? ?", fields("***** CQ 1296.065 1st Q65-60C 2nd try 1500 *****"))   // a loose number is not Hz
+        assertEquals("1296.050 2nd CW ? 800", fields("***** CQ 1296.050 2nd CW 800 *****"))   // also after another mode
+    }
+
     @Test
     fun ordinaryMessagesAreNotCq() {
         assertNull(ChatCqParser.parse(msg("089 -332 0 0900 2.7 -10 : CQ F5AOL JN38"), now))
