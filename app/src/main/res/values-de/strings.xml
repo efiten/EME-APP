@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Diese Datei ist keine Vermessung von horizon.dl6zg.de (JSON oder CSV).</string>
     <string name="horizon_load_few">Zu wenige Punkte in dieser Datei (mindestens 2).</string>
     <string name="horizon_load_gaps">Nicht vermessen, offen gelassen: %1$s.</string>
+    <string name="moon_ahead">Später: %1$s</string>
+    <string name="moon_ahead_hint">Schieben, um bis 48 h vorauszuschauen</string>
+    <string name="moon_now">Jetzt</string>
 </resources>

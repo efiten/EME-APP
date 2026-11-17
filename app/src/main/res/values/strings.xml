@@ -136,4 +136,7 @@
     <string name="horizon_load_error">This file is not a survey from horizon.dl6zg.de (JSON or CSV).</string>
     <string name="horizon_load_few">Too few points in this file (at least 2 are needed).</string>
     <string name="horizon_load_gaps">Not measured, left open: %1$s.</string>
+    <string name="moon_ahead">Ahead: %1$s</string>
+    <string name="moon_ahead_hint">Slide to look up to 48 h ahead</string>
+    <string name="moon_now">Now</string>
 </resources>
