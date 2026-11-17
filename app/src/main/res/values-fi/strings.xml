@@ -100,6 +100,11 @@
     <string name="n0uk_cq_empty">Ei CQ-kutsuja N0UK-chatissa viimeisen 60 minuutin aikana.</string>
     <string name="n0uk_error">N0UK-chat ei saatavilla: %1$s</string>
     <string name="release_notes">Julkaisutiedot</string>
+    <string name="update_available">Versio %1$s on saatavilla</string>
+    <string name="update_download">Lataa</string>
+    <string name="update_dismiss">Sulje</string>
+    <string name="update_check">Tarkista uudet versiot</string>
+    <string name="update_check_hint">Kysyy GitHubilta kerran päivässä. GitHub näkee silloin puhelimesi IP-osoitteen.</string>
     <string name="horizon_title">Omat esteet</string>
     <string name="horizon_info">Puut, talot ja maasto, jotka peittävät kuun asemallasi. Sovellus näyttää niiden avulla, milloin kuu on todella näkyvissä.</string>
     <string name="horizon_summary">Vähintään %1$s° · esteitä: %2$d</string>

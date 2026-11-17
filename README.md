@@ -10,6 +10,17 @@ Open the link on your Android phone, open the downloaded file and allow installa
 It installs over earlier versions; your settings and HB9Q login are kept.
 What changed in each version: [Releases](https://github.com/on5gsdirk-cmd/EME-APP/releases).
 
+### New versions
+
+The app is not in Google Play. Once a day it asks GitHub for the latest release; when there is a newer
+one, a bar at the top says so, with a button to the release page. GitHub then sees the IP address of
+your phone; Settings has a switch to turn the check off. Test releases are not offered.
+
+Other ways to hear about a new version:
+- With a GitHub account: *Watch > Custom > Releases* on this repository; GitHub then mails you for each release.
+- The Android app [Obtainium](https://github.com/ImranR98/Obtainium) follows GitHub releases and installs
+  them: add `https://github.com/on5gsdirk-cmd/EME-APP`.
+
 ## Screenshots
 
 | Moon | Deg | Live CQ | My obstacles |
