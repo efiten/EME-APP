@@ -22,7 +22,7 @@
     <string name="band_all">Усі</string>
     <string name="not_fetched">ще не завантажено</string>
     <string name="updated">оновлено %1$s UTC</string>
-    <string name="cq_summary">%1$d станцій · ост. %2$d хв · %3$s</string>
+    <string name="cq_summary">станцій: %1$d · ост. %2$d хв · %3$s</string>
     <string name="moon_at_you">Місяць у вашому QTH: EL %1$s°</string>
     <string name="refresh">Оновити</string>
     <string name="choose_band">Виберіть хоча б один діапазон.</string>
@@ -76,13 +76,13 @@
     <string name="deg_new_moon">молодик</string>
     <string name="moon_phase">Фаза Місяця: %1$s (освітлено %2$d%%)</string>
     <string name="phase_0">молодик</string>
-    <string name="phase_1">молодий місяць</string>
+    <string name="phase_1">молодий Місяць</string>
     <string name="phase_2">перша чверть</string>
-    <string name="phase_3">зростаючий місяць</string>
+    <string name="phase_3">Місяць, що росте</string>
     <string name="phase_4">повня</string>
-    <string name="phase_5">спадний місяць</string>
+    <string name="phase_5">спадний Місяць</string>
     <string name="phase_6">остання чверть</string>
-    <string name="phase_7">старий місяць</string>
+    <string name="phase_7">старий Місяць</string>
     <string name="deg_series_deg">DEG (дБ)</string>
     <string name="deg_series_dist">Відстань до Місяця (км)</string>
     <string name="deg_series_dec">Схилення (°)</string>
@@ -113,7 +113,7 @@
     <string name="horizon_add">Додати перешкоду</string>
     <string name="horizon_delete">Видалити перешкоду</string>
     <string name="horizon_saved">Перешкоди збережено</string>
-    <string name="horizon_moon_today">Траса Місяця сьогодні (UTC)</string>
+    <string name="horizon_moon_today">Траєкторія Місяця сьогодні (UTC)</string>
     <string name="horizon_invalid">0 – %1$d</string>
     <string name="horizon_moon_clear">Місяць поза вашими перешкодами</string>
     <string name="horizon_moon_partial">Місяць частково за перешкодами</string>
@@ -126,7 +126,7 @@
     <string name="horizon_measure">Виміряти перешкоди</string>
     <string name="horizon_load">Завантажити перешкоди</string>
     <string name="horizon_measure_info">Виміряйте свої перешкоди телефоном на horizon.dl6zg.de (від ON6ZG), натисніть там Download JSON, а потім завантажте файл тут. Завантаження замінює перешкоди нижче; нічого не зберігається, доки ви не натиснете Зберегти.</string>
-    <string name="horizon_loaded">Завантажено: %1$d точок, %2$d перешкод. Перевірте їх, позначте рідкі дерева як часткові й збережіть.</string>
+    <string name="horizon_loaded">Завантажено: точок %1$d, перешкод %2$d. Перевірте їх, позначте рідкі дерева як часткові й збережіть.</string>
     <string name="horizon_load_error">Цей файл не є вимірюванням з horizon.dl6zg.de (JSON або CSV).</string>
     <string name="horizon_load_few">У цьому файлі замало точок (потрібно щонайменше 2).</string>
     <string name="horizon_load_gaps">Не виміряно, залишено відкритим: %1$s.</string>

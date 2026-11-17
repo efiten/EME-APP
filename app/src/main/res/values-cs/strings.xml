@@ -22,7 +22,7 @@
     <string name="band_all">Vše</string>
     <string name="not_fetched">ještě nenačteno</string>
     <string name="updated">aktualizováno %1$s UTC</string>
-    <string name="cq_summary">%1$d stanic · posl. %2$d min · %3$s</string>
+    <string name="cq_summary">stanice: %1$d · posl. %2$d min · %3$s</string>
     <string name="moon_at_you">Měsíc u vás: EL %1$s°</string>
     <string name="refresh">Obnovit</string>
     <string name="choose_band">Zvolte alespoň jedno pásmo.</string>
@@ -126,7 +126,7 @@
     <string name="horizon_measure">Změřit překážky</string>
     <string name="horizon_load">Načíst překážky</string>
     <string name="horizon_measure_info">Změřte své překážky telefonem na horizon.dl6zg.de (od ON6ZG), tam klepněte na Download JSON a soubor pak načtěte zde. Načtení nahradí překážky níže; nic se neuloží, dokud neklepnete na Uložit.</string>
-    <string name="horizon_loaded">Načteno: %1$d bodů, %2$d překážek. Zkontrolujte je, řídké stromy označte jako částečné a uložte.</string>
+    <string name="horizon_loaded">Načteno: bodů %1$d, překážek %2$d. Zkontrolujte je, řídké stromy označte jako částečné a uložte.</string>
     <string name="horizon_load_error">Tento soubor není měření z horizon.dl6zg.de (JSON nebo CSV).</string>
     <string name="horizon_load_few">V tomto souboru je příliš málo bodů (jsou potřeba alespoň 2).</string>
     <string name="horizon_load_gaps">Neměřeno, ponecháno volné: %1$s.</string>
