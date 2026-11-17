@@ -12,8 +12,8 @@ android {
         applicationId = "be.on5gs.eme"
         minSdk = 26
         targetSdk = 35
-        versionCode = 23
-        versionName = "1.3.0-test1"
+        versionCode = 24
+        versionName = "1.3.0"
     }
 
     signingConfigs {
