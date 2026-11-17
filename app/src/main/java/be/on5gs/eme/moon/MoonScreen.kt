@@ -287,9 +287,11 @@ private fun TimeLines(vararg lines: Pair<String, Pair<String, String>>, color: C
         val gap = with(LocalDensity.current) { 10.dp.roundToPx() }
         fun width(text: String, style: TextStyle) =
             measurer.measure(text, style, maxLines = 1, softWrap = false).size.width
-        val needed = lines.maxOf { width(it.first, label) } + gap +
-            lines.maxOf { (_, v) -> width(v.first, value) + if (v.second.isEmpty()) 0 else width("  ${v.second}", zone) }
-        val scale = fitScale(needed, constraints.maxWidth)
+        fun needed(scale: Float) = lines.maxOf { width(it.first, label.scaled(scale)) } + (gap * scale).toInt() +
+            lines.maxOf { (_, v) -> width(v.first, value.scaled(scale)) + if (v.second.isEmpty()) 0 else width("  ${v.second}", zone.scaled(scale)) }
+        // Kleinere letters worden niet precies evenredig smaller (afronding per letter): opnieuw meten
+        var scale = fitScale(needed(1f), constraints.maxWidth)
+        repeat(3) { if (scale < 1f) scale *= fitScale(needed(scale), constraints.maxWidth) }
         Row(verticalAlignment = Alignment.Bottom) {
             Column(horizontalAlignment = Alignment.End) {
                 lines.forEach { (text, _) ->
