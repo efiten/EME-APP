@@ -68,3 +68,9 @@ app/src/main/assets/land110m.txt       coastlines for the world map
 
 The test data in `app/src/test/resources/` are real samples from the HB9Q chat, the N0UK chat,
 W3SZ Live CQ and N6NU Live CQ, used to test the parsers. All e-mail addresses in them have been replaced by `xxxx@test.com`.
+
+## License
+
+The code in this repository (`app/` and `web/`) is licensed under the GNU General Public License
+v3.0, see [`LICENSE`](LICENSE). The license covers the code only: the data from HB9Q, W3SZ, N6NU
+and N0UK is not ours to license, and the rules for those services are in `CONTRIBUTING.md`.
