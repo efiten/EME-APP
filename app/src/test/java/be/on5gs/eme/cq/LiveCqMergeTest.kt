@@ -42,14 +42,16 @@ class LiveCqMergeTest {
 
     @Test
     fun selectShowsAllSourcesAndKeepsALocator() {
-        val older = spot("K3SK", LiveCqSource.W3SZ, grid = "FM07", spotter = "W3TI")
-        val newer = spot("K3SK", LiveCqSource.N6NU, time = t + 120_000, grid = "")
+        // 11 uur later dan t: de maan staat op bij FM07 (31°), dus #105 verbergt het station niet
+        val u = t + 11 * 3_600_000L
+        val older = spot("K3SK", LiveCqSource.W3SZ, time = u, grid = "FM07", spotter = "W3TI")
+        val newer = spot("K3SK", LiveCqSource.N6NU, time = u + 120_000, grid = "")
         val shown = LiveCqParser.select(
-            LiveCqParser.merge(listOf(older), listOf(newer)), setOf(Band.B23CM), t + 180_000, 60,
+            LiveCqParser.merge(listOf(older), listOf(newer)), setOf(Band.B23CM), u + 180_000, 60,
         )
         assertEquals(1, shown.size)
         val s = shown.single()
-        assertEquals(t + 120_000, s.utcMillis)                                   // de nieuwste
+        assertEquals(u + 120_000, s.utcMillis)                                   // de nieuwste
         assertEquals("FM07", s.grid)                                             // locator uit de oudere
         assertEquals(setOf(LiveCqSource.W3SZ, LiveCqSource.N6NU), s.sources)     // gezien op beide sites
     }

@@ -2,6 +2,7 @@
 // W3SZ CSV and N6NU JSON parsing, merge and select. All timestamps are UTC.
 
 import { toLatLon } from './maidenhead.js';
+import { position } from './moon-calculator.js';
 
 /** Band buttons as on the W3SZ Live CQ site. Frequencies in MHz. */
 export const BANDS = [
@@ -237,7 +238,17 @@ export function selectSpots(spots, bandIds, nowMs, maxAgeMinutes) {
       sources: new Set(group.flatMap((s) => [...s.sources])),
     });
   }
-  return result.sort((a, b) => b.utcMillis - a.utcMillis);
+  return result.filter((s) => moonMayBeUp(s, nowMs)).sort((a, b) => b.utcMillis - a.utcMillis);
+}
+
+/**
+ * Is the moon up at this station now? If not, it cannot be worked via EME and the spot is not shown,
+ * in the list and on the map (#105). Without a usable locator this cannot be calculated: the spot stays.
+ * "Up" = above 0 deg (their own horizon is not known). Same as LiveCqParser.moonMayBeUp.
+ */
+export function moonMayBeUp(spot, nowMs) {
+  const pos = stationLatLon(spot.grid);
+  return pos === null || position(pos.latDeg, pos.lonDeg, nowMs).isAboveHorizon;
 }
 
 /** Port of CqScreen.kt stationLatLon: 6-character locator, else the 4-character one, else null. */
