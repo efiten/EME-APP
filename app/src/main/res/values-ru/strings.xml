@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Этот файл не является измерением с horizon.dl6zg.de (JSON или CSV).</string>
     <string name="horizon_load_few">Слишком мало точек в файле (нужно не меньше 2).</string>
     <string name="horizon_load_gaps">Не измерено, оставлено открытым: %1$s.</string>
+    <string name="moon_ahead">Вперёд: %1$s</string>
+    <string name="moon_ahead_hint">Сдвиньте, чтобы смотреть до 48 ч вперёд</string>
+    <string name="moon_now">Сейчас</string>
 </resources>

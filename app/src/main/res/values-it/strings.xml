@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Questo file non è un rilievo di horizon.dl6zg.de (JSON o CSV).</string>
     <string name="horizon_load_few">Troppo pochi punti in questo file (ne servono almeno 2).</string>
     <string name="horizon_load_gaps">Non misurato, lasciato aperto: %1$s.</string>
+    <string name="moon_ahead">Avanti: %1$s</string>
+    <string name="moon_ahead_hint">Scorri per vedere fino a 48 h avanti</string>
+    <string name="moon_now">Ora</string>
 </resources>

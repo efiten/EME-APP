@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Dit bestand is geen opmeting van horizon.dl6zg.de (JSON of CSV).</string>
     <string name="horizon_load_few">Te weinig punten in dit bestand (minstens 2 nodig).</string>
     <string name="horizon_load_gaps">Niet gemeten, open gelaten: %1$s.</string>
+    <string name="moon_ahead">Vooruit: %1$s</string>
+    <string name="moon_ahead_hint">Schuif om tot 48 u vooruit te kijken</string>
+    <string name="moon_now">Nu</string>
 </resources>

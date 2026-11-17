@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Tämä tiedosto ei ole horizon.dl6zg.de:n mittaus (JSON tai CSV).</string>
     <string name="horizon_load_few">Liian vähän pisteitä tiedostossa (vähintään 2).</string>
     <string name="horizon_load_gaps">Ei mitattu, jätetty avoimeksi: %1$s.</string>
+    <string name="moon_ahead">Eteenpäin: %1$s</string>
+    <string name="moon_ahead_hint">Liu\'uta nähdäksesi enintään 48 h eteenpäin</string>
+    <string name="moon_now">Nyt</string>
 </resources>

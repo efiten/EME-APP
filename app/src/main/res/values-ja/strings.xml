@@ -130,4 +130,7 @@
     <string name="horizon_load_error">このファイルは horizon.dl6zg.de の測定（JSON または CSV）ではありません。</string>
     <string name="horizon_load_few">このファイルの点が少なすぎます（2 点以上必要）。</string>
     <string name="horizon_load_gaps">未測定のため開放のまま: %1$s。</string>
+    <string name="moon_ahead">先：%1$s</string>
+    <string name="moon_ahead_hint">スライドで最大48時間先まで表示</string>
+    <string name="moon_now">現在</string>
 </resources>

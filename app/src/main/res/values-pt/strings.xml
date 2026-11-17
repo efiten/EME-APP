@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Este ficheiro não é uma medição de horizon.dl6zg.de (JSON ou CSV).</string>
     <string name="horizon_load_few">Poucos pontos neste ficheiro (são precisos pelo menos 2).</string>
     <string name="horizon_load_gaps">Não medido, deixado aberto: %1$s.</string>
+    <string name="moon_ahead">Adiante: %1$s</string>
+    <string name="moon_ahead_hint">Deslize para ver até 48 h à frente</string>
+    <string name="moon_now">Agora</string>
 </resources>

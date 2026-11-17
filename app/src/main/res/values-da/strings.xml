@@ -130,4 +130,7 @@
     <string name="horizon_load_error">Denne fil er ikke en måling fra horizon.dl6zg.de (JSON eller CSV).</string>
     <string name="horizon_load_few">For få punkter i filen (mindst 2).</string>
     <string name="horizon_load_gaps">Ikke målt, efterladt åbent: %1$s.</string>
+    <string name="moon_ahead">Frem: %1$s</string>
+    <string name="moon_ahead_hint">Træk for at se op til 48 t frem</string>
+    <string name="moon_now">Nu</string>
 </resources>
