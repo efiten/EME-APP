@@ -39,7 +39,6 @@ class UpdateCheckTest {
     @Test
     fun readsTheVersionFromTheTag() {
         assertEquals("1.4.0", UpdateCheck.parseLatest("""{"tag_name":"v1.4.0","name":"EME APP 1.4.0","draft":false,"prerelease":false}"""))
-        assertEquals("1.4.0", UpdateCheck.parseLatest("""{"tag_name":"1.4.0"}"""))
     }
 
     @Test
@@ -50,6 +49,8 @@ class UpdateCheckTest {
         assertNull(UpdateCheck.parseLatest("""{"message":"API rate limit exceeded"}"""))
         assertNull(UpdateCheck.parseLatest("<html>"))
         assertNull(UpdateCheck.parseLatest(""))
+        assertNull(UpdateCheck.parseLatest("""{"tag_name":"1.4.0"}"""))            // geen v: de releasepagina bestaat niet
+        assertNull(UpdateCheck.parseLatest("""{"tag_name":"v202611171530"}"""))    // te groot getal
     }
 
     @Test
@@ -62,6 +63,7 @@ class UpdateCheckTest {
         assertFalse(UpdateCheck.isNewer("1.3", "1.3.0"))
         assertFalse(UpdateCheck.isNewer("1.2.9", "1.3.0"))
         assertFalse(UpdateCheck.isNewer("", "1.3.0"))
+        assertFalse(UpdateCheck.isNewer("202611171530", "1.3.0"))   // geen crash bij een te groot getal
     }
 
     /** Een testversie (1.4.0-test1) krijgt de gewone 1.4.0 aangeboden, een gewone 1.4.0 niet. */

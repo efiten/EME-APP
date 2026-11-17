@@ -12,8 +12,9 @@ What changed in each version: [Releases](https://github.com/on5gsdirk-cmd/EME-AP
 
 ### New versions
 
-The app is not in Google Play. Once a day it asks GitHub for the latest release; when there is a newer
-one, a bar at the top says so, with a button to the release page. GitHub then sees the IP address of
+The app is not in Google Play. At most once a day, when it starts or when you come back from Settings,
+it asks GitHub for the latest release; when there is a newer one, a bar at the top says so, with a
+button to the release page. GitHub then sees the IP address of
 your phone; Settings has a switch to turn the check off. Test releases are not offered.
 
 Other ways to hear about a new version:

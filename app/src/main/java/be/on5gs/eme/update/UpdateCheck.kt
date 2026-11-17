@@ -25,14 +25,19 @@ object UpdateCheck {
     /** Testnaad: in de app de echte aanvraag. */
     internal var fetchLatest: () -> String = ::fetch
 
-    private val VERSION = Regex("""\d+(\.\d+)*""")
+    /** Hooguit 4 cijfers per getal, zodat toInt() nooit overloopt. */
+    private val VERSION = Regex("""\d{1,4}(\.\d{1,4})*""")
 
-    /** De versie uit het antwoord van releases/latest ("v1.4.0" geeft "1.4.0"); null bij een draft, pre-release of onleesbaar antwoord. */
+    /**
+     * De versie uit het antwoord van releases/latest ("v1.4.0" geeft "1.4.0"); null bij een draft, pre-release,
+     * onleesbaar antwoord of een tag zonder "v" (dan zou [releaseUrl] niet bestaan).
+     */
     fun parseLatest(json: String): String? {
         val o = runCatching { JSONObject(json) }.getOrNull() ?: return null
         if (o.optBoolean("draft") || o.optBoolean("prerelease")) return null
-        val tag = o.optString("tag_name").removePrefix("v")
-        return tag.takeIf { VERSION.matches(it) }
+        val tag = o.optString("tag_name")
+        if (!tag.startsWith("v")) return null
+        return tag.substring(1).takeIf { VERSION.matches(it) }
     }
 
     /**
