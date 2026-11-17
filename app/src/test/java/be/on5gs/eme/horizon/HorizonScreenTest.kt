@@ -80,7 +80,7 @@ class HorizonScreenTest {
 
         assertEquals("1;5;B 60 110 25;P 180 200 20", settings.horizon.encode())
         compose.onNodeWithTag("horizon-summary").assertTextEquals("Minimum 5° · obstacles: 2")
-        compose.onNodeWithText("Horizon saved").assertExists()
+        compose.onNodeWithText("Obstacles saved").assertExists()
     }
 
     /** Schotel van 6 m op 1296 MHz (de band van de Deg-tab): marge 1,35°; leeg = geen schotel. */
