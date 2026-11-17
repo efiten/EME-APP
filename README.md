@@ -36,13 +36,13 @@ the downloaded survey into obstacles. A chart shows your horizon with today's mo
 diameter of your dish and its band, half the beamwidth is added above your horizon, so the edge of
 the beam is clear too.
 
-The app has a dark blue theme and 13 languages (NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, RU, ZH, JA).
+The app has a dark blue theme and 15 languages (NL, FR, EN, DE, ES, IT, PT, SV, DA, FI, CS, RU, UK, ZH, JA).
 
 ## Web app (iPhone)
 
 iPhone users cannot install the APK. Open **https://eme.on8ar.eu** in Safari instead. It has the same
 screens as the app (Moon, Deg, HB9Q, N0UK, Live CQ, Settings and My horizon), the same calculations and
-the same 13 languages. The HB9Q tab needs your own HB9Q login, entered in Settings; the web app keeps it
+the same 15 languages. The HB9Q tab needs your own HB9Q login, entered in Settings; the web app keeps it
 only in your browser. Live CQ and the N0UK chat are fetched once for all web users together, at the same
 intervals as the app.
 

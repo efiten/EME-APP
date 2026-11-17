@@ -60,7 +60,7 @@ import java.util.TimeZone
  * geen woord dat over twee regels gebroken wordt,
  * tikdoelen van minstens 48 dp en de tabbladen bovenaan zichtbaar.
  *
- * Alle 13 talen op een klein scherm met grote letters (de moeilijkste situatie), plus Engels op
+ * Alle 15 talen op een klein scherm met grote letters (de moeilijkste situatie), plus Engels op
  * een gewone telefoon en op een tablet. Vaste tijd en vaste gegevens, zonder netwerk.
  */
 @RunWith(ParameterizedRobolectricTestRunner::class)
@@ -72,7 +72,7 @@ class LayoutTest(private val device: String, private val language: String, priva
         private const val SMALL_PHONE = "w320dp-h640dp-xhdpi"
         private const val PHONE = "w411dp-h891dp-xxhdpi"
         private const val TABLET = "w800dp-h1280dp-xhdpi"
-        private val LANGUAGES = listOf("en", "da", "de", "es", "fi", "fr", "it", "ja", "nl", "pt", "ru", "sv", "zh")
+        private val LANGUAGES = listOf("en", "cs", "da", "de", "es", "fi", "fr", "it", "ja", "nl", "pt", "ru", "sv", "uk", "zh")
 
         /** Tijd van de N0UK-sample, zodat die berichten "recent" zijn. */
         private val NOW = Instant.parse("2026-11-10T16:20:00Z").toEpochMilli()
