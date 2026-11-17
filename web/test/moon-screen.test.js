@@ -157,10 +157,10 @@ describe('own horizon in the moon tab (same as HorizonUseTest.kt)', () => {
     try {
       vi.setSystemTime(Date.parse('2026-11-20T12:00:00Z'));
       screen.mount(host, ctxOf(settings({ horizon: decode('1;5;B 60 110 25;P 180 200 20') })));
-      expect(q('horizon-now').textContent).toBe('Moon behind your horizon');
+      expect(q('horizon-now').textContent).toBe('Moon behind your obstacles');
       expect(q('horizon-now').classList.contains('blocked')).toBe(true);
       const line = q('horizon-window');
-      expect(line.textContent).toContain('Clear of your horizon');
+      expect(line.textContent).toContain('Clear of your obstacles');
       expect(line.textContent).toContain('16:50');
       expect(line.textContent).toContain('tomorrow 03:15');
       expect(line.querySelector('.time').classList.contains('clear')).toBe(true);

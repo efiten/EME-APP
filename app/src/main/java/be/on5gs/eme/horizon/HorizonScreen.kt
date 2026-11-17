@@ -131,7 +131,8 @@ fun HorizonScreen(
     val gapsText = stringResource(R.string.horizon_load_gaps)
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
-        scope.launch {
+        // Main: na het lezen het scherm op de main thread bijwerken, ook in de Compose-tests (#110)
+        scope.launch(Dispatchers.Main) {
             val text = withContext(Dispatchers.IO) {
                 runCatching {
                     // Eén byte meer lezen dan de grens: is het bestand groter, dan is het geen opmeting (zoals de webversie)

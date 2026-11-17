@@ -65,7 +65,7 @@ class HorizonImportTest {
     @Test
     fun measureOpensHorizonSurvey() {
         show("horizon_survey_example.json")
-        compose.onNodeWithText("Measure horizon").performClick()
+        compose.onNodeWithText("Measure obstacles").performClick()
         assertEquals("https://horizon.dl6zg.de/", opened)
     }
 
@@ -73,7 +73,7 @@ class HorizonImportTest {
     @Test
     fun loadingASurveyFillsTheObstaclesAndSaveKeepsThem() {
         show("horizon_survey_example.json")
-        compose.onNodeWithText("Load horizon").performClick()
+        compose.onNodeWithText("Load obstacles").performClick()
         compose.waitForIdle()
         compose.waitUntil(5_000) { compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size == 7 }
         compose.onNodeWithTag("horizon-import-message")
@@ -88,8 +88,10 @@ class HorizonImportTest {
     @Test
     fun unmeasuredGapsAreNamedInTheMessage() {
         show("only_the_tree.json")
-        compose.onNodeWithText("Load horizon").performClick()
-        compose.waitUntil(5_000) { compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size == 1 }
+        compose.onNodeWithText("Load obstacles").performClick()
+        // Wachten op de melding: 1 rij staat er al voor het inladen (#110)
+        compose.waitUntil(5_000) { compose.onAllNodesWithText("Loaded:", substring = true).fetchSemanticsNodes().isNotEmpty() }
+        assertEquals(1, compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size)
         compose.onNodeWithTag("horizon-import-message").assertTextEquals(
             "Loaded: 3 points, 1 obstacles. Check them, mark thin trees as partial, then save. Not measured, left open: 110–60°.",
         )
@@ -104,7 +106,7 @@ class HorizonImportTest {
             while (length <= 1_000_000) { append("${az % 360}.00,5.00,2026-11-15T10:00:00.000Z,0,sensor\n"); az += 10 }
         }
         show("big.csv", big)
-        compose.onNodeWithText("Load horizon").performClick()
+        compose.onNodeWithText("Load obstacles").performClick()
         compose.waitUntil(5_000) { compose.onAllNodesWithText("This file is not", substring = true).fetchSemanticsNodes().isNotEmpty() }
         assertEquals(1, compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size)
     }
@@ -112,10 +114,10 @@ class HorizonImportTest {
     @Test
     fun aWrongFileShowsAnErrorAndKeepsTheObstacles() {
         show("not_a_survey.txt")
-        compose.onNodeWithText("Load horizon").performClick()
+        compose.onNodeWithText("Load obstacles").performClick()
         compose.waitUntil(5_000) { compose.onAllNodesWithText("This file is not", substring = true).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithTag("horizon-import-message")
-            .assertTextEquals("This file is not a horizon survey from horizon.dl6zg.de (JSON or CSV).")
+            .assertTextEquals("This file is not a survey from horizon.dl6zg.de (JSON or CSV).")
         assertEquals(1, compose.onAllNodesWithText("From az (°)").fetchSemanticsNodes().size)   // de boompjes staan er nog
     }
 }

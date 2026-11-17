@@ -171,7 +171,13 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = "+nl")
-    fun horizonScreen() {
+    fun horizonScreen() = horizon("horizon")
+
+    /** Engels, voor de README. */
+    @Test
+    fun horizonScreenEnglish() = horizon("readme-horizon")
+
+    private fun horizon(name: String) {
         // "Mijn horizon" met de situatie van ON5GS, op 20 november 2026 (maan komt op achter de boom)
         be.on5gs.eme.AppClock.nowMillis = { java.time.Instant.parse("2026-11-20T12:00:00Z").toEpochMilli() }
         try {
@@ -185,7 +191,7 @@ class ScreenshotTest {
                 }
             }
             compose.waitForIdle()
-            save("horizon")
+            save(name)
         } finally {
             be.on5gs.eme.AppClock.nowMillis = System::currentTimeMillis
         }
@@ -193,12 +199,18 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = "+nl")
-    fun degradationScreen() {
+    fun degradationScreen() = degradation("degradatie")
+
+    /** Engels, voor de README. */
+    @Test
+    fun degradationScreenEnglish() = degradation("readme-deg")
+
+    private fun degradation(name: String) {
         SettingsRepository(ApplicationProvider.getApplicationContext()).degBand = be.on5gs.eme.degradation.EmeBand.B144
         compose.setContent { EmeTheme { Surface(color = MaterialTheme.colorScheme.background) { Box(Modifier.fillMaxSize()) { EmeApp() } } } }
         compose.onNodeWithText("Deg").performClick()
         compose.waitForIdle()
-        save("degradatie")
+        save(name)
     }
 
     @Test

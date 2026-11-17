@@ -110,6 +110,15 @@ describe('ChatCqParserTest', () => {
     expect(fields('***** CQ 1296.065 2nd Q65-300A CFOM *****')).toBe('1296.065 2nd Q65-300A CFOM ?');
   });
 
+  // Hz only right after the mode or CFOM, or before "hz" (#12, option 2): "?" rather than a wrong number
+  test('hzOnlyAfterTheModeOrCfomOrBeforeHz', () => {
+    expect(fields('***** CQ 432 1st Q65-60B 1000 *****')).toBe('? 1st Q65-60B ? 1000'); // frequency without a dot is not Hz; the number after the mode is
+    expect(fields('***** CQ 1296,065 1st Q65-60C 1500 *****')).toBe('? 1st Q65-60C ? 1500'); // frequency with a comma is not Hz
+    expect(fields('***** CQ 1296.065 1st Q65-60C CFOM until 0930 *****')).toBe('1296.065 1st Q65-60C CFOM ?'); // a clock time is not Hz
+    expect(fields('***** CQ 1296.065 1st Q65-60C 2nd try 1500 *****')).toBe('1296.065 1st Q65-60C ? ?'); // a loose number is not Hz
+    expect(fields('***** CQ 1296.050 2nd CW 800 *****')).toBe('1296.050 2nd CW ? 800'); // also after another mode
+  });
+
   test('ordinaryMessagesAreNotCq', () => {
     expect(parseCq(msg('089 -332 0 0900 2.7 -10 : CQ F5AOL JN38'), now)).toBeNull();
     expect(parseCq(msg('@KB2SA: Thanks for the reports.'), now)).toBeNull();

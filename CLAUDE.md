@@ -31,6 +31,10 @@ The rules for every change are in CONTRIBUTING.md. Read and follow them:
 - Stage files by name (`git add <file>`), not `git add -A` or `git add .`.
 - Never force-push and never rewrite history that is already on GitHub.
 - Merge a pull request only when the "Unit tests" check is green.
+- Merge a pull request only after a review on it: a review comment or a GitHub review that says
+  what was checked. The author may review their own pull request, also when Claude wrote it;
+  a review by someone else is not required. For a release pull request, the maintainer's
+  explicit "ok" on the release notes is the review.
 
 ## Never
 

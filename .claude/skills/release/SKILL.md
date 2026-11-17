@@ -38,7 +38,8 @@ gh release list --limit 1 --exclude-pre-releases --json tagName,publishedAt
 - The first release after 0.16 is 0.17.0 (or 0.16.1 if it holds only fixes).
 - 1.0.0 only when the maintainer asks for it.
 - A test release gets a suffix, for example `0.17.0-test1`. It is published as a pre-release and
-  the "latest" download link keeps pointing to the last real release.
+  the "latest" download link keeps pointing to the last real release. It gets no web zip and the web jobs
+  are skipped: eme.on8ar.eu stays on the last real release.
 
 Tell the maintainer the version and the reason in one sentence before you continue.
 

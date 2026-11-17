@@ -17,7 +17,11 @@ Thanks for helping. This page describes how changes get into the app.
    - `Fixes #12` when the pull request solves the whole issue. GitHub then closes the issue
      when the pull request is merged.
    - `Part of #12` when it solves only a part. Say in the issue what is left.
-6. The maintainer (ON5GS) reviews and merges.
+6. **Review, then merge.** Every pull request gets a review before it is merged: a review
+   comment or a GitHub review on the pull request. The author may do that review themselves;
+   what matters is that someone read the change after CI and wrote down what they checked.
+   For a release pull request, the maintainer's explicit "ok" on the release notes is the review.
+   The maintainer (ON5GS) merges.
 7. **Closing an issue by hand.** An issue that was solved in parts does not close by itself.
    Whoever merges the last part closes the issue, with a comment that links the pull requests.
 

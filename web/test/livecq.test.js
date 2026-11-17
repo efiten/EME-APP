@@ -191,12 +191,14 @@ describe('LiveCqMerge', () => {
   });
 
   test('selectShowsAllSourcesAndKeepsALocator', () => {
-    const older = spot('K3SK', 'W3SZ', { grid: 'FM07', spotter: 'W3TI' });
-    const newer = spot('K3SK', 'N6NU', { time: t + 120_000, grid: '' });
-    const shown = selectSpots(mergeSpots([older], [newer]), new Set(['B23CM']), t + 180_000, 60);
+    // 11 h later than t: the moon is up at FM07 (31 deg), so #105 does not hide the station
+    const u = t + 11 * 3_600_000;
+    const older = spot('K3SK', 'W3SZ', { time: u, grid: 'FM07', spotter: 'W3TI' });
+    const newer = spot('K3SK', 'N6NU', { time: u + 120_000, grid: '' });
+    const shown = selectSpots(mergeSpots([older], [newer]), new Set(['B23CM']), u + 180_000, 60);
     expect(shown.length).toBe(1);
     const s = shown[0];
-    expect(s.utcMillis).toBe(t + 120_000);
+    expect(s.utcMillis).toBe(u + 120_000);
     expect(s.grid).toBe('FM07');
     expect(s.sources).toEqual(new Set(['W3SZ', 'N6NU']));
   });

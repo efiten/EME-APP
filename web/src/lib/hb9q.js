@@ -107,12 +107,17 @@ export const CHAT_CQ_WINDOW_MINUTES = 60;
 const FREQ = /\b(\d{2,5})\.(\d{0,3})/;
 const PERIOD = /\b(1st|2nd)\b/i;
 const Q65 = /\bQ65[A-E]?\s*-?\s*(\d{2,3})\s*([A-E])\b/i;
-const Q65_ALL = new RegExp(Q65.source, 'gi');
 const OTHER_MODE = /\b(JT65[A-C]?|JT4[A-G]?|JT9|QRA64[A-E]?|FT8|FT4|FST4|MSK144|JTTY|ISCAT-?[AB]?|CW|SSB)\b/i;
 const CFOM = /CFOM/i;
 const OWN_ECHO = /own\s*echo/i;
-// A number of 3-4 digits that is not a power (W), distance (m), duration (min) or dB.
-const HZ = /(?<![\d.])(\d{3,4})(?![\d.])(?!\s*(?:w\b|m\b|min|db|watt))/gi;
+// Hz (#12): a number of 3-4 digits right after the mode or CFOM ("Q65-60C 1500", "CFOM @1500") that is not a
+// power (W), distance (m), duration (min) or dB; or right before "hz" ("1500Hz"). A loose number (the frequency
+// without a dot, a clock time) is not Hz: "?" rather than a wrong number. Same as ChatCqParser.kt.
+const HZ_AFTER = new RegExp(
+  `(?:${Q65.source}|${OTHER_MODE.source}|CFOM)` + String.raw`[\s,;:@/-]*(\d{3,4})(?![\d.])(?!\s*(?:w\b|m\b|min|db|watt))`,
+  'gi',
+);
+const HZ_BEFORE = /(?<![\d.])(\d{3,4})\s*hz\b/gi;
 const CQ_WORD = /\bCQ\b/i;
 const CLOCK = /(\d{1,2}):(\d{2})/;
 const DAY_OF_MONTH = /(\d{1,2})(?:st|nd|rd|th)\s+of\s+([A-Za-z]{3})/;
@@ -185,9 +190,15 @@ export function parseCq(msg, nowMs) {
     mode = other === undefined ? '?' : other === 'ISCATA' || other === 'ISCATB' ? `ISCAT-${other.slice(-1)}` : other;
   }
   const cfom = CFOM.test(rest) ? 'CFOM' : OWN_ECHO.test(rest) ? 'own echo' : '?';
-  // Hz: first number between 200 and 3000, outside the frequency and the mode (e.g. "60" in Q65-60C)
-  const withoutMode = rest.replace(Q65_ALL, ' ');
-  const hzValue = Array.from(withoutMode.matchAll(HZ), (m) => Number(m[1])).find((n) => n >= 200 && n <= 3000);
+  // Hz: the first number between 200 and 3000 at a place where Hz is written (after the mode or CFOM, or before "hz")
+  const hzValue = [...rest.matchAll(HZ_AFTER), ...rest.matchAll(HZ_BEFORE)]
+    .map((m) => {
+      const n = m[m.length - 1];
+      return { at: m.index + m[0].lastIndexOf(n), n: Number(n) };
+    })
+    .sort((a, b) => a.at - b.at)
+    .map((c) => c.n)
+    .find((n) => n >= 200 && n <= 3000);
 
   return {
     messageId: msg.id,
