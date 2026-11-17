@@ -1,5 +1,6 @@
 package be.on5gs.eme.moon
 
+import androidx.compose.material3.OutlinedButton
 import be.on5gs.eme.horizon.horizonMarginDeg
 import be.on5gs.eme.horizon.beamMarginDeg
 import androidx.compose.ui.semantics.semantics
@@ -212,6 +213,14 @@ fun MoonScreen(settings: SettingsRepository, callsign: String, locator: String) 
 
         // De kaart met de tijden blijft over nu gaan: een vast referentiepunt tijdens het schuiven
         events?.let { ev -> EventsCard(ev, now, zone, locale, if (horizon.isDefault) null else window) }
+
+        // Gezamenlijk maanvenster met een ander station (#119)
+        var showMutual by remember { mutableStateOf(false) }
+        Spacer(Modifier.height(12.dp))
+        OutlinedButton(onClick = { showMutual = true }, modifier = Modifier.testTag("mutual-open")) {
+            Text(stringResource(R.string.mutual_button))
+        }
+        if (showMutual) MutualWindowDialog(settings, locator) { showMutual = false }
     }
 }
 

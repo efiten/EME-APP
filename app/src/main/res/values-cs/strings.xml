@@ -138,4 +138,14 @@
     <string name="update_dismiss">Zavřít</string>
     <string name="update_check">Kontrolovat nové verze</string>
     <string name="update_check_hint">Jednou denně se zeptá GitHubu. GitHub přitom uvidí IP adresu vašeho telefonu.</string>
+    <string name="mutual_button">Společné okno</string>
+    <string name="mutual_title">Společné měsíční okno</string>
+    <string name="mutual_info">Kdy je Měsíc současně nad obzorem u obou stanic: u vás mimo vaše překážky, u druhé stanice nad obzorem. Příštích 30 dní, časy v místním čase (%1$s).</string>
+    <string name="mutual_locator">Lokátor druhé stanice</string>
+    <string name="mutual_calculate">Spočítat</string>
+    <string name="mutual_recent">Nedávné</string>
+    <string name="mutual_none">V příštích 30 dnech žádné společné okno.</string>
+    <string name="mutual_max">Max. EL %1$s° · Deg %2$s dB (%3$s MHz)</string>
+    <string name="mutual_partial">částečně za vašimi překážkami</string>
+    <string name="mutual_calculating">Počítám…</string>
 </resources>

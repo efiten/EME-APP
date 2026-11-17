@@ -138,4 +138,14 @@
     <string name="update_dismiss">Закрити</string>
     <string name="update_check">Перевіряти нові версії</string>
     <string name="update_check_hint">Раз на день звертається до GitHub. GitHub при цьому бачить IP-адресу вашого телефону.</string>
+    <string name="mutual_button">Спільне вікно</string>
+    <string name="mutual_title">Спільне місячне вікно</string>
+    <string name="mutual_info">Коли Місяць одночасно над горизонтом в обох станцій: у вас поза вашими перешкодами, в іншої станції над горизонтом. Наступні 30 днів, час місцевий (%1$s).</string>
+    <string name="mutual_locator">Локатор іншої станції</string>
+    <string name="mutual_calculate">Обчислити</string>
+    <string name="mutual_recent">Нещодавні</string>
+    <string name="mutual_none">У наступні 30 днів немає спільного вікна.</string>
+    <string name="mutual_max">Макс. EL %1$s° · Deg %2$s дБ (%3$s МГц)</string>
+    <string name="mutual_partial">частково за вашими перешкодами</string>
+    <string name="mutual_calculating">Обчислення…</string>
 </resources>
